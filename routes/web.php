@@ -26,6 +26,7 @@ Route::middleware('auth')->group(function () {
     // Route untuk mata kuliah
     Route::resource('mata_kuliah', MataKuliahController::class);
 
+
     // Route untuk dosen
     Route::resource('dosen', DosenController::class);
 

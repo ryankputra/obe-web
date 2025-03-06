@@ -10,50 +10,71 @@
         body {
             display: flex;
         }
+
+        /* Styling Sidebar */
         #sidebar-wrapper {
             width: 250px;
-            background-color: #007bff; /* Warna biru untuk sidebar */
+            background-color: #0D6EFD; /* Biru utama Bootstrap */
             color: #fff;
             height: 100vh;
             position: fixed;
             display: flex;
             flex-direction: column;
         }
+
         .sidebar-heading {
             padding: 1.5rem;
             text-align: center;
-            background: #0056b3; /* Warna biru lebih gelap untuk heading */
+            background: #025CE2; /* Biru lebih gelap */
+            font-size: 1.2rem;
+            font-weight: bold;
         }
+
+        /* Styling Item Sidebar */
         .list-group-item {
-            background: #007bff;
-            color: #fff;
+            background: transparent !important;
+            color: white !important;
             border: none;
-            margin: 0.25rem 0; /* Tambahkan jarak antara item */
-            padding-top: 1rem; /* Tambahkan jarak vertikal */
-            padding-bottom: 1rem; /* Tambahkan jarak vertikal */
+            margin: 0.25rem 0;
+            padding: 1rem;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease-in-out;
         }
+
+        /* Hover Effect */
         .list-group-item:hover {
-            background: #0056b3; /* Warna biru lebih gelap untuk hover */
+            background: #0B5ED7 !important; /* Biru lebih terang */
+            color: #fff !important;
         }
-        .list-group-item.bg-danger {
-            background: #dc3545; /* Warna merah untuk logout */
-            border-radius: 4px; /* Buat kotak tombol logout */
-            text-align: center;
+
+        /* Aktif Item Lebih Mencolok */
+        .list-group-item.active {
+            background-color: #B3D4FF !important; /* Biru muda */
+            color: #0D47A1 !important; /* Biru tua */
+            font-weight: bold;
+            border-left: 5px solid #0B5ED7; /* Border kiri tebal */
         }
-        .list-group-item.bg-danger:hover {
-            background: #c82333; /* Warna merah lebih gelap untuk hover logout */
+
+        /* Tombol Logout */
+        .logout-btn {
+            width: 90%;
+            margin: 10px auto;
         }
+
         .main-content {
             margin-left: 250px;
             padding: 2rem;
             width: calc(100% - 250px);
         }
+
         .dashboard-heading {
             font-size: 2rem;
             font-weight: bold;
             margin-bottom: 2rem;
             color: #333;
         }
+
         .chart-title {
             font-size: 1.5rem;
             font-weight: bold;
@@ -61,6 +82,7 @@
             color: #666;
         }
     </style>
+    @yield('styles')
 </head>
 <body>
     @include('partials.sidebar')
