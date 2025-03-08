@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class FakultasController extends Controller
+class FakultasfstController extends Controller
 {
     public function sainsTeknologi()
     {
@@ -15,6 +15,6 @@ class FakultasController extends Controller
             ['nama' => 'RPL', 'jumlah' => 200],
         ];
 
-        return view('fakultas.sains_tek', compact('prodi'));
+        return view('fakultasfst.sains_tek', compact('prodi'));
     }
 }

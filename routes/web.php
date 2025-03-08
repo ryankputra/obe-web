@@ -9,8 +9,10 @@ use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\CPLController;
 use App\Http\Controllers\CPMKController;
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\FakultasController;
+use App\Http\Controllers\fakultasfstController;
 use App\Http\Controllers\InformatikaController;
+use App\Http\Controllers\sisteminformasiController;
+use App\Http\Controllers\RekayasaperangkatlunakController;
 
 
 // Route untuk halaman utama (arahkan ke login)
@@ -37,8 +39,10 @@ Route::middleware('auth')->group(function () {
 
     // Route untuk mahasiswa
     Route::resource('mahasiswa', MahasiswaController::class);
-    Route::get('/fakultas/sains-teknologi', [FakultasController::class, 'sainsTeknologi'])->name('fakultas.sains-teknologi');
-    Route::get('/fakultas/sains-teknologi/informatika', [InformatikaController::class, 'index'])->name('fakultas.sains-teknologi.informatika');
+    Route::get('/fakultasfst/sains-teknologi', [fakultasfstController::class, 'sainsTeknologi'])->name('fakultasfst.sains-teknologi');
+    Route::get('/fakultasfst/sains-teknologi/informatika', [InformatikaController::class, 'index'])->name('fakultasfst.sains-teknologi.informatika');
+    Route::get('/fakultasfst/sains-teknologi/sisteminformasi', [sisteminformasiController::class, 'index'])->name('fakultasfst.sains-teknologi.sisteminformasi');
+    Route::get('/fakultasfst/sains-teknologi/Rekayasaperangkatlunak', [RekayasaperangkatlunakController::class, 'index'])->name('fakultasfst.sains-teknologi.Rekayasaperangkatlunak');
 
 
 

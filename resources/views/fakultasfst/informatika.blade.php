@@ -5,7 +5,7 @@
 @section('content')
 <div class="container-fluid">
     <div class="mb-4">
-        <a href="{{ route('fakultas.sains-teknologi') }}" class="btn btn-secondary back-btn">
+        <a href="{{ route('fakultasfst.sains-teknologi') }}" class="btn btn-secondary back-btn">
             <i class="fas fa-arrow-left me-2"></i> Kembali
         </a>
     </div>

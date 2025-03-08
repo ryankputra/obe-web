@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'Fakultas Sains dan Teknologi')
+@section('title', 'fakultasfst Sains dan Teknologi')
 
 @section('content')
 <div class="container-fluid">
-    <h1 class="mt-4">Fakultas Sains dan Teknologi</h1>
+    <h1 class="mt-4">fakultasfst Sains dan Teknologi</h1>
     <div class="d-flex justify-content-between align-items-center mb-3">
         <a href="{{ route('mahasiswa.index') }}" class="btn btn-secondary">
         <i class="fas fa-arrow-left me-2"></i> Kembali
@@ -34,7 +34,7 @@
                             <td class="text-start">Informatika</td>
                             <td>50</td>
                             <td>
-                                <a href="{{ route('fakultas.sains-teknologi.informatika') }}" class="btn btn-outline-info btn-sm">Lihat</a>
+                                <a href="{{ route('fakultasfst.sains-teknologi.informatika') }}" class="btn btn-outline-info btn-sm">Lihat</a>
                                 <a href="#" class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#editProdiModal" data-prodi="Informatika" data-jumlah="50">Edit</a>
                                 <a href="#" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteProdiModal" data-prodi="Informatika">Hapus</a>
                             </td>
@@ -43,7 +43,7 @@
                             <td class="text-start">Sistem Informasi</td>
                             <td>60</td>
                             <td>
-                                <a href="#" class="btn btn-outline-info btn-sm">Lihat</a>
+                                <a href="{{ route('fakultasfst.sains-teknologi.sisteminformasi') }}" class="btn btn-outline-info btn-sm">Lihat</a>
                                 <a href="#" class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#editProdiModal" data-prodi="Sistem Informasi" data-jumlah="60">Edit</a>
                                 <a href="#" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteProdiModal" data-prodi="Sistem Informasi">Hapus</a>
                             </td>
@@ -52,7 +52,7 @@
                             <td class="text-start">RPL</td>
                             <td>55</td>
                             <td>
-                                <a href="#" class="btn btn-outline-info btn-sm">Lihat</a>
+                                <a href="{{ route('fakultasfst.sains-teknologi.Rekayasaperangkatlunak') }}" class="btn btn-outline-info btn-sm">Lihat</a>
                                 <a href="#" class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#editProdiModal" data-prodi="RPL" data-jumlah="55">Edit</a>
                                 <a href="#" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteProdiModal" data-prodi="RPL">Hapus</a>
                             </td>
@@ -172,7 +172,7 @@
             <td class="text-start">${prodiNama}</td>
             <td>${jumlahMahasiswa}</td>
             <td>
-                <a href="{{ route('fakultas.sains-teknologi.informatika') }}" class="btn btn-outline-info btn-sm">Lihat</a>
+                <a href="{{ route('fakultasfst.sains-teknologi.informatika') }}" class="btn btn-outline-info btn-sm">Lihat</a>
                 <a href="#" class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#editProdiModal" data-prodi="${prodiNama}" data-jumlah="${jumlahMahasiswa}">Edit</a>
                 <a href="#" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteProdiModal" data-prodi="${prodiNama}">Hapus</a>
             </td>

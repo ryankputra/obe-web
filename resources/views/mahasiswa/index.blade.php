@@ -8,7 +8,7 @@
     <div class="row">
         <div class="col-md-4 mb-4">
             <div class="card">
-                <a href="{{ route('fakultas.sains-teknologi') }}">
+                <a href="{{ route('fakultasfst.sains-teknologi') }}">
                     <img src="images/inf.jpeg" class="card-img-top" alt="Fakultas Sains dan Teknologi">
                     <div class="card-body text-center">
                         <p class="card-text">Fakultas Sains dan Teknologi</p>
@@ -18,6 +18,7 @@
         </div>
         <div class="col-md-4 mb-4">
             <div class="card">
+
                 <img src="images/bisnis.jpeg" class="card-img-top" alt="Fakultas Ekonomi dan Bisnis">
                 <div class="card-body text-center">
                     <p class="card-text">Fakultas Ekonomi dan Bisnis</p>
