@@ -4,19 +4,21 @@
 
 @section('content')
 <div class="container-fluid">
-    <h1 class="mt-4">fakultasfst Sains dan Teknologi</h1>
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <a href="{{ route('mahasiswa.index') }}" class="btn btn-secondary">
-        <i class="fas fa-arrow-left me-2"></i> Kembali
+    <div class="mb-4">
+        <a href="{{ route('mahasiswa.index') }}" class="btn btn-secondary back-btn">
+            <i class="fas fa-arrow-left me-2"></i> Kembali
         </a>
-        <div class="d-flex">
-            <button class="btn btn-success rounded-circle me-2 d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;" data-bs-toggle="modal" data-bs-target="#addProdiModal">
-                <i class="fas fa-plus text-white"></i>
-            </button>
-            <button class="btn btn-primary rounded-circle d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;">
-                <i class="fas fa-save text-white"></i>
-            </button>
-        </div>
+    </div>
+    
+    <h1 class="mb-4 text-purple">fakultas Sains dan Teknologi</h1>
+    
+    <div class="d-flex justify-content-end mb-3">
+        <button class="btn btn-success rounded-circle me-2 d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;" data-bs-toggle="modal" data-bs-target="#addMahasiswaModal">
+            <i class="fas fa-plus text-white"></i>
+        </button>
+        <button class="btn btn-primary rounded-circle d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;">
+            <i class="fas fa-save text-white"></i>
+        </button>
     </div>
     <div class="row">
         <div class="col-12">
@@ -154,6 +156,13 @@
     .table th {
         background-color: #2f5f98 !important;
         color: #fff !important;
+    }
+    .header-blue {
+        background-color: #2f5f98 !important;
+    }
+    
+    .text-purple {
+        color: #5842a8 !important;
     }
 </style>
 @endsection
