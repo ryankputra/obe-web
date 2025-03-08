@@ -9,8 +9,16 @@
         <a href="{{ route('cpmk.index') }}" class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('cpmk*') ? 'active' : '' }}">CPMK</a>
 
         <div class="mt-auto text-center">
-            <!-- Tombol Logout -->
-            <button class="btn btn-danger logout-btn" data-bs-toggle="modal" data-bs-target="#logoutModal">Logout</button>
+            <!-- Tombol Gerigi untuk Profil dan Logout -->
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="settingsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-cog"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="settingsDropdown">
+                    <li><a class="dropdown-item" href="{{ route('profile') }}">Profil</a></li>
+                    <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">Logout</a></li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
@@ -36,3 +44,60 @@
         </div>
     </div>
 </div>
+
+<style>
+    #sidebar-wrapper {
+        background-color: #426c8f;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sidebar-heading {
+        font-size: 1.5rem;
+        padding: 20px;
+        color: #fff;
+    }
+
+    .list-group-item {
+        background-color: #426c8f;
+        color: #fff;
+    }
+
+    .list-group-item:hover,
+    .list-group-item:focus {
+        background-color: #5b82a6;
+        color: #fff;
+    }
+
+    .list-group-item.active {
+        background-color: #007bff;
+        color: #fff;
+    }
+
+    .dropdown {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+    }
+
+    .dropdown-toggle::after {
+        display: none;
+    }
+
+    .dropdown-menu {
+        background-color: #426c8f;
+        color: #fff;
+    }
+
+    .dropdown-item {
+        color: #fff;
+    }
+
+    .dropdown-item:hover,
+    .dropdown-item:focus {
+        background-color:rgb(202, 202, 202);
+    }
+</style>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" crossorigin="anonymous">

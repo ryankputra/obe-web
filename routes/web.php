@@ -9,6 +9,9 @@ use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\CPLController;
 use App\Http\Controllers\CPMKController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\FakultasController;
+use App\Http\Controllers\InformatikaController;
+
 
 // Route untuk halaman utama (arahkan ke login)
 Route::get('/', function () {
@@ -22,16 +25,22 @@ Auth::routes();
 Route::middleware('auth')->group(function () {
     // Route untuk dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    
+
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
+
     // Route untuk mata kuliah
     Route::resource('mata_kuliah', MataKuliahController::class);
 
 
     // Route untuk dosen
-    Route::resource('dosen', DosenController::class);
+    Route::get('/dosen', [DosenController::class, 'index'])->name('dosen.index');
 
     // Route untuk mahasiswa
     Route::resource('mahasiswa', MahasiswaController::class);
+    Route::get('/fakultas/sains-teknologi', [FakultasController::class, 'sainsTeknologi'])->name('fakultas.sains-teknologi');
+    Route::get('/fakultas/sains-teknologi/informatika', [InformatikaController::class, 'index'])->name('fakultas.sains-teknologi.informatika');
+
+
 
     // Route untuk CPL
     Route::resource('cpl', CPLController::class);

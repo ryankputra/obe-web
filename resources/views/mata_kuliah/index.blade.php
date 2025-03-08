@@ -10,7 +10,7 @@
             <button class="btn btn-primary rounded-circle me-2 d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;" data-bs-toggle="modal" data-bs-target="#addCourseModal">
                 <i class="fas fa-plus text-white"></i>
             </button>
-            <button class="btn btn-success rounded-circle d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;">
+            <button id="saveCourseBtn" class="btn btn-success rounded-circle d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;">
                 <i class="fas fa-save text-white"></i>
             </button>
         </div>
@@ -18,7 +18,7 @@
     <div class="row">
         <div class="col-12">
             <div class="table-responsive">
-                <table class="table table-bordered text-center">
+                <table class="table table-bordered text-center" id="courseTable">
                     <thead>
                         <tr>
                             <th rowspan="2">Kode MK</th>
@@ -37,14 +37,14 @@
                         @foreach($mataKuliahs as $mk)
                         <tr>
                             <td>{{ $mk['kode_mk'] }}</td>
-                            <td>{{ $mk['nama_mk'] }}</td>
+                            <td class="text-start">{{ $mk['nama_mk'] }}</td>
                             <td>{{ $mk['deskripsi'] }}</td>
                             <td>{{ $mk['semester'] }}</td>
                             <td>{{ $mk['sks_teori'] }}</td>
                             <td>{{ $mk['sks_praktik'] }}</td>
                             <td>
-                                <a href="#" class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#editCourseModal" data-kode="{{ $mk['kode_mk'] }}" data-nama="{{ $mk['nama_mk'] }}" data-deskripsi="{{ $mk['deskripsi'] }}" data-semester="{{ $mk['semester'] }}" data-teori="{{ $mk['sks_teori'] }}" data-praktik="{{ $mk['sks_praktik'] }}">Edit</a>
-                                <a href="#" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal" data-kode="{{ $mk['kode_mk'] }}">Hapus</a>
+                                <a href="#" class="btn btn-outline-success btn-sm edit-course" data-bs-toggle="modal" data-bs-target="#editCourseModal" data-kode="{{ $mk['kode_mk'] }}" data-nama="{{ $mk['nama_mk'] }}" data-deskripsi="{{ $mk['deskripsi'] }}" data-semester="{{ $mk['semester'] }}" data-teori="{{ $mk['sks_teori'] }}" data-praktik="{{ $mk['sks_praktik'] }}">Edit</a>
+                                <a href="#" class="btn btn-outline-danger btn-sm delete-course" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal" data-kode="{{ $mk['kode_mk'] }}">Hapus</a>
                             </td>
                         </tr>
                         @endforeach
@@ -55,109 +55,145 @@
     </div>
 </div>
 
-<!-- Modal untuk Form Tambah Mata Kuliah -->
+<!-- Tambah Mata Kuliah Modal -->
 <div class="modal fade" id="addCourseModal" tabindex="-1" aria-labelledby="addCourseModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addCourseModalLabel">Tambah Mata Kuliah</h5>
+                <h5 class="modal-title" id="addCourseModalLabel">Tambah Mata Kuliah Baru</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <form id="addCourseForm">
-                    <div class="mb-3">
-                        <label for="kodeMk" class="form-label">Kode MK</label>
-                        <input type="text" class="form-control" id="kodeMk" name="kode_mk">
+            <form id="addCourseForm">
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="kode_mk" class="form-label">Kode MK</label>
+                            <input type="text" class="form-control" id="kode_mk" name="kode_mk" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="nama_mk" class="form-label">Nama MK</label>
+                            <input type="text" class="form-control" id="nama_mk" name="nama_mk" required>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="namaMk" class="form-label">Nama MK</label>
-                        <input type="text" class="form-control" id="namaMk" name="nama_mk">
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="deskripsi" class="form-label">Deskripsi</label>
+                            <textarea class="form-control" id="deskripsi" name="deskripsi" rows="3"></textarea>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="deskripsiMk" class="form-label">Deskripsi</label>
-                        <textarea class="form-control" id="deskripsiMk" name="deskripsi"></textarea>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="semester" class="form-label">Semester</label>
+                            <select class="form-select" id="semester" name="semester" required>
+                                <option value="">Pilih Semester</option>
+                                @for($i = 1; $i <= 8; $i++)
+                                    <option value="{{ $i }}">{{ $i }}</option>
+                                @endfor
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="sks_teori" class="form-label">SKS Teori</label>
+                            <input type="number" class="form-control" id="sks_teori" name="sks_teori" min="0" value="0" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="sks_praktik" class="form-label">SKS Praktik</label>
+                            <input type="number" class="form-control" id="sks_praktik" name="sks_praktik" min="0" value="0" required>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="semesterMk" class="form-label">Semester</label>
-                        <input type="number" class="form-control" id="semesterMk" name="semester">
-                    </div>
-                    <div class="mb-3">
-                        <label for="sksTeori" class="form-label">SKS Teori</label>
-                        <input type="number" class="form-control" id="sksTeori" name="sks_teori">
-                    </div>
-                    <div class="mb-3">
-                        <label for="sksPraktik" class="form-label">SKS Praktik</label>
-                        <input type="number" class="form-control" id="sksPraktik" name="sks_praktik">
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                <button type="button" class="btn btn-primary" id="addCourseButton">Tambah</button>
-            </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
-<!-- Modal untuk Form Edit Mata Kuliah -->
+<!-- Edit Mata Kuliah Modal -->
 <div class="modal fade" id="editCourseModal" tabindex="-1" aria-labelledby="editCourseModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="editCourseModalLabel">Edit Mata Kuliah</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            <form id="editCourseForm">
+                <div class="modal-body">
+                    <input type="hidden" id="edit_kode_mk_original" name="kode_mk_original">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="edit_kode_mk" class="form-label">Kode MK</label>
+                            <input type="text" class="form-control" id="edit_kode_mk" name="kode_mk" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="edit_nama_mk" class="form-label">Nama MK</label>
+                            <input type="text" class="form-control" id="edit_nama_mk" name="nama_mk" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="edit_deskripsi" class="form-label">Deskripsi</label>
+                            <textarea class="form-control" id="edit_deskripsi" name="deskripsi" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="edit_semester" class="form-label">Semester</label>
+                            <select class="form-select" id="edit_semester" name="semester" required>
+                                <option value="">Pilih Semester</option>
+                                @for($i = 1; $i <= 8; $i++)
+                                    <option value="{{ $i }}">{{ $i }}</option>
+                                @endfor
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="edit_sks_teori" class="form-label">SKS Teori</label>
+                            <input type="number" class="form-control" id="edit_sks_teori" name="sks_teori" min="0" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="edit_sks_praktik" class="form-label">SKS Praktik</label>
+                            <input type="number" class="form-control" id="edit_sks_praktik" name="sks_praktik" min="0" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-success">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteConfirmModalLabel">Konfirmasi Hapus</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
             <div class="modal-body">
-                <form id="editCourseForm">
-                    <div class="mb-3">
-                        <label for="editKodeMk" class="form-label">Kode MK</label>
-                        <input type="text" class="form-control" id="editKodeMk" name="kode_mk" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label for="editNamaMk" class="form-label">Nama MK</label>
-                        <input type="text" class="form-control" id="editNamaMk" name="nama_mk">
-                    </div>
-                    <div class="mb-3">
-                        <label for="editDeskripsiMk" class="form-label">Deskripsi</label>
-                        <textarea class="form-control" id="editDeskripsiMk" name="deskripsi"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="editSemesterMk" class="form-label">Semester</label>
-                        <input type="number" class="form-control" id="editSemesterMk" name="semester">
-                    </div>
-                    <div class="mb-3">
-                        <label for="editSksTeori" class="form-label">SKS Teori</label>
-                        <input type="number" class="form-control" id="editSksTeori" name="sks_teori">
-                    </div>
-                    <div class="mb-3">
-                        <label for="editSksPraktik" class="form-label">SKS Praktik</label>
-                        <input type="number" class="form-control" id="editSksPraktik" name="sks_praktik">
-                    </div>
-                </form>
+                <p>Apakah Anda yakin ingin menghapus mata kuliah ini?</p>
+                <p class="fw-bold" id="delete_kode_nama"></p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                <button type="button" class="btn btn-primary" id="saveEditButton">Simpan</button>
+                <button type="button" id="confirmDeleteBtn" class="btn btn-danger">Hapus</button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Modal Konfirmasi Hapus -->
-<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteConfirmModalLabel">Hapus?</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<!-- Toast Notification -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div id="successToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                Operasi berhasil dilakukan!
             </div>
-            <div class="modal-body">
-                Apakah Anda yakin ingin menghapus mata kuliah ini?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                <button type="button" class="btn btn-danger" id="confirmDelete">Hapus</button>
-            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
     </div>
 </div>
@@ -165,6 +201,9 @@
 
 @section('styles')
 <style>
+    body {
+        background-color: #def4ff;
+    }
     .dashboard-heading {
         font-size: 2rem;
         font-weight: bold;
@@ -173,17 +212,17 @@
     
     /* Warna header tabel */
     .table thead th {
-        background-color: rgb(0, 114, 202) !important; /* Warna biru */
+        background-color: rgb(0, 114, 202) !important;
         color: white !important;
     }
 
     .table tbody tr:hover {
-        background-color: #f3e5f5;
+        background-color: #def4ff;
     }
 
     .table-bordered th,
     .table-bordered td {
-        border: 2px solid #dee2e6;
+        border: 2px solid #def4ff;
     }
 
     .table th {
@@ -196,6 +235,11 @@
         vertical-align: middle;
     }
 
+    /* Rata kiri untuk kolom Nama MK */
+    .text-start {
+        text-align: left !important;
+    }
+
     .btn-outline-success {
         border-color: #28a745;
         color: #28a745;
@@ -206,118 +250,238 @@
         color: #dc3545;
     }
 
-    /* Warna tombol tambah dan simpan */
     .btn-primary {
-        background-color: #007bff !important; /* Biru */
+        background-color: #007bff !important;
         border: none;
     }
 
     .btn-success {
-        background-color: #28a745 !important; /* Hijau */
+        background-color: #28a745 !important;
         border: none;
     }
 </style>
 @endsection
 
 @section('scripts')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js" crossorigin="anonymous"></script>
 <script>
-    // Tambahkan logika untuk menambah mata kuliah baru
-    document.getElementById('addCourseButton').addEventListener('click', function() {
-        const kodeMk = document.getElementById('kodeMk').value;
-        const namaMk = document.getElementById('namaMk').value;
-        const deskripsi = document.getElementById('deskripsiMk').value;
-        const semester = document.getElementById('semesterMk').value;
-        const sksTeori = document.getElementById('sksTeori').value;
-        const sksPraktik = document.getElementById('sksPraktik').value;
-
-        const tbody = document.querySelector('.table tbody');
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td>${kodeMk}</td>
-            <td>${namaMk}</td>
-            <td>${deskripsi}</td>
-            <td>${semester}</td>
-            <td>${sksTeori}</td>
-            <td>${sksPraktik}</td>
-            <td>
-                <a href="#" class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#editCourseModal" data-kode="${kodeMk}" data-nama="${namaMk}" data-deskripsi="${deskripsi}" data-semester="${semester}" data-teori="${sksTeori}" data-praktik="${sksPraktik}">Edit</a>
-                <a href="#" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal" data-kode="${kodeMk}">Hapus</a>
-            </td>
-        `;
-        tbody.appendChild(tr);
-
-        document.getElementById('addCourseForm').reset();
-        const addCourseModal = new bootstrap.Modal(document.getElementById('addCourseModal'));
-        addCourseModal.hide();
-    });
-
-    // Logika untuk mengisi data form edit dengan data yang sesuai
-    document.getElementById('editCourseModal').addEventListener('show.bs.modal', function(event) {
-        const button = event.relatedTarget;
-        const kodeMk = button.getAttribute('data-kode');
-        const namaMk = button.getAttribute('data-nama');
-        const deskripsi = button.getAttribute('data-deskripsi');
-        const semester = button.getAttribute('data-semester');
-        const sksTeori = button.getAttribute('data-teori');
-        const sksPraktik = button.getAttribute('data-praktik');
-
-        const modal = this;
-        modal.querySelector('#editKodeMk').value = kodeMk;
-        modal.querySelector('#editNamaMk').value = namaMk;
-        modal.querySelector('#editDeskripsiMk').value = deskripsi;
-        modal.querySelector('#editSemesterMk').value = semester;
-        modal.querySelector('#editSksTeori').value = sksTeori;
-        modal.querySelector('#editSksPraktik').value = sksPraktik;
-    });
-
-    // Logika untuk menyimpan perubahan pada mata kuliah
-    document.getElementById('saveEditButton').addEventListener('click', function() {
-        const kodeMk = document.getElementById('editKodeMk').value;
-        const namaMk = document.getElementById('editNamaMk').value;
-        const deskripsi = document.getElementById('editDeskripsiMk').value;
-        const semester = document.getElementById('editSemesterMk').value;
-        const sksTeori = document.getElementById('editSksTeori').value;
-        const sksPraktik = document.getElementById('editSksPraktik').value;
-
-        const rows = document.querySelectorAll('.table tbody tr');
-        rows.forEach(row => {
-            if (row.children[0].textContent === kodeMk) {
-                row.children[1].textContent = namaMk;
-                row.children[2].textContent = deskripsi;
-                row.children[3].textContent = semester;
-                row.children[4].textContent = sksTeori;
-                row.children[5].textContent = sksPraktik;
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize toast
+        const successToast = new bootstrap.Toast(document.getElementById('successToast'));
+        
+        // Show success message
+        function showSuccessMessage() {
+            successToast.show();
+        }
+        
+        // Handle Add Course Form Submit
+        document.getElementById('addCourseForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const kodeMk = document.getElementById('kode_mk').value;
+            const namaMk = document.getElementById('nama_mk').value;
+            const deskripsi = document.getElementById('deskripsi').value;
+            const semester = document.getElementById('semester').value;
+            const sksTeori = document.getElementById('sks_teori').value;
+            const sksPraktik = document.getElementById('sks_praktik').value;
+            
+            // Validate SKS
+            if (parseInt(sksTeori) + parseInt(sksPraktik) === 0) {
+                alert('Total SKS (Teori + Praktik) harus lebih dari 0');
+                return;
+            }
+            
+            // Check if kode_mk already exists
+            const rows = document.querySelectorAll('#courseTable tbody tr');
+            for (let i = 0; i < rows.length; i++) {
+                if (rows[i].cells[0].textContent.trim() === kodeMk) {
+                    alert('Kode MK sudah ada, silahkan gunakan kode yang berbeda');
+                    return;
+                }
+            }
+            
+            // Add new row to table
+            const tbody = document.querySelector('#courseTable tbody');
+            const newRow = tbody.insertRow();
+            
+            newRow.innerHTML = `
+                <td>${kodeMk}</td>
+                <td class="text-start">${namaMk}</td>
+                <td>${deskripsi}</td>
+                <td>${semester}</td>
+                <td>${sksTeori}</td>
+                <td>${sksPraktik}</td>
+                <td>
+                    <a href="#" class="btn btn-outline-success btn-sm edit-course" data-bs-toggle="modal" data-bs-target="#editCourseModal" data-kode="${kodeMk}" data-nama="${namaMk}" data-deskripsi="${deskripsi}" data-semester="${semester}" data-teori="${sksTeori}" data-praktik="${sksPraktik}">Edit</a>
+                    <a href="#" class="btn btn-outline-danger btn-sm delete-course" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal" data-kode="${kodeMk}">Hapus</a>
+                </td>
+            `;
+            
+            // Add event listeners to new buttons
+            attachEditListener(newRow.querySelector('.edit-course'));
+            attachDeleteListener(newRow.querySelector('.delete-course'));
+            
+            // Reset form and close modal
+            this.reset();
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addCourseModal'));
+            modal.hide();
+            
+            // Show success message
+            showSuccessMessage();
+        });
+        
+        // Handle Edit Course Form Submit
+        document.getElementById('editCourseForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const originalKode = document.getElementById('edit_kode_mk_original').value;
+            const newKode = document.getElementById('edit_kode_mk').value;
+            const namaMk = document.getElementById('edit_nama_mk').value;
+            const deskripsi = document.getElementById('edit_deskripsi').value;
+            const semester = document.getElementById('edit_semester').value;
+            const sksTeori = document.getElementById('edit_sks_teori').value;
+            const sksPraktik = document.getElementById('edit_sks_praktik').value;
+            
+            // Validate SKS
+            if (parseInt(sksTeori) + parseInt(sksPraktik) === 0) {
+                alert('Total SKS (Teori + Praktik) harus lebih dari 0');
+                return;
+            }
+            
+            // If kode_mk is changed, check if new kode_mk already exists
+            if (originalKode !== newKode) {
+                const rows = document.querySelectorAll('#courseTable tbody tr');
+                for (let i = 0; i < rows.length; i++) {
+                    if (rows[i].cells[0].textContent.trim() === newKode) {
+                        alert('Kode MK sudah ada, silahkan gunakan kode yang berbeda');
+                        return;
+                    }
+                }
+            }
+            
+            // Find and update the row
+            const rows = document.querySelectorAll('#courseTable tbody tr');
+            for (let i = 0; i < rows.length; i++) {
+                if (rows[i].cells[0].textContent.trim() === originalKode) {
+                    // Update row values
+                    rows[i].cells[0].textContent = newKode;
+                    rows[i].cells[1].textContent = namaMk;
+                    rows[i].cells[2].textContent = deskripsi;
+                    rows[i].cells[3].textContent = semester;
+                    rows[i].cells[4].textContent = sksTeori;
+                    rows[i].cells[5].textContent = sksPraktik;
+                    
+                    // Update data attributes for edit button
+                    const editBtn = rows[i].querySelector('.edit-course');
+                    editBtn.setAttribute('data-kode', newKode);
+                    editBtn.setAttribute('data-nama', namaMk);
+                    editBtn.setAttribute('data-deskripsi', deskripsi);
+                    editBtn.setAttribute('data-semester', semester);
+                    editBtn.setAttribute('data-teori', sksTeori);
+                    editBtn.setAttribute('data-praktik', sksPraktik);
+                    
+                    // Update data attribute for delete button
+                    const deleteBtn = rows[i].querySelector('.delete-course');
+                    deleteBtn.setAttribute('data-kode', newKode);
+                    
+                    break;
+                }
+            }
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editCourseModal'));
+            modal.hide();
+            
+            // Show success message
+            showSuccessMessage();
+        });
+        
+        // Function to attach edit listener
+        function attachEditListener(button) {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const kode = this.getAttribute('data-kode');
+                const nama = this.getAttribute('data-nama');
+                const deskripsi = this.getAttribute('data-deskripsi');
+                const semester = this.getAttribute('data-semester');
+                const teori = this.getAttribute('data-teori');
+                const praktik = this.getAttribute('data-praktik');
+                
+                // Populate the edit form
+                document.getElementById('edit_kode_mk_original').value = kode;
+                document.getElementById('edit_kode_mk').value = kode;
+                document.getElementById('edit_nama_mk').value = nama;
+                document.getElementById('edit_deskripsi').value = deskripsi;
+                document.getElementById('edit_semester').value = semester;
+                document.getElementById('edit_sks_teori').value = teori;
+                document.getElementById('edit_sks_praktik').value = praktik;
+            });
+        }
+        
+        // Function to attach delete listener
+        function attachDeleteListener(button) {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const kode = this.getAttribute('data-kode');
+                const row = this.closest('tr');
+                const nama = row.cells[1].textContent;
+                
+                document.getElementById('delete_kode_nama').textContent = `${kode} - ${nama}`;
+                
+                // Store the row reference for deletion
+                document.getElementById('confirmDeleteBtn').setAttribute('data-row', row.rowIndex);
+            });
+        }
+        
+        // Handle Delete Confirmation
+        document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+            const rowIndex = this.getAttribute('data-row');
+            const table = document.getElementById('courseTable');
+            
+            if (rowIndex) {
+                table.deleteRow(rowIndex);
+            }
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal'));
+            modal.hide();
+            
+            // Show success message
+            showSuccessMessage();
+        });
+        
+        // Handle Save All button (simulation)
+        document.getElementById('saveCourseBtn').addEventListener('click', function() {
+            // Show confirmation dialog
+            if (confirm('Apakah Anda yakin ingin menyimpan semua perubahan?')) {
+                // In a real application, this would send data to the server
+                showSuccessMessage();
+                
+                // Optional: collect all data from table to show what would be saved
+                const rows = document.querySelectorAll('#courseTable tbody tr');
+                const data = [];
+                
+                rows.forEach(row => {
+                    data.push({
+                        kode_mk: row.cells[0].textContent,
+                        nama_mk: row.cells[1].textContent,
+                        deskripsi: row.cells[2].textContent,
+                        semester: row.cells[3].textContent,
+                        sks_teori: row.cells[4].textContent,
+                        sks_praktik: row.cells[5].textContent
+                    });
+                });
+                
+                console.log('Data yang akan disimpan:', data);
             }
         });
-
-        const editCourseModal = new bootstrap.Modal(document.getElementById('editCourseModal'));
-        editCourseModal.hide();
-    });
-
-    // Logika untuk menghapus mata kuliah
-    document.getElementById('deleteConfirmModal').addEventListener('show.bs.modal', function(event) {
-        const button = event.relatedTarget;
-        const kodeMk = button.getAttribute('data-kode');
-
-        document.getElementById('confirmDelete').addEventListener('click', function() {
-            const rows = document.querySelectorAll('.table tbody tr');
-            rows.forEach(row => {
-                if (row.children[0].textContent === kodeMk) {
-                    row.remove();
-                }
-            });
-
-            const deleteConfirmModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
-            deleteConfirmModal.hide();
-        }, { once: true });
-    });
-
-    // Logika untuk menutup modal dengan tombol "Batal" dan "Silang"
-    document.querySelectorAll('[data-bs-dismiss="modal"]').forEach(button => {
-        button.addEventListener('click', () => {
-            const modal = bootstrap.Modal.getInstance(button.closest('.modal'));
-            modal.hide();
+        
+        // Attach event listeners to existing buttons
+        document.querySelectorAll('.edit-course').forEach(button => {
+            attachEditListener(button);
+        });
+        
+        document.querySelectorAll('.delete-course').forEach(button => {
+            attachDeleteListener(button);
         });
     });
 </script>
