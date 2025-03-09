@@ -19,7 +19,10 @@ class LoginController extends Controller
         if (Auth::attempt($credentials)) {
             return redirect()->intended('dashboard');
         }
+        else{
+            return redirect()->back()->withErrors(['login' => 'Nama pengguna atau kata sandi salah atau tidak terdaftar']);
+        }
 
-        return redirect()->back()->withErrors(['login' => 'Nama pengguna atau kata sandi salah atau tidak terdaftar']);
+        
     }
 }

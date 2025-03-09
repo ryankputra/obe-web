@@ -13,6 +13,7 @@ use App\Http\Controllers\fakultasfstController;
 use App\Http\Controllers\InformatikaController;
 use App\Http\Controllers\sisteminformasiController;
 use App\Http\Controllers\RekayasaperangkatlunakController;
+use App\Http\Controllers\ProfileController;
 
 
 // Route untuk halaman utama (arahkan ke login)
@@ -32,10 +33,11 @@ Route::middleware('auth')->group(function () {
 
     // Route untuk mata kuliah
     Route::resource('mata_kuliah', MataKuliahController::class);
-
+    Route::post('/saveMk', [MataKuliahController::class, 'saveMk'])->name('saveMk');
 
     // Route untuk dosen
     Route::get('/dosen', [DosenController::class, 'index'])->name('dosen.index');
+    
 
     // Route untuk mahasiswa
     Route::resource('mahasiswa', MahasiswaController::class);
