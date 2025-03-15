@@ -27,10 +27,10 @@ use App\Http\Controllers\BahasaingController;
  use App\Http\Controllers\CpmkController;
 
 
-Route::get('/mata-kuliah', [MataKuliahController::class, 'index'])->name('listMk');
-Route::post('/mata-kuliah/save', [MataKuliahController::class, 'store'])->name('saveMk');
-Route::post('/mata-kuliah/update', [MataKuliahController::class, 'update'])->name('updateMk');
-Route::post('/mata-kuliah/delete', [MataKuliahController::class, 'destroy'])->name('deleteMk');
+// Route::get('/mata-kuliah', [MataKuliahController::class, 'index'])->name('listMk');
+// Route::post('/mata-kuliah/save', [MataKuliahController::class, 'store'])->name('saveMk');
+// Route::post('/mata-kuliah/update', [MataKuliahController::class, 'update'])->name('updateMk');
+// Route::post('/mata-kuliah/delete', [MataKuliahController::class, 'destroy'])->name('deleteMk');
 
 
 
@@ -57,7 +57,8 @@ Route::middleware('auth')->group(function () {
 
     // Route untuk mata kuliah
     Route::resource('mata_kuliah', MataKuliahController::class);
-    Route::post('/saveMk', [MataKuliahController::class, 'saveMk'])->name('saveMk');
+    // Route::post('/saveMk', [MataKuliahController::class, 'saveMk'])->name('saveMk');
+    // Route::put('/editMk/{id}', [MataKuliahController::class, 'editMk'])->name('editMk');
 
     // Route untuk dosen
     Route::get('/dosen', [DosenController::class, 'index'])->name('dosen.index');
