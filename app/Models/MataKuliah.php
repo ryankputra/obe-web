@@ -15,6 +15,7 @@ class MataKuliah extends Model
         'deskripsi',
         'semester',
         'sks_teori',
-        'sks_praktik'
+        'sks_praktik',
+        'status_mata_kuliah',
     ];
 }

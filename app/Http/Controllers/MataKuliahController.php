@@ -17,56 +17,45 @@ class MataKuliahController extends Controller
         return view('mata_kuliah.index', compact('mataKuliahs'));
     }
 
-    public function saveMk(Request $request)
+    public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $validated = $request->validate([
             'kode_mk' => 'required|unique:mata_kuliahs,kode_mk',
-            'nama_mk' => 'required|string|max:255',
-            'deskripsi' => 'nullable|string',
-            'semester' => 'required|integer|between:1,8',
+            'nama_mk' => 'required',
+            'deskripsi' => 'nullable',
+            'semester' => 'required|integer',
             'sks_teori' => 'required|integer|min:0',
             'sks_praktik' => 'required|integer|min:0',
+            'status_mata_kuliah' => 'required',
         ]);
 
-        if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput();
-        }
+        MataKuliah::create($validated);
 
-        MataKuliah::create($request->only(['kode_mk', 'nama_mk', 'deskripsi', 'semester', 'sks_teori', 'sks_praktik']));
-
-        return redirect()->route('mata_kuliah.index')->with('success', 'Mata Kuliah berhasil ditambahkan!');
+        return redirect()->route('listMk')->with('success', 'Mata Kuliah berhasil ditambahkan.');
     }
 
-    public function editMk(Request $request, $id)
-{
-    // Cek apakah data ada di database
-    $mataKuliah = MataKuliah::find($id);
+    public function update(Request $request)
+    {
+        $validated = $request->validate([
+            'kode_mk' => 'required|exists:mata_kuliahs,kode_mk',
+            'nama_mk' => 'required',
+            'deskripsi' => 'nullable',
+            'semester' => 'required|integer',
+            'sks_teori' => 'required|integer|min:0',
+            'sks_praktik' => 'required|integer|min:0',
+            'status_mata_kuliah' => 'required',
+        ]);
 
-    if (!$mataKuliah) {
-        return response()->json(['success' => false, 'message' => 'Mata Kuliah tidak ditemukan'], 404);
+        $mataKuliah = MataKuliah::where('kode_mk', $request->kode_mk)->first();
+        $mataKuliah->update($validated);
+
+        return redirect()->route('listMk')->with('success', 'Mata Kuliah berhasil diperbarui.');
     }
 
-    // Debug sebelum update
-    Log::info('Data sebelum update:', $mataKuliah->toArray());
+    public function destroy(Request $request)
+    {
+        MataKuliah::where('kode_mk', $request->kode_mk)->delete();
 
-
-    // Update record
-    $mataKuliah->update([
-        'kode_mk' => $request->kode_mk,
-        'nama_mk' => $request->nama_mk,
-        'deskripsi' => $request->deskripsi,
-        'semester' => $request->semester,
-        'sks_teori' => $request->sks_teori,
-        'sks_praktik' => $request->sks_praktik
-    ]);
-
-    // Debug setelah update
-    $mataKuliah->refresh();
-    Log::info('Data setelah update:', $mataKuliah->toArray());
-
-    return response()->json(['success' => true, 'message' => 'Data berhasil diupdate', 'data' => $mataKuliah]);
-}
-
+        return redirect()->route('listMk')->with('success', 'Mata Kuliah berhasil dihapus.');
+    }
 }

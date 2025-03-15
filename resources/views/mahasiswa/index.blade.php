@@ -18,15 +18,17 @@
         </div>
         <div class="col-md-4 mb-4">
             <div class="card">
-
+                <a href="{{ route('fakultasfeb.feb') }}">
                 <img src="images/bisnis.jpeg" class="card-img-top" alt="Fakultas Ekonomi dan Bisnis">
                 <div class="card-body text-center">
                     <p class="card-text">Fakultas Ekonomi dan Bisnis</p>
                 </div>
             </div>
+            </a>
         </div>
         <div class="col-md-4 mb-4">
             <div class="card">
+            <a href="{{ route('fakultasVokasi.Vokasi') }}">
                 <img src="images/vokasi.jpeg" class="card-img-top" alt="Vokasi">
                 <div class="card-body text-center">
                     <p class="card-text">Vokasi</p>
