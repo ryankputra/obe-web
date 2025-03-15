@@ -59,9 +59,7 @@
 @include('mata_kuliah.create')
 
 <!-- Edit Mata Kuliah Modal -->
-<div class="modal fade" id="editCourseModal" tabindex="-1" aria-labelledby="editCourseModalLabel" aria-hidden="true">
-    <!-- Modal content here (same as before) -->
-</div>
+@include('mata_kuliah.edit')
 
 <!-- Delete Confirmation Modal -->
 <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">

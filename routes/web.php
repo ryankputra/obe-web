@@ -15,6 +15,8 @@ use App\Http\Controllers\sisteminformasiController;
 use App\Http\Controllers\RekayasaperangkatlunakController;
 use App\Http\Controllers\ProfileController;
 
+use App\Http\Resources\PostRes;
+
 
 // Route untuk halaman utama (arahkan ke login)
 Route::get('/', function () {
@@ -34,6 +36,7 @@ Route::middleware('auth')->group(function () {
     // Route untuk mata kuliah
     Route::resource('mata_kuliah', MataKuliahController::class);
     Route::post('/saveMk', [MataKuliahController::class, 'saveMk'])->name('saveMk');
+    Route::put('/editMk/{id}', [MataKuliahController::class, 'editMk'])->name('editMk');
 
     // Route untuk dosen
     Route::get('/dosen', [DosenController::class, 'index'])->name('dosen.index');
