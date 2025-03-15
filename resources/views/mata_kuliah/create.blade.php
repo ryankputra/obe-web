@@ -1,53 +1,51 @@
-<!-- Tambah Mata Kuliah Modal -->
 <div class="modal fade" id="addCourseModal" tabindex="-1" aria-labelledby="addCourseModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addCourseModalLabel">Tambah Mata Kuliah Baru</h5>
+                <h5 class="modal-title" id="addCourseModalLabel">Tambah Mata Kuliah</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="addCourseForm" method="post" action="{{ route('saveMk') }}">
-                @csrf
+            <form id="addCourseForm" method="post" action="{{ route('mata_kuliah.store') }}">
                 <div class="modal-body">
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="kode_mk" class="form-label">Kode MK</label>
-                            <input type="text" class="form-control" id="kode_mk" name="kode_mk" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="nama_mk" class="form-label">Nama MK</label>
-                            <input type="text" class="form-control" id="nama_mk" name="nama_mk" required>
-                        </div>
+
+                    @csrf
+                    <div class="mb-3">
+                        <label for="kodeMk" class="form-label">Kode MK</label>
+                        <input type="text" class="form-control text-start" id="kodeMk" name="kode_mk">
                     </div>
-                    <div class="row mb-3">
-                        <div class="col-md-12">
-                            <label for="deskripsi" class="form-label">Deskripsi</label>
-                            <textarea class="form-control" id="deskripsi" name="deskripsi" rows="3"></textarea>
-                        </div>
+                    <div class="mb-3">
+                        <label for="namaMk" class="form-label">Nama MK</label>
+                        <input type="text" class="form-control text-start" id="namaMk" name="nama_mk">
                     </div>
-                    <div class="row mb-3">
-                        <div class="col-md-4">
-                            <label for="semester" class="form-label">Semester</label>
-                            <select class="form-select" id="semester" name="semester" required>
-                                <option value="">Pilih Semester</option>
-                                @for($i = 1; $i <= 8; $i++)
-                                    <option value="{{ $i }}">{{ $i }}</option>
-                                @endfor
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="sks_teori" class="form-label">SKS Teori</label>
-                            <input type="number" class="form-control" id="sks_teori" name="sks_teori" min="0" value="0" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="sks_praktik" class="form-label">SKS Praktik</label>
-                            <input type="number" class="form-control" id="sks_praktik" name="sks_praktik" min="0" value="0" required>
-                        </div>
+                    <div class="mb-3">
+                        <label for="deskripsi" class="form-label">Deskripsi</label>
+                        <textarea class="form-control text-start" id="deskripsi" name="deskripsi" rows="4"></textarea>
                     </div>
+                    <div class="mb-3">
+                        <label for="semester" class="form-label">Semester</label>
+                        <input type="number" class="form-control text-start" id="semester" name="semester">
+                    </div>
+                    <div class="mb-3">
+                        <label for="sksTeori" class="form-label">SKS Teori</label>
+                        <input type="number" class="form-control text-start" id="sksTeori" name="sks_teori">
+                    </div>
+                    <div class="mb-3">
+                        <label for="sksPraktik" class="form-label">SKS Praktik</label>
+                        <input type="number" class="form-control text-start" id="sksPraktik" name="sks_praktik">
+                    </div>
+                    <div class="mb-3">
+                        <label for="statusMataKuliah" class="form-label">Status Mata Kuliah</label>
+                        <select class="form-control text-start" id="statusMataKuliah" name="status_mata_kuliah">
+                            <option value="Wajib Prodi">Wajib Prodi</option>
+                            <option value="Wajib Universitas">Wajib Universitas</option>
+                            <option value="Pilihan">Pilihan</option>
+                        </select>
+                    </div>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
+                    <button type="submit" class="btn btn-primary" id="addCourseButton">Tambah</button>
                 </div>
             </form>
         </div>
