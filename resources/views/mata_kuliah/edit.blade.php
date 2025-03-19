@@ -9,10 +9,19 @@
                 @csrf
                 @method('PUT')
                 <div class="modal-body">
+                    <!-- Hidden input field for ID -->
+                    <input type="hidden" name="id" id="editCourseId">
+
+                    <!-- Kode MK -->
                     <div class="mb-3">
                         <label for="kodeMk" class="form-label">Kode MK</label>
                         <input type="text" class="form-control text-start" id="kodeMk" name="kode_mk">
+                        @error('kode_mk')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
                     </div>
+
+                    <!-- Nama MK -->
                     <div class="mb-3">
                         <label for="namaMk" class="form-label">Nama MK</label>
                         <input type="text" class="form-control text-start" id="namaMk" name="nama_mk">
@@ -20,6 +29,8 @@
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
                     </div>
+
+                    <!-- Deskripsi -->
                     <div class="mb-3">
                         <label for="deskripsi" class="form-label">Deskripsi</label>
                         <textarea class="form-control text-start" id="deskripsi" name="deskripsi" rows="4"></textarea>
@@ -27,6 +38,8 @@
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
                     </div>
+
+                    <!-- Semester -->
                     <div class="mb-3">
                         <label for="semester" class="form-label">Semester</label>
                         <input type="number" class="form-control text-start" id="semester" name="semester">
@@ -34,6 +47,8 @@
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
                     </div>
+
+                    <!-- SKS Teori -->
                     <div class="mb-3">
                         <label for="sksTeori" class="form-label">SKS Teori</label>
                         <input type="number" class="form-control text-start" id="sksTeori" name="sks_teori">
@@ -41,6 +56,8 @@
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
                     </div>
+
+                    <!-- SKS Praktik -->
                     <div class="mb-3">
                         <label for="sksPraktik" class="form-label">SKS Praktik</label>
                         <input type="number" class="form-control text-start" id="sksPraktik" name="sks_praktik">
@@ -48,6 +65,8 @@
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
                     </div>
+
+                    <!-- Status Mata Kuliah -->
                     <div class="mb-3">
                         <label for="statusMataKuliah" class="form-label">Status Mata Kuliah</label>
                         <select class="form-control text-start" id="statusMataKuliah" name="status_mata_kuliah">

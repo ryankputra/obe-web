@@ -50,13 +50,14 @@
                                     <td>
                                         <a href="#" class="btn btn-outline-success btn-sm edit-course"
                                             data-bs-toggle="modal" data-bs-target="#editCourseModal"
-                                            data-kode="{{ $mk['kode_mk'] }}" data-nama="{{ $mk['nama_mk'] }}"
-                                            data-deskripsi="{{ $mk['deskripsi'] }}" data-semester="{{ $mk['semester'] }}"
-                                            data-teori="{{ $mk['sks_teori'] }}" data-praktik="{{ $mk['sks_praktik'] }}"
+                                            data-id="{{ $mk['id'] }}" data-kode="{{ $mk['kode_mk'] }}"
+                                            data-nama="{{ $mk['nama_mk'] }}" data-deskripsi="{{ $mk['deskripsi'] }}"
+                                            data-semester="{{ $mk['semester'] }}" data-teori="{{ $mk['sks_teori'] }}"
+                                            data-praktik="{{ $mk['sks_praktik'] }}"
                                             data-status="{{ $mk['status_mata_kuliah'] }}">Edit</a>
                                         <a href="#" class="btn btn-outline-danger btn-sm delete-course"
                                             data-bs-toggle="modal" data-bs-target="#deleteConfirmModal"
-                                            data-kode="{{ $mk['kode_mk'] }}">Hapus</a>
+                                            data-id="{{ $mk['id'] }}">Hapus</a>
                                     </td>
                                 </tr>
                             @endforeach
@@ -112,7 +113,6 @@
     <style>
         body {
             background-color: #def4ff !important;
-            ;
         }
 
         .dashboard-heading {
@@ -179,11 +179,15 @@
             // Logika untuk mengisi data form edit dengan data yang sesuai
             document.getElementById('editCourseModal').addEventListener('show.bs.modal', function(event) {
                 const button = event.relatedTarget; // Button that triggered the modal
+                const id = button.getAttribute('data-id'); // Get the id from the button
                 const kodeMk = button.getAttribute('data-kode'); // Get the kode_mk from the button
 
-                // Update the form's action URL
+                // Update the form's action URL with the id
                 const form = document.getElementById('editCourseForm');
-                form.action = "{{ route('mata_kuliah.update', '') }}/" + kodeMk;
+                form.action = "{{ route('mata_kuliah.update', '') }}/" + id;
+
+                // Populate the hidden id field
+                document.querySelector('#editCourseForm input[name="id"]').value = id;
 
                 // Populate the form fields
                 document.getElementById('kodeMk').value = kodeMk;
@@ -224,7 +228,9 @@
                             // Update the table dynamically
                             const rows = document.querySelectorAll('#courseTable tbody tr');
                             rows.forEach(row => {
-                                if (row.children[0].textContent === data.kode_mk) {
+                                if (row.querySelector('[data-id]').getAttribute('data-id') ===
+                                    data.id) {
+                                    row.children[0].textContent = data.kode_mk;
                                     row.children[1].textContent = data.nama_mk;
                                     row.children[2].textContent = data.deskripsi;
                                     row.children[3].textContent = data.semester;
@@ -250,10 +256,10 @@
             // Logika untuk menghapus Mata Kuliah
             document.getElementById('deleteConfirmModal').addEventListener('show.bs.modal', function(event) {
                 const button = event.relatedTarget;
-                const kodeMk = button.getAttribute('data-kode');
+                const id = button.getAttribute('data-id'); // Get the id from the button
 
                 document.getElementById('confirmDeleteButton').addEventListener('click', function() {
-                    fetch("{{ route('mata_kuliah.destroy', '') }}/" + kodeMk, {
+                    fetch("{{ route('mata_kuliah.destroy', '') }}/" + id, {
                             method: 'POST',
                             headers: {
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
@@ -269,14 +275,14 @@
                                 // Remove the row from the table
                                 const rows = document.querySelectorAll('#courseTable tbody tr');
                                 rows.forEach(row => {
-                                    if (row.children[0].textContent === kodeMk) {
+                                    if (row.querySelector('[data-id]').getAttribute('data-id') === id) {
                                         row.remove();
                                     }
                                 });
 
                                 // Show a success message
-                                const successToast = new bootstrap.Toast(document
-                                    .getElementById('successToast'));
+                                const successToast = new bootstrap.Toast(document.getElementById(
+                                    'successToast'));
                                 successToast.show();
                             } else {
                                 alert('Gagal menghapus data.');
@@ -293,13 +299,6 @@
                 }, {
                     once: true
                 });
-            });
-
-            // Logika untuk menyimpan semua perubahan (implementasi logika penyimpanan sesuai kebutuhan aplikasi)
-            document.getElementById('saveCourseBtn').addEventListener('click', function() {
-                // Implementasi logika penyimpanan (misalnya, melalui AJAX)
-                const successToast = new bootstrap.Toast(document.getElementById('successToast'));
-                successToast.show();
             });
         });
     </script>

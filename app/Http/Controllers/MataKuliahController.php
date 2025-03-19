@@ -33,24 +33,37 @@ class MataKuliahController extends Controller
 
         return redirect()->route('mata_kuliah.index')->with('success', 'Mata Kuliah berhasil ditambahkan.');
     }
-
-    public function update(Request $request, $kode_mk)
+    public function update(Request $request, $id)
     {
-        $validated = $request->validate([
-            'kode_mk' => 'required|exists:mata_kuliahs,kode_mk',
-            'nama_mk' => 'required|max:100',
-            'deskripsi' => 'nullable|string',
-            'semester' => 'required|integer|min:1|max:14',
-            'sks_teori' => 'required|integer|min:0|max:10',
-            'sks_praktik' => 'required|integer|min:0|max:10',
-            'status_mata_kuliah' => 'required|in:Wajib Prodi,Wajib Universitas,Pilihan',
+        // Validate the request data
+        $request->validate([
+            'kode_mk' => 'required|string|max:255',
+            'nama_mk' => 'required|string|max:255',
+            'deskripsi' => 'required|string',
+            'semester' => 'required|integer',
+            'sks_teori' => 'required|integer',
+            'sks_praktik' => 'required|integer',
+            'status_mata_kuliah' => 'required|string',
         ]);
-
-        $mataKuliah = MataKuliah::where('kode_mk', $kode_mk)->first();
-        $mataKuliah->update($validated);
-
+    
+        // Find the mata_kuliah record in the database
+        $mataKuliah = MataKuliah::findOrFail($id);
+    
+        // Update the record with the new data
+        $mataKuliah->update([
+            'kode_mk' => $request->input('kode_mk'),
+            'nama_mk' => $request->input('nama_mk'),
+            'deskripsi' => $request->input('deskripsi'),
+            'semester' => $request->input('semester'),
+            'sks_teori' => $request->input('sks_teori'),
+            'sks_praktik' => $request->input('sks_praktik'),
+            'status_mata_kuliah' => $request->input('status_mata_kuliah'),
+        ]);
+    
+        // Return a JSON response
         return response()->json([
             'success' => true,
+            'id' => $mataKuliah->id,
             'kode_mk' => $mataKuliah->kode_mk,
             'nama_mk' => $mataKuliah->nama_mk,
             'deskripsi' => $mataKuliah->deskripsi,
