@@ -23,8 +23,8 @@ use App\Http\Controllers\AkuntansiVokasiController;
 use App\Http\Controllers\ManagemenkeuController;
 use App\Http\Controllers\BahasaingController;
 
- use App\Http\Controllers\CplController;
- use App\Http\Controllers\CpmkController;
+use App\Http\Controllers\CplController;
+use App\Http\Controllers\CpmkController;
 
 
 // Route::get('/mata-kuliah', [MataKuliahController::class, 'index'])->name('listMk');
@@ -56,13 +56,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
 
     // Route untuk mata kuliah
+    Route::put('/mata-kuliah/{id}', [MataKuliahController::class, 'update'])->name('mata_kuliah.update');
+    Route::delete('/mata-kuliah/{id}', [MataKuliahController::class, 'destroy'])->name('mata_kuliah.destroy');
     Route::resource('mata_kuliah', MataKuliahController::class);
     // Route::post('/saveMk', [MataKuliahController::class, 'saveMk'])->name('saveMk');
     // Route::put('/editMk/{id}', [MataKuliahController::class, 'editMk'])->name('editMk');
 
     // Route untuk dosen
     Route::get('/dosen', [DosenController::class, 'index'])->name('dosen.index');
-    
+
 
     // Route untuk mahasiswa
     Route::resource('mahasiswa', MahasiswaController::class);

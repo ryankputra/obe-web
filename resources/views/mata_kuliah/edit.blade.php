@@ -9,61 +9,48 @@
                 @csrf
                 @method('PUT')
                 <div class="modal-body">
-                    <!-- Hidden input field for ID -->
                     <input type="hidden" name="id" id="editCourseId">
 
                     <!-- Kode MK -->
                     <div class="mb-3">
                         <label for="kodeMk" class="form-label">Kode MK</label>
                         <input type="text" class="form-control text-start" id="kodeMk" name="kode_mk">
-                        @error('kode_mk')
-                            <div class="text-danger">{{ $message }}</div>
-                        @enderror
+                        @error('kode_mk')<div class="text-danger">{{ $message }}</div>@enderror
                     </div>
 
                     <!-- Nama MK -->
                     <div class="mb-3">
                         <label for="namaMk" class="form-label">Nama MK</label>
                         <input type="text" class="form-control text-start" id="namaMk" name="nama_mk">
-                        @error('nama_mk')
-                            <div class="text-danger">{{ $message }}</div>
-                        @enderror
+                        @error('nama_mk')<div class="text-danger">{{ $message }}</div>@enderror
                     </div>
 
                     <!-- Deskripsi -->
                     <div class="mb-3">
                         <label for="deskripsi" class="form-label">Deskripsi</label>
                         <textarea class="form-control text-start" id="deskripsi" name="deskripsi" rows="4"></textarea>
-                        @error('deskripsi')
-                            <div class="text-danger">{{ $message }}</div>
-                        @enderror
+                        @error('deskripsi')<div class="text-danger">{{ $message }}</div>@enderror
                     </div>
 
                     <!-- Semester -->
                     <div class="mb-3">
                         <label for="semester" class="form-label">Semester</label>
                         <input type="number" class="form-control text-start" id="semester" name="semester">
-                        @error('semester')
-                            <div class="text-danger">{{ $message }}</div>
-                        @enderror
+                        @error('semester')<div class="text-danger">{{ $message }}</div>@enderror
                     </div>
 
                     <!-- SKS Teori -->
                     <div class="mb-3">
                         <label for="sksTeori" class="form-label">SKS Teori</label>
                         <input type="number" class="form-control text-start" id="sksTeori" name="sks_teori">
-                        @error('sks_teori')
-                            <div class="text-danger">{{ $message }}</div>
-                        @enderror
+                        @error('sks_teori')<div class="text-danger">{{ $message }}</div>@enderror
                     </div>
 
                     <!-- SKS Praktik -->
                     <div class="mb-3">
                         <label for="sksPraktik" class="form-label">SKS Praktik</label>
                         <input type="number" class="form-control text-start" id="sksPraktik" name="sks_praktik">
-                        @error('sks_praktik')
-                            <div class="text-danger">{{ $message }}</div>
-                        @enderror
+                        @error('sks_praktik')<div class="text-danger">{{ $message }}</div>@enderror
                     </div>
 
                     <!-- Status Mata Kuliah -->
@@ -74,14 +61,12 @@
                             <option value="Wajib Universitas">Wajib Universitas</option>
                             <option value="Pilihan">Pilihan</option>
                         </select>
-                        @error('status_mata_kuliah')
-                            <div class="text-danger">{{ $message }}</div>
-                        @enderror
+                        @error('status_mata_kuliah')<div class="text-danger">{{ $message }}</div>@enderror
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary" id="saveEditCourseButton">Simpan</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
                 </div>
             </form>
         </div>
