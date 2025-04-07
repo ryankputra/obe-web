@@ -146,6 +146,7 @@
         border-radius: 5px;
         font-size: 0.8rem;
     }
+    
 
     .btn-outline-danger:hover {
         background-color: #dc3545;
