@@ -89,7 +89,7 @@
     <div class="login-container">
         <!-- Judul di atas card -->
         <div class="login-title">
-            Sistem Informasi Penilaian UPITRA
+            Sistem Informasi Penilaian OBE
         </div>
         <!-- Card login -->
         <div class="login-card">

@@ -1,63 +1,50 @@
 @extends('layouts.app')
 
-@section('title', 'Fakultas Sains dan Teknologi')
+@section('title', 'Mahasiswa - RPL')
 
 @section('content')
 <div class="container-fluid">
-    <h1 class="mt-4">Fakultas Sains dan Teknologi</h1>
+    <h1 class="mt-4">Mahasiswa - RPL</h1>
 
-    <!-- Baris Tombol Aksi -->
+    <!-- Tombol Kembali dan Tambah -->
     <div class="row mb-3">
         <div class="col-12 d-flex justify-content-between align-items-center">
-            <!-- Tombol Lihat Semua Data Mahasiswa di sebelah kiri -->
-            <button class="btn btn-primary">
-                <i class="fas fa-database"></i> Lihat Semua Data Mahasiswa
-            </button>
-
-            <!-- Tombol Tambah di sebelah kanan -->
-            <a href="#" class="btn btn-success rounded-circle d-flex justify-content-center align-items-center"
-                style="width: 40px; height: 40px;">
-                <i class="fas fa-plus text-white"></i>
+            <a href="/mahasiswa" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i> Kembali
+            </a>
+            <a href="#" class="btn btn-success">
+                <i class="fas fa-plus me-1"></i> Tambah Mahasiswa
             </a>
         </div>
     </div>
 
-    <!-- Tabel Prodi dan Jumlah Mahasiswa -->
+    <!-- Tabel Mahasiswa -->
     <div class="row">
         <div class="col-12">
             <div class="table-responsive">
                 <table class="table table-bordered text-center">
                     <thead>
                         <tr>
-                            <th>Prodi</th>
-                            <th>Jumlah Mahasiswa</th>
+                            <th>NIM</th>
+                            <th>Nama</th>
+                            <th>Tahun Masuk</th>
+                            <th>Email</th>
+                            <th>Kontak</th>
+                            <th>Jenis Kelamin</th>
+                            <th>IPK</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>Informatika</td>
-                            <td>50</td>
+                            <td>301233</td>
+                            <td>Pend 1</td>
+                            <td>2020</td>
+                            <td>pend1@rpl.com</td>
+                            <td>08555</td>
+                            <td>Laki-laki</td>
+                            <td>3.2</td>
                             <td>
-                                <a href="/informatika" class="btn btn-outline-primary btn-sm">Lihat</a>
-                                <a href="#" class="btn btn-outline-success btn-sm">Edit</a>
-                                <button class="btn btn-outline-danger btn-sm">Hapus</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Sistem Informasi</td>
-                            <td>60</td>
-                            <td>
-                                <a href="/sistem-informasi" class="btn btn-outline-primary btn-sm">Lihat</a>
-                                <a href="#" class="btn btn-outline-success btn-sm">Edit</a>
-                                <button class="btn btn-outline-danger btn-sm">Hapus</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>RPL</td>
-                            <td>55</td>
-                            <td>
-                                <a href="rpl" class="btn btn-outline-primary btn-sm">Lihat</a>
                                 <a href="#" class="btn btn-outline-success btn-sm">Edit</a>
                                 <button class="btn btn-outline-danger btn-sm">Hapus</button>
                             </td>
@@ -71,6 +58,8 @@
 @endsection
 
 @section('styles')
+
+
 <style>
     body {
         background-color: #def4ff;
@@ -163,10 +152,4 @@
         color: #fff;
     }
 </style>
-@endsection
-
-@section('scripts')
-<script>
-    console.log('Halaman berhasil dimuat!');
-</script>
 @endsection

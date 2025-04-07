@@ -77,14 +77,19 @@ Route::middleware('auth')->group(function () {
     Route::get('/fakultasfst/sains-teknologi/sisteminformasi', [sisteminformasiController::class, 'index'])->name('fakultasfst.sains-teknologi.sisteminformasi');
     Route::get('/fakultasfst/sains-teknologi/Rekayasaperangkatlunak', [RekayasaperangkatlunakController::class, 'index'])->name('fakultasfst.sains-teknologi.Rekayasaperangkatlunak');
 
-    Route::get('/fakultasfeb/feb', [fakultasfebController::class, 'feb'])->name('fakultasfeb.feb');
-    Route::get('/fakultasfeb/feb/Akuntansi', [AkuntansiController::class, 'index'])->name('fakultasfeb.feb.Akuntansi');
-    Route::get('/fakultasfeb/feb/sistemmanegement', [sistemmanegementController::class, 'index'])->name('fakultasfeb.feb.sistemmanegement');
 
-    Route::get('/fakultasVokasi/Vokasi', [fakultasVokasiController::class, 'Vokasi'])->name('fakultasVokasi.Vokasi');
-    Route::get('/fakultasVokasi/Vokasi/AkuntansiVokasi', [AkuntansiVokasiController::class, 'index'])->name('fakultasVokasi.Vokasi.AkuntansiVokasi');
-    Route::get('/fakultasVokasi/Vokasi/Managemenkeu', [ManagemenkeuController::class, 'index'])->name('fakultasVokasi.Vokasi.Managemenkeu');
-    Route::get('/fakultasVokasi/Vokasi/Bahasaing', [BahasaingController::class, 'index'])->name('fakultasVokasi.Vokasi.Bahasaing');
+    Route::get('/informatika', function () {
+        return view('fakultasfst.informatika');
+    });
+    Route::get('/sistem-informasi', function () {
+        return view('fakultasfst.sistem-informasi');
+    });
+    
+    Route::get('/rpl', function () {
+        return view('fakultasfst.rpl');
+    });
+    
+    
 
     // Route untuk CPL
     Route::get('/cpl', [CplController::class, 'index'])->name('cpl.index');
