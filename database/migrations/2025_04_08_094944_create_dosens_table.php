@@ -13,8 +13,11 @@ return new class extends Migration
     {
         Schema::create('dosens', function (Blueprint $table) {
             $table->id();
-            $table->string('nidn');
-            
+            $table->integer('nidn');
+            $table->string('nama');
+            $table->string('email');
+            $table->string('jabatan');
+            $table->string('kompetensi');
             $table->timestamps();
         });
     }

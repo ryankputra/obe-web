@@ -63,7 +63,7 @@ Route::middleware('auth')->group(function () {
     // Route::put('/editMk/{id}', [MataKuliahController::class, 'editMk'])->name('editMk');
 
     // Route untuk dosen
-    Route::get('/dosen', [DosenController::class, 'index'])->name('dosen.index');
+    Route::resource('dosen', DosenController::class);
 
 
     // Route untuk mahasiswa
