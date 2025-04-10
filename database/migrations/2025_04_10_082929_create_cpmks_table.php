@@ -13,7 +13,11 @@ return new class extends Migration
     {
         Schema::create('cpmks', function (Blueprint $table) {
             $table->id();
-            $table->
+            $table->string('kode_cpl');
+            $table->string('kode_cpmk');
+            $table->string('mata_kuliah');
+            $table->longText('deskripsi');
+            $table->string('pic');
             $table->timestamps();
         });
     }

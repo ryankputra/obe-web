@@ -7,10 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Cpl extends Model
 {
-    /** @use HasFactory<\Database\Factories\CplFactory> */
     use HasFactory;
+    
     protected $fillable = [
         'kode_cpl',
         'deskripsi'
     ];
+
+    public function cpmks()
+    {
+        return $this->hasMany(Cpmk::class, 'kode_cpl', 'kode_cpl');
+    }
 }

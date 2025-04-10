@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer('nidn');
             $table->string('nama');
-            $table->string('email');
+            $table->string('email')->nullable();
             $table->string('jabatan');
             $table->string('kompetensi');
             $table->timestamps();

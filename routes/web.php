@@ -67,6 +67,7 @@ Route::middleware('auth')->group(function () {
 
     //route cpl
     Route::resource('cpl', CplController::class);
+    Route::resource('cpmk',CpmkController::class);
 
 
     // Route untuk mahasiswa
