@@ -2,19 +2,52 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cpl;
 use Illuminate\Http\Request;
 
 class CplController extends Controller
 {
     public function index()
     {
-        // Logika untuk mengambil data CPL
-        $cpl = [
-            ['kode' => 'CPL - 001', 'deskripsi' => 'Lorem ipsum dolor sit amet'],
-            ['kode' => 'CPL - 002', 'deskripsi' => 'Lorem ipsum dolor sit amet'],
-            ['kode' => 'CPL - 003', 'deskripsi' => 'Lorem ipsum dolor sit amet'],
-        ];
+        $cpls = Cpl::orderBy('kode_cpl')->paginate(10);
+        return view('cpl.index', compact('cpls'));
+    }
 
-        return view('cpl.cpl', compact('cpl'));
+    public function create()
+    {
+        return view('cpl.create');
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'kode_cpl' => 'required|unique:cpls,kode_cpl|max:10',
+            'deskripsi' => 'required'
+        ]);
+
+        Cpl::create($validated);
+        return redirect()->route('cpl.index')->with('success', 'CPL berhasil ditambahkan.');
+    }
+
+    public function edit(Cpl $cpl)
+    {
+        return view('cpl.edit', compact('cpl'));
+    }
+
+    public function update(Request $request, Cpl $cpl)
+    {
+        $validated = $request->validate([
+            'kode_cpl' => 'required|unique:cpls,kode_cpl,'.$cpl->id.'|max:10',
+            'deskripsi' => 'required'
+        ]);
+
+        $cpl->update($validated);
+        return redirect()->route('cpl.index')->with('success', 'CPL berhasil diperbarui.');
+    }
+
+    public function destroy(Cpl $cpl)
+    {
+        $cpl->delete();
+        return redirect()->route('cpl.index')->with('success', 'CPL berhasil dihapus.');
     }
 }

@@ -65,6 +65,9 @@ Route::middleware('auth')->group(function () {
     // Route untuk dosen
     Route::resource('dosen', DosenController::class);
 
+    //route cpl
+    Route::resource('cpl', CplController::class);
+
 
     // Route untuk mahasiswa
     Route::resource('mahasiswa', MahasiswaController::class);
