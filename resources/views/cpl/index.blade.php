@@ -12,6 +12,7 @@
         </div>
     @endif
 
+    <!-- Action Buttons -->
     <div class="d-flex justify-content-end align-items-center mb-3">
         <div class="d-flex">
             <a href="{{ route('cpl.create') }}" class="btn btn-success rounded-circle me-2 d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;">
@@ -23,6 +24,7 @@
         </div>
     </div>
 
+    <!-- CPL Table -->
     <div class="row">
         <div class="col-12">
             <div class="table-responsive">
@@ -61,8 +63,15 @@
                         @endforelse
                     </tbody>
                 </table>
-                <div class="d-flex justify-content-center mt-3">
-                    {{ $cpls->links() }}
+
+                <!-- Pagination Buttons -->
+                <div class="d-flex justify-content-end mt-3">
+                    <button class="btn btn-primary me-2" onclick="navigateToPage('{{ $cpls->previousPageUrl() }}')" {{ $cpls->onFirstPage() ? 'disabled' : '' }}>
+                        <i class="fas fa-chevron-left"></i> Halaman Sebelumnya
+                    </button>
+                    <button class="btn btn-primary" onclick="navigateToPage('{{ $cpls->nextPageUrl() }}')" {{ $cpls->hasMorePages() ? '' : 'disabled' }}>
+                        Halaman Selanjutnya <i class="fas fa-chevron-right"></i>
+                    </button>
                 </div>
             </div>
         </div>
@@ -157,55 +166,23 @@
         border-color: #dc3545;
     }
 
-    /* Form styling */
-    .card {
-        border: none;
-        border-radius: 0.5rem;
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
-        margin-bottom: 2rem;
-    }
-
-    .card-body {
-        padding: 2rem;
-    }
-
-    .form-control {
-        padding: 0.5rem 0.75rem;
-        border-radius: 0.25rem;
-        border: 1px solid #ced4da;
-    }
-
-    .form-control:focus {
-        border-color: #80bdff;
-        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-    }
-
-    /* Alert styling */
-    .alert {
-        padding: 1rem;
-        margin-bottom: 1.5rem;
-        border-radius: 0.25rem;
-    }
-
     /* Pagination styling */
-    .pagination {
-        justify-content: center;
-    }
-
-    .page-item.active .page-link {
-        background-color: #2f5f98;
-        border-color: #2f5f98;
-    }
-
-    .page-link {
-        color: #2f5f98;
-    }
-
-    /* Action buttons container */
-    .action-buttons {
-        display: flex;
+    .d-flex.justify-content-end {
         gap: 0.5rem;
-        justify-content: center;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
     }
 </style>
+@endsection
+
+@section('scripts')
+<script>
+    function navigateToPage(url) {
+        if (url) {
+            window.location.href = url;
+        }
+    }
+</script>
 @endsection
