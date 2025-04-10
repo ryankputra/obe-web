@@ -5,17 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Cpl extends Model
+class Cpmk extends Model
 {
     use HasFactory;
     
     protected $fillable = [
         'kode_cpl',
-        'deskripsi'
+        'kode_cpmk',
+        'mata_kuliah',
+        'deskripsi',
+        'pic'
     ];
 
-    public function cpmks()
+    public function cpl()
     {
-        return $this->hasMany(Cpmk::class, 'kode_cpl', 'kode_cpl');
+        return $this->belongsTo(Cpl::class, 'kode_cpl', 'kode_cpl');
     }
 }

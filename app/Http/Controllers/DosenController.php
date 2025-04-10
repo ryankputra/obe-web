@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Filters\V1\DosenFilter;
 use App\Http\Resources\V1\DosenCollection;
 use App\Models\Dosen;
+use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Http\Request;
 
 class DosenController extends Controller
@@ -40,9 +41,13 @@ class DosenController extends Controller
         $validated = $request->validate([
             'nidn' => 'required|unique:dosens,nidn',
             'nama' => 'required',
+            'gelar' => 'required',
+            'jenis_kelamin' => 'required',
             'email' => 'nullable|email',
+            'kontak' => 'nullable|numeric',
             'jabatan' => 'required',
             'kompetensi' => 'required',
+            'prodi' => 'required',
         ]);
 
         Dosen::create($validated);
@@ -60,9 +65,13 @@ class DosenController extends Controller
         $validated = $request->validate([
             'nidn' => 'required|unique:dosens,nidn,'.$dosen->id,
             'nama' => 'required',
+            'gelar' => 'required',
+            'jenis_kelamin' => 'required',
             'email' => 'nullable|email',
+            'kontak' => 'numeric|nullable',
             'jabatan' => 'required',
             'kompetensi' => 'required',
+            'prodi' => 'required',
         ]);
 
         $dosen->update($validated);
