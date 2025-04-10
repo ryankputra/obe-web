@@ -38,6 +38,7 @@
                         <select class="form-control text-start" id="statusMataKuliah" name="status_mata_kuliah">
                             <option value="Wajib Prodi">Wajib Prodi</option>
                             <option value="Wajib Universitas">Wajib Universitas</option>
+                            <option value="Wajib Fakultas">Wajib Fakultas</option>
                             <option value="Pilihan">Pilihan</option>
                         </select>
                     </div>
