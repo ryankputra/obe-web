@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cpl;
 use App\Models\Cpmk;
+use App\Models\MataKuliah;
 use Illuminate\Http\Request;
 
 class CpmkController extends Controller
@@ -12,7 +13,8 @@ class CpmkController extends Controller
     {
         $cpmks = Cpmk::with('cpl')->get();
         $cpls = Cpl::all();
-        return view('cpmk.index', compact('cpmks', 'cpls'));
+        $matakuliahs = MataKuliah::all();
+        return view('cpmk.index', compact('cpmks', 'cpls', 'matakuliahs'));
     }
 
     public function store(Request $request)
@@ -20,7 +22,7 @@ class CpmkController extends Controller
         $validated = $request->validate([
             'kode_cpl' => 'required|exists:cpls,kode_cpl',
             'kode_cpmk' => 'required|numeric|min:1|max:999',
-            'mata_kuliah' => 'required',
+            'mata_kuliah' => 'required|exists:mata_kuliahs,kode_mk',
             'deskripsi' => 'required',
             'pic' => 'required'
         ]);
@@ -43,7 +45,7 @@ class CpmkController extends Controller
     {
         $validated = $request->validate([
             'kode_cpl' => 'required|exists:cpls,kode_cpl',
-            'mata_kuliah' => 'required',
+            'mata_kuliah' => 'required|exists:mata_kuliahs,kode_mk',
             'deskripsi' => 'required',
             'pic' => 'required'
         ]);

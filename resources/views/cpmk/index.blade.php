@@ -102,7 +102,11 @@
                     </div>
                     <div class="mb-3">
                         <label for="mata_kuliah" class="form-label">Mata Kuliah</label>
-                        <input type="text" class="form-control" id="mata_kuliah" name="mata_kuliah" required>
+                        <select class="form-control" id="mata_kuliah" name="mata_kuliah" required>
+                            @foreach($matakuliahs as $matakuliah)
+                            <option value="{{ $matakuliah->kode_mk }}">{{ $matakuliah->kode_mk }} - {{ $matakuliah->nama_mk }}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label for="deskripsi" class="form-label">Deskripsi</label>
@@ -148,7 +152,11 @@
                     </div>
                     <div class="mb-3">
                         <label for="edit_mata_kuliah" class="form-label">Mata Kuliah</label>
-                        <input type="text" class="form-control" id="edit_mata_kuliah" name="mata_kuliah" required>
+                        <select class="form-control" id="edit_mata_kuliah" name="mata_kuliah" required>
+                            @foreach($matakuliahs as $matakuliah)
+                            <option value="{{ $matakuliah->kode_mk }}">{{ $matakuliah->kode_mk }} - {{ $matakuliah->nama_mk }}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label for="edit_deskripsi" class="form-label">Deskripsi</label>
