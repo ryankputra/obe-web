@@ -2,26 +2,65 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Cpmk;
+use App\Http\Requests\StoreCpmkRequest;
+use App\Http\Requests\UpdateCpmkRequest;
 
 class CpmkController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
     public function index()
     {
-        // Logika untuk mengambil data CPMK
-        $cpmk = [
-            ['kode' => 'CPMK - 001', 'deskripsi' => 'Lorem ipsum dolor sit amet', 'cpl' => 'CPL - 001'],
-            ['kode' => 'CPMK - 002', 'deskripsi' => 'Lorem ipsum dolor sit amet', 'cpl' => 'CPL - 002'],
-            ['kode' => 'CPMK - 003', 'deskripsi' => 'Lorem ipsum dolor sit amet', 'cpl' => 'CPL - 003'],
-        ];
+        //
+    }
 
-        // Logika untuk mengambil data CPL
-        $cpl = [
-            ['kode' => 'CPL - 001', 'deskripsi' => 'CPL Description 1'],
-            ['kode' => 'CPL - 002', 'deskripsi' => 'CPL Description 2'],
-            ['kode' => 'CPL - 003', 'deskripsi' => 'CPL Description 3'],
-        ];
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        //
+    }
 
-        return view('cpmk.cpmk', compact('cpmk', 'cpl'));
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(StoreCpmkRequest $request)
+    {
+        //
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(Cpmk $cpmk)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Cpmk $cpmk)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(UpdateCpmkRequest $request, Cpmk $cpmk)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Cpmk $cpmk)
+    {
+        //
     }
 }

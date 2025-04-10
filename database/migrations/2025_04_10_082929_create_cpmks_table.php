@@ -11,10 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('cpls', function (Blueprint $table) {
+        Schema::create('cpmks', function (Blueprint $table) {
             $table->id();
-            $table->string('kode_cpl')->unique();
-            $table->longText('deskripsi');
+            $table->
             $table->timestamps();
         });
     }
@@ -24,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('cpls');
+        Schema::dropIfExists('cpmks');
     }
 };
