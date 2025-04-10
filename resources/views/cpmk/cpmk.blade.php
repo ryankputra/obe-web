@@ -23,8 +23,8 @@
                         <tr>
                             <th>ID CPL</th>
                             <th>ID CPMK</th>
-                            <th>MATA KULIAH</th>
-                            <th>DESKRIPSI</th>
+                            <th>Mata Kuliah</th>
+                            <th>Deskripsi</th>
                             <th>PIC</th>
                             <th>Action</th>
                         </tr>
