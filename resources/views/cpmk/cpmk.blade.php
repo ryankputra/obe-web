@@ -21,18 +21,24 @@
                 <table class="table table-bordered text-center">
                     <thead style="background-color: #2f5f98; color: #fff;">
                         <tr>
-                            <th>Kode CPMK</th>
-                            <th>Deskripsi</th>
+                            <th>ID CPL</th>
+                            <th>ID CPMK</th>
+                            <th>MATA KULIAH</th>
+                            <th>DESKRIPSI</th>
+                            <th>PIC</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($cpmk as $item)
                         <tr>
+                            <td>{{ $item['cpl'] }}</td>
                             <td>{{ $item['kode'] }}</td>
+                            <td>{{ $item['mata_kuliah'] ?? 'N/A' }}</td>
                             <td>{{ $item['deskripsi'] }}</td>
+                            <td>{{ $item['pic'] ?? 'N/A' }}</td>
                             <td>
-                                <a href="#" class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#editCpmkModal" data-cpmk="{{ $item['kode'] }}" data-deskripsi="{{ $item['deskripsi'] }}" data-cpl="{{ $item['cpl'] }}">Edit</a>
+                                <a href="#" class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#editCpmkModal" data-cpmk="{{ $item['kode'] }}" data-deskripsi="{{ $item['deskripsi'] }}" data-cpl="{{ $item['cpl'] }}" data-mata_kuliah="{{ $item['mata_kuliah'] ?? 'N/A' }}" data-pic="{{ $item['pic'] ?? 'N/A' }}">Edit</a>
                                 <a href="#" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteCpmkModal" data-cpmk="{{ $item['kode'] }}">Hapus</a>
                             </td>
                         </tr>
@@ -55,20 +61,28 @@
             <div class="modal-body">
                 <form id="addCpmkForm">
                     <div class="mb-3">
-                        <label for="cpmkKode" class="form-label">Kode CPMK</label>
+                        <label for="cplSelect" class="form-label">ID CPL</label>
+                        <select class="form-control" id="cplSelect" name="cpl">
+                            @foreach($cpl as $item)
+                            <option value="{{ $item['kode'] }}">{{ $item['kode'] }} - {{ $item['deskripsi'] }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cpmkKode" class="form-label">ID CPMK</label>
                         <input type="text" class="form-control" id="cpmkKode" name="cpmkKode">
+                    </div>
+                    <div class="mb-3">
+                        <label for="mataKuliah" class="form-label">Mata Kuliah</label>
+                        <input type="text" class="form-control" id="mataKuliah" name="mataKuliah">
                     </div>
                     <div class="mb-3">
                         <label for="cpmkDeskripsi" class="form-label">Deskripsi</label>
                         <textarea class="form-control" id="cpmkDeskripsi" name="cpmkDeskripsi" rows="4"></textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="cplSelect" class="form-label">CPL</label>
-                        <select class="form-control" id="cplSelect" name="cpl">
-                            @foreach($cpl as $item)
-                            <option value="{{ $item['kode'] }}">{{ $item['kode'] }} - {{ $item['deskripsi'] }}</option>
-                            @endforeach
-                        </select>
+                        <label for="cpmkPic" class="form-label">PIC</label>
+                        <input type="text" class="form-control" id="cpmkPic" name="cpmkPic">
                     </div>
                 </form>
             </div>
@@ -91,20 +105,28 @@
             <div class="modal-body">
                 <form id="editCpmkForm">
                     <div class="mb-3">
-                        <label for="editCpmkKode" class="form-label">Kode CPMK</label>
+                        <label for="editCplSelect" class="form-label">ID CPL</label>
+                        <select class="form-control" id="editCplSelect" name="cpl">
+                            @foreach($cpl as $item)
+                            <option value="{{ $item['kode'] }}">{{ $item['kode'] }} - {{ $item['deskripsi'] }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editCpmkKode" class="form-label">ID CPMK</label>
                         <input type="text" class="form-control text-start" id="editCpmkKode" name="cpmkKode" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editMataKuliah" class="form-label">Mata Kuliah</label>
+                        <input type="text" class="form-control text-start" id="editMataKuliah" name="mataKuliah">
                     </div>
                     <div class="mb-3">
                         <label for="editCpmkDeskripsi" class="form-label">Deskripsi</label>
                         <textarea class="form-control text-start" id="editCpmkDeskripsi" name="cpmkDeskripsi" rows="4"></textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="editCplSelect" class="form-label">CPL</label>
-                        <select class="form-control" id="editCplSelect" name="cpl">
-                            @foreach($cpl as $item)
-                            <option value="{{ $item['kode'] }}">{{ $item['kode'] }} - {{ $item['deskripsi'] }}</option>
-                            @endforeach
-                        </select>
+                        <label for="editCpmkPic" class="form-label">PIC</label>
+                        <input type="text" class="form-control text-start" id="editCpmkPic" name="cpmkPic">
                     </div>
                 </form>
             </div>
@@ -159,17 +181,22 @@
 <script>
     // Logika untuk menambah CPMK baru
     document.getElementById('addCpmkButton').addEventListener('click', function() {
-        const cpmkKode = document.getElementById('cpmkKode').value;
-        const cpmkDeskripsi = document.getElementById('cpmkDeskripsi').value;
         const cpl = document.getElementById('cplSelect').value;
+        const cpmkKode = document.getElementById('cpmkKode').value;
+        const mataKuliah = document.getElementById('mataKuliah').value;
+        const cpmkDeskripsi = document.getElementById('cpmkDeskripsi').value;
+        const cpmkPic = document.getElementById('cpmkPic').value;
 
         const tbody = document.querySelector('.table tbody');
         const tr = document.createElement('tr');
         tr.innerHTML = `
+            <td>${cpl}</td>
             <td>${cpmkKode}</td>
+            <td>${mataKuliah}</td>
             <td>${cpmkDeskripsi}</td>
+            <td>${cpmkPic}</td>
             <td>
-                <a href="#" class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#editCpmkModal" data-cpmk="${cpmkKode}" data-deskripsi="${cpmkDeskripsi}" data-cpl="${cpl}">Edit</a>
+                <a href="#" class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#editCpmkModal" data-cpmk="${cpmkKode}" data-deskripsi="${cpmkDeskripsi}" data-cpl="${cpl}" data-mata_kuliah="${mataKuliah}" data-pic="${cpmkPic}">Edit</a>
                 <a href="#" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteCpmkModal" data-cpmk="${cpmkKode}">Hapus</a>
             </td>
         `;
@@ -186,11 +213,15 @@
         const cpmkKode = button.getAttribute('data-cpmk');
         const cpmkDeskripsi = button.getAttribute('data-deskripsi');
         const cpl = button.getAttribute('data-cpl');
+        const mataKuliah = button.getAttribute('data-mata_kuliah');
+        const cpmkPic = button.getAttribute('data-pic');
 
         const modal = this;
         modal.querySelector('#editCpmkKode').value = cpmkKode;
         modal.querySelector('#editCpmkDeskripsi').value = cpmkDeskripsi;
         modal.querySelector('#editCplSelect').value = cpl;
+        modal.querySelector('#editMataKuliah').value = mataKuliah;
+        modal.querySelector('#editCpmkPic').value = cpmkPic;
     });
 
     // Logika untuk menyimpan perubahan pada CPMK
@@ -198,12 +229,19 @@
         const cpmkKode = document.getElementById('editCpmkKode').value;
         const cpmkDeskripsi = document.getElementById('editCpmkDeskripsi').value;
         const cpl = document.getElementById('editCplSelect').value;
+        const mataKuliah = document.getElementById('editMataKuliah').value;
+        const cpmkPic = document.getElementById('editCpmkPic').value;
 
         const rows = document.querySelectorAll('.table tbody tr');
         rows.forEach(row => {
-            if (row.children[0].textContent === cpmkKode) {
-                row.children[1].textContent = cpmkDeskripsi;
-                row.children[2].querySelector('a[data-bs-target="#editCpmkModal"]').setAttribute('data-cpl', cpl);
+            if (row.children[1].textContent === cpmkKode) {
+                row.children[0].textContent = cpl;
+                row.children[2].textContent = mataKuliah;
+                row.children[3].textContent = cpmkDeskripsi;
+                row.children[4].textContent = cpmkPic;
+                row.children[5].querySelector('a[data-bs-target="#editCpmkModal"]').setAttribute('data-cpl', cpl);
+                row.children[5].querySelector('a[data-bs-target="#editCpmkModal"]').setAttribute('data-mata_kuliah', mataKuliah);
+                row.children[5].querySelector('a[data-bs-target="#editCpmkModal"]').setAttribute('data-pic', cpmkPic);
             }
         });
 
@@ -219,7 +257,7 @@
         document.getElementById('confirmDeleteCpmk').addEventListener('click', function() {
             const rows = document.querySelectorAll('.table tbody tr');
             rows.forEach(row => {
-                if (row.children[0].textContent === cpmkKode) {
+                if (row.children[1].textContent === cpmkKode) {
                     row.remove();
                 }
             });

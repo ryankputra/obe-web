@@ -68,9 +68,13 @@
                         <tr>
                             <th>NIDN</th>
                             <th>Nama Dosen</th>
+                            <th>Gelar</th>
+                            <th>Jenis Kelamin</th>
                             <th>Email</th>
+                            <th>Kontak</th>
                             <th>Jabatan</th>
                             <th>Kompetensi</th>
+                            <th>Prodi</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -79,9 +83,13 @@
                         <tr>
                             <td>{{ $dosen->nidn }}</td>
                             <td>{{ $dosen->nama }}</td>
+                            <td>{{ $dosen->gelar }}</td>
+                            <td>{{ $dosen->jenis_kelamin }}</td>
                             <td>{{ $dosen->email }}</td>
+                            <td>{{ $dosen->kontak }}</td>
                             <td>{{ $dosen->jabatan }}</td>
                             <td>{{ $dosen->kompetensi }}</td>
+                            <td>{{ $dosen->prodi }}</td>
                             <td>
                                 <a href="{{ route('dosen.edit', $dosen->id) }}" class="btn btn-outline-success btn-sm">Edit</a>
                                 <form action="{{ route('dosen.destroy', $dosen->id) }}" method="POST" style="display: inline-block;">
@@ -93,13 +101,20 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="6" class="text-center">Tidak ada data dosen ditemukan</td>
+                            <td colspan="10" class="text-center">Tidak ada data dosen ditemukan</td>
                         </tr>
                         @endforelse
                     </tbody>
                 </table>
-                <div class="d-flex justify-content-center mt-4">
-                    {{ $dosens->appends(request()->query())->links() }}
+
+                <!-- Pagination Controls -->
+                <div class="d-flex justify-content-end align-items-center mt-3">
+                    <button class="btn btn-primary me-2" onclick="navigateToPage('{{ $dosens->previousPageUrl() }}')" {{ $dosens->onFirstPage() ? 'disabled' : '' }}>
+                        <i class="fas fa-chevron-left"></i> Halaman Sebelumnya
+                    </button>
+                    <button class="btn btn-primary" onclick="navigateToPage('{{ $dosens->nextPageUrl() }}')" {{ $dosens->hasMorePages() ? '' : 'disabled' }}>
+                        Halaman Selanjutnya <i class="fas fa-chevron-right"></i>
+                    </button>
                 </div>
             </div>
         </div>
@@ -109,7 +124,6 @@
 
 @section('styles')
 <style>
-    /* Your existing styles remain the same */
     body {
         background-color: #def4ff;
     }
@@ -122,6 +136,15 @@
         background-color: rgb(0, 114, 202) !important;
         color: white !important;
     }
-    /* ... rest of your styles ... */
 </style>
+@endsection
+
+@section('scripts')
+<script>
+    function navigateToPage(url) {
+        if (url) {
+            window.location.href = url;
+        }
+    }
+</script>
 @endsection
