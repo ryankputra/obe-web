@@ -17,9 +17,6 @@
             <button class="btn btn-success rounded-circle me-2 d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;" data-bs-toggle="modal" data-bs-target="#addCpmkModal">
                 <i class="fas fa-plus text-white"></i>
             </button>
-            <button class="btn btn-primary rounded-circle d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;">
-                <i class="fas fa-save text-white"></i>
-            </button>
         </div>
     </div>
 

@@ -11,11 +11,6 @@
                     style="width: 40px; height: 40px;" data-bs-toggle="modal" data-bs-target="#addCourseModal">
                     <i class="fas fa-plus text-white"></i>
                 </button>
-                <button id="saveCourseBtn"
-                    class="btn btn-success rounded-circle d-flex justify-content-center align-items-center"
-                    style="width: 40px; height: 40px;">
-                    <i class="fas fa-save text-white"></i>
-                </button>
             </div>
         </div>
         <div class="row">
@@ -143,7 +138,7 @@
         }
 
         .btn-primary {
-            background-color: #007bff !important;
+            background-color:rgb(40, 187, 72) !important;
             border: none;
         }
 
