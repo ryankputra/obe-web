@@ -12,23 +12,35 @@ class DosenController extends Controller
 {
     public function index(Request $request)
     {
-        $filter = new DosenFilter();
-        $filterItems = $filter->transform($request);
+        $query = Dosen::query();
 
-        $dosens = Dosen::query();
-
-        if (count($filterItems)) {
-            $dosens->where($filterItems);
+        // Search filter (name, nidn, or email)
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('nama', 'like', "%$search%")
+                    ->orWhere('nidn', 'like', "%$search%")
+                    ->orWhere('email', 'like', "%$search%");
+            });
         }
 
-        if ($request->wantsJson()) {
-            return new DosenCollection($dosens->paginate()->appends($request->query()));
+        // Jabatan filter
+        if ($request->has('jabatan') && $request->jabatan != '') {
+            $query->where('jabatan', $request->jabatan);
         }
 
-        return view('dosen.index', [
-            'dosens' => $dosens->paginate(10)->appends($request->query()),
-            'filters' => $request->all()
-        ]);
+        // Prodi filter
+        if ($request->has('prodi') && $request->prodi != '') {
+            $query->where('prodi', $request->prodi);
+        }
+
+        $dosens = $query->paginate(10);
+
+        // Get unique values for dropdowns
+        $jabatans = Dosen::select('jabatan')->distinct()->pluck('jabatan');
+        $prodis = Dosen::select('prodi')->distinct()->pluck('prodi');
+
+        return view('dosen.index', compact('dosens', 'jabatans', 'prodis'));
     }
 
     public function create()
@@ -51,7 +63,7 @@ class DosenController extends Controller
         ]);
 
         Dosen::create($validated);
-        
+
         return redirect()->route('dosen.index')->with('success', 'Dosen berhasil ditambahkan.');
     }
 
@@ -63,7 +75,7 @@ class DosenController extends Controller
     public function update(Request $request, Dosen $dosen)
     {
         $validated = $request->validate([
-            'nidn' => 'required|unique:dosens,nidn,'.$dosen->id,
+            'nidn' => 'required|unique:dosens,nidn,' . $dosen->id,
             'nama' => 'required',
             'gelar' => 'required',
             'jenis_kelamin' => 'required',
