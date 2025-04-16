@@ -58,6 +58,14 @@
                             @endforeach
                         </tbody>
                     </table>
+                    <div class="d-flex justify-content-start mt-3">
+                    <div style="border: 2px solid #000; background-color: white; padding: 10px 20px; font-weight: bold;">
+                        Total SKS:
+                        {{ $mataKuliahs->sum(function($mk) {
+                            return $mk->sks_teori + $mk->sks_praktik;
+                        }) }}
+                    </div>
+                </div>
                 </div>
             </div>
         </div>
