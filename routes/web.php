@@ -44,21 +44,14 @@ Route::middleware('auth')->group(function () {
     // Fakultas FST Routes
     Route::prefix('fakultasfst')->group(function () {
         // Main index page
-        Route::get('/', [ProdiController::class, 'index'])
-            ->name('fakultasfst.index');
-
-        // Detail page
-        Route::get('/{prodi}', [ProdiController::class, 'show'])
-            ->name('fakultasfst.prodi.show');
+        Route::get('/', [ProdiController::class, 'index'])->name('fakultasfst.index');
 
         // Prodi CRUD routes
         Route::prefix('prodi')->group(function () {
-            Route::post('/', [ProdiController::class, 'store'])
-                ->name('fakultasfst.prodi.store');
-            Route::put('/{prodi}', [ProdiController::class, 'update'])
-                ->name('fakultasfst.prodi.update');
-            Route::delete('/{prodi}', [ProdiController::class, 'destroy'])
-                ->name('fakultasfst.prodi.destroy');
+            Route::post('/', [ProdiController::class, 'store'])->name('fakultasfst.prodi.store');
+            Route::get('/{prodi}', [ProdiController::class, 'show'])->name('fakultasfst.prodi.show');
+            Route::put('/{prodi}', [ProdiController::class, 'update'])->name('fakultasfst.prodi.update');
+            Route::delete('/{prodi}', [ProdiController::class, 'destroy'])->name('fakultasfst.prodi.destroy');
         });
     });
 });
