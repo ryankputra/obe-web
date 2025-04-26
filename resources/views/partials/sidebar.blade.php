@@ -2,11 +2,11 @@
     <div class="sidebar-heading text-white text-center py-4">OBE-WEB</div>
     <div class="list-group list-group-flush flex-grow-1">
         <a href="{{ route('dashboard') }}" class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('dashboard') ? 'active' : '' }}">Dashboard</a>
-        <a href="{{ route('mata_kuliah.index') }}" class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('mata_kuliah*') ? 'active' : '' }}">Mata Kuliah</a>
-        <a href="{{ route('dosen.index') }}" class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('dosen*') ? 'active' : '' }}">Dosen</a>
-        <a href="{{ route('mahasiswa.index') }}" class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('mahasiswa*') ? 'active' : '' }}">Mahasiswa</a>
-        <a href="{{ route('cpl.index') }}" class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('cpl*') ? 'active' : '' }}">CPL</a>
-        <a href="{{ route('cpmk.index') }}" class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('cpmk*') ? 'active' : '' }}">CPMK</a>
+<a href="{{ route('mata_kuliah.index') }}" class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('mata_kuliah*') ? 'active' : '' }}">Mata Kuliah</a>
+<a href="{{ route('dosen.index') }}" class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('dosen*') ? 'active' : '' }}">Dosen</a>
+<a href="{{ route('fakultasfst.index') }}" class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('fakultasfst*') ? 'active' : '' }}">Prodi</a>
+<a href="{{ route('cpl.index') }}" class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('cpl*') ? 'active' : '' }}">CPL</a>
+<a href="{{ route('cpmk.index') }}" class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('cpmk*') ? 'active' : '' }}">CPMK</a>
 
         <div class="mt-auto text-center">
             <!-- Tombol Gerigi untuk Profil dan Logout -->

@@ -11,7 +11,11 @@ class Prodi extends Model
 
     protected $fillable = [
         'nama_prodi',
-        'jumlah_mahasiswa',
-        'fakultas'
+        'jumlah_mahasiswa'
     ];
+
+    public function mahasiswa()
+    {
+        return $this->hasMany(Mahasiswa::class); // Also works without second parameter
+    }
 }
