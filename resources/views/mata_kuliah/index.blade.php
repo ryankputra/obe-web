@@ -13,6 +13,50 @@
                 </button>
             </div>
         </div>
+        
+        <!-- Filter Section -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="searchInput">Cari Mata Kuliah</label>
+                                    <input type="text" class="form-control" id="searchInput" placeholder="Kode atau Nama MK">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="semesterFilter">Filter Semester</label>
+                                    <select class="form-control" id="semesterFilter">
+                                        <option value="">Semua Semester</option>
+                                        @for($i = 1; $i <= 8; $i++)
+                                            <option value="{{ $i }}">Semester {{ $i }}</option>
+                                        @endfor
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="statusFilter">Filter Status</label>
+                                    <select class="form-control" id="statusFilter">
+                                        <option value="">Semua Status</option>
+                                        <option value="Wajib Prodi">Wajib Prodi</option>
+                                        <option value="Pilihan">Pilihan</option>
+                                        <option value="Wajib Universitas">Wajib Universitas</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 d-flex align-items-end">
+                                <button class="btn btn-secondary" id="resetFilter">Reset Filter</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         <div class="row">
             <div class="col-12">
                 <div class="table-responsive">
@@ -32,9 +76,9 @@
                                 <th>Praktik</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="courseTableBody">
                             @foreach ($mataKuliahs as $mk)
-                                <tr data-id="{{ $mk->id }}"> <!-- Added data-id -->
+                                <tr data-id="{{ $mk->id }}" data-semester="{{ $mk->semester }}" data-status="{{ $mk->status_mata_kuliah }}">
                                     <td>{{ $mk->kode_mk }}</td>
                                     <td class="text-start">{{ $mk->nama_mk }}</td>
                                     <td>{{ $mk->deskripsi }}</td>
@@ -59,13 +103,13 @@
                         </tbody>
                     </table>
                     <div class="d-flex justify-content-start mt-3">
-                    <div style="border: 2px solid #000; background-color: white; padding: 10px 20px; font-weight: bold;">
-                        Total SKS:
-                        {{ $mataKuliahs->sum(function($mk) {
-                            return $mk->sks_teori + $mk->sks_praktik;
-                        }) }}
+                        <div style="border: 2px solid #000; background-color: white; padding: 10px 20px; font-weight: bold;" id="totalSKS">
+                            Total SKS:
+                            {{ $mataKuliahs->sum(function($mk) {
+                                return $mk->sks_teori + $mk->sks_praktik;
+                            }) }}
+                        </div>
                     </div>
-                </div>
                 </div>
             </div>
         </div>
@@ -154,6 +198,14 @@
             background-color: #28a745 !important;
             border: none;
         }
+        
+        .card {
+            border-radius: 10px;
+        }
+        
+        .form-control {
+            border-radius: 5px;
+        }
     </style>
 @endsection
 
@@ -211,17 +263,117 @@
                                 row.cells[4].textContent = data.sks_teori;
                                 row.cells[5].textContent = data.sks_praktik;
                                 row.cells[6].textContent = data.status_mata_kuliah;
+                                
+                                // Update data attributes for filtering
+                                row.setAttribute('data-semester', data.semester);
+                                row.setAttribute('data-status', data.status_mata_kuliah);
                             }
 
                             // Show Success Toast
                             const toast = new bootstrap.Toast(document.getElementById('successToast'));
                             toast.show();
+                            
+                            // Update total SKS
+                            updateTotalSKS();
                         }
                     })
                     .catch(error => {
                         console.error('Error:', error);
                     });
             });
+            
+            // Filter functionality
+            const searchInput = document.getElementById('searchInput');
+            const semesterFilter = document.getElementById('semesterFilter');
+            const statusFilter = document.getElementById('statusFilter');
+            const resetFilter = document.getElementById('resetFilter');
+            const courseTableBody = document.getElementById('courseTableBody');
+            const rows = courseTableBody.querySelectorAll('tr');
+            
+            function filterCourses() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const semesterValue = semesterFilter.value;
+                const statusValue = statusFilter.value;
+                
+                let totalSKS = 0;
+                let visibleRows = 0;
+                
+                rows.forEach(row => {
+                    const kode = row.cells[0].textContent.toLowerCase();
+                    const nama = row.cells[1].textContent.toLowerCase();
+                    const semester = row.getAttribute('data-semester');
+                    const status = row.getAttribute('data-status');
+                    const sksTeori = parseInt(row.cells[4].textContent) || 0;
+                    const sksPraktik = parseInt(row.cells[5].textContent) || 0;
+                    
+                    const matchesSearch = searchTerm === '' || 
+                        kode.includes(searchTerm) || 
+                        nama.includes(searchTerm);
+                    const matchesSemester = semesterValue === '' || semester === semesterValue;
+                    const matchesStatus = statusValue === '' || status === statusValue;
+                    
+                    if (matchesSearch && matchesSemester && matchesStatus) {
+                        row.style.display = '';
+                        totalSKS += sksTeori + sksPraktik;
+                        visibleRows++;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+                
+                // Update total SKS display
+                document.getElementById('totalSKS').textContent = `Total SKS: ${totalSKS}`;
+                
+                // If no rows visible, show message
+                if (visibleRows === 0) {
+                    const noResultsRow = document.createElement('tr');
+                    noResultsRow.innerHTML = '<td colspan="8" class="text-center">Tidak ada mata kuliah yang sesuai dengan filter</td>';
+                    noResultsRow.id = 'noResultsRow';
+                    
+                    // Remove existing no results row if exists
+                    const existingNoResults = document.getElementById('noResultsRow');
+                    if (existingNoResults) {
+                        existingNoResults.remove();
+                    }
+                    
+                    courseTableBody.appendChild(noResultsRow);
+                } else {
+                    // Remove no results row if it exists
+                    const noResultsRow = document.getElementById('noResultsRow');
+                    if (noResultsRow) {
+                        noResultsRow.remove();
+                    }
+                }
+            }
+            
+            // Event listeners for filters
+            searchInput.addEventListener('input', filterCourses);
+            semesterFilter.addEventListener('change', filterCourses);
+            statusFilter.addEventListener('change', filterCourses);
+            
+            // Reset filter
+            resetFilter.addEventListener('click', function() {
+                searchInput.value = '';
+                semesterFilter.value = '';
+                statusFilter.value = '';
+                filterCourses();
+            });
+            
+            // Function to calculate total SKS
+            function updateTotalSKS() {
+                let total = 0;
+                const visibleRows = courseTableBody.querySelectorAll('tr:not([style*="display: none"])');
+                
+                visibleRows.forEach(row => {
+                    if (row.style.display !== 'none') {
+                        const sksTeori = parseInt(row.cells[4].textContent) || 0;
+                        const sksPraktik = parseInt(row.cells[5].textContent) || 0;
+                        total += sksTeori + sksPraktik;
+                    }
+                });
+                
+                document.getElementById('totalSKS').textContent = `Total SKS: ${total}`;
+            }
         });
     </script>
 @endsection

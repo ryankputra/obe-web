@@ -15,6 +15,8 @@ class CpmkController extends Controller
         $cpls = Cpl::all();
         $matakuliahs = MataKuliah::all();
         return view('cpmk.index', compact('cpmks', 'cpls', 'matakuliahs'));
+
+        
     }
 
     public function store(Request $request)

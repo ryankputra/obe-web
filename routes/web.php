@@ -25,7 +25,7 @@ use App\Http\Controllers\BahasaingController;
 
 use App\Http\Controllers\CplController;
 use App\Http\Controllers\CpmkController;
-
+use App\Http\Controllers\ProdiController;
 
 // Route::get('/mata-kuliah', [MataKuliahController::class, 'index'])->name('listMk');
 // Route::post('/mata-kuliah/save', [MataKuliahController::class, 'store'])->name('saveMk');
@@ -72,10 +72,15 @@ Route::middleware('auth')->group(function () {
 
     // Route untuk mahasiswa
     Route::resource('mahasiswa', MahasiswaController::class);
-    Route::get('/fakultasfst/sains-teknologi', [fakultasfstController::class, 'sainsTeknologi'])->name('fakultasfst.sains-teknologi');
-    Route::get('/fakultasfst/sains-teknologi/informatika', [InformatikaController::class, 'index'])->name('fakultasfst.sains-teknologi.informatika');
-    Route::get('/fakultasfst/sains-teknologi/sisteminformasi', [sisteminformasiController::class, 'index'])->name('fakultasfst.sains-teknologi.sisteminformasi');
-    Route::get('/fakultasfst/sains-teknologi/Rekayasaperangkatlunak', [RekayasaperangkatlunakController::class, 'index'])->name('fakultasfst.sains-teknologi.Rekayasaperangkatlunak');
+    Route::prefix('fakultasfst')->group(function () {
+        Route::get('saintek', [ProdiController::class, 'index'])->name('fakultasfst.saintek');
+        Route::get('saintek/{id}', [ProdiController::class, 'showDetail'])->name('fakultasfst.saintek.detail');
+
+        // Prodi CRUD routes
+        Route::post('prodi', [ProdiController::class, 'store'])->name('fakultasfst.prodi.store');
+        Route::put('prodi/{id}', [ProdiController::class, 'update'])->name('fakultasfst.prodi.update');
+        Route::delete('prodi/{id}', [ProdiController::class, 'destroy'])->name('fakultasfst.prodi.destroy');
+    });
 
 
     Route::get('/informatika', function () {
