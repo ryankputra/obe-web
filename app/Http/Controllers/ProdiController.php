@@ -15,15 +15,30 @@ class ProdiController extends Controller
 
     public function store(Request $request)
     {
-        // ... validation and creation logic
+        $validated = $request->validate([
+            'nama_prodi' => 'required|string|max:255|unique:prodis',
+            'jumlah_mahasiswa' => 'required|integer|min:0',
+        ]);
+
+        Prodi::create($validated);
 
         return redirect()->route('fakultasfst.index')
             ->with('success', 'Program studi berhasil ditambahkan');
     }
 
+    public function show(Prodi $prodi)
+    {
+        return view('fakultasfst.prodi-detail', compact('prodi'));
+    }
+
     public function update(Request $request, Prodi $prodi)
     {
-        // ... validation and update logic
+        $validated = $request->validate([
+            'nama_prodi' => 'required|string|max:255|unique:prodis,nama_prodi,' . $prodi->id,
+            'jumlah_mahasiswa' => 'required|integer|min:0',
+        ]);
+
+        $prodi->update($validated);
 
         return redirect()->route('fakultasfst.index')
             ->with('success', 'Program studi berhasil diperbarui');
@@ -36,4 +51,6 @@ class ProdiController extends Controller
         return redirect()->route('fakultasfst.index')
             ->with('success', 'Program studi berhasil dihapus');
     }
+
+    // Remove the edit() method since you're using modal
 }
