@@ -44,6 +44,7 @@
                                         <option value="">Semua Status</option>
                                         <option value="Wajib Prodi">Wajib Prodi</option>
                                         <option value="Pilihan">Pilihan</option>
+                                        <option value="Wajib Fakultas">Wajib Fakultas</option>
                                         <option value="Wajib Universitas">Wajib Universitas</option>
                                     </select>
                                 </div>
