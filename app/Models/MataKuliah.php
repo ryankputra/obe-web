@@ -18,4 +18,7 @@ class MataKuliah extends Model
         'sks_praktik',
         'status_mata_kuliah',
     ];
+    protected $primaryKey = 'kode_mk';
+    public $incrementing = false;
+    protected $keyType = 'string';
 }
