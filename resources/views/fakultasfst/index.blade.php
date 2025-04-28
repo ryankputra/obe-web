@@ -17,10 +17,6 @@
                 style="width: 40px; height: 40px;" data-bs-toggle="modal" data-bs-target="#addProdiModal">
                 <i class="fas fa-plus text-white"></i>
             </button>
-            <button class="btn btn-primary rounded-circle d-flex justify-content-center align-items-center"
-                style="width: 40px; height: 40px;" id="saveAllButton">
-                <i class="fas fa-save text-white"></i>
-            </button>
         </div>
 
         <div class="row">
