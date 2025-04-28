@@ -5,9 +5,7 @@
 @section('content')
     <div class="container-fluid">
         <div class="mb-4">
-            <a href="{{ route('mahasiswa.index') }}" class="btn btn-secondary back-btn">
-                <i class="fas fa-arrow-left me-2"></i> Kembali
-            </a>
+            
         </div>
 
         <h1 class="mb-4 text-purple">Fakultas Sains dan Teknologi</h1>
