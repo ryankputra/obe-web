@@ -110,7 +110,8 @@
                                     <td>{{ $dosen->email }}</td>
                                     <td>{{ $dosen->kontak }}</td>
                                     <td>{{ $dosen->jabatan }}</td>
-                                    <td>{{ $dosen->kompetensi }}</td>
+                                    <td><a href="{{ route('dosen.kompetensi', $dosen->id) }}" 
+                                    class="btn btn-outline-info btn-sm">Lihat</a></td>
                                     <td>{{ $dosen->prodi }}</td>
                                     <td>
                                         <a href="{{ route('dosen.edit', $dosen->id) }}"

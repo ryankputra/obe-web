@@ -26,72 +26,73 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.5); /* Opacity 50% */
+            background: rgba(0, 0, 0, 0.5);
             z-index: 1;
         }
         .login-container {
             position: relative;
-            z-index: 2; /* Pastikan container di atas overlay */
+            z-index: 2;
             text-align: center;
             width: 100%;
             max-width: 400px;
         }
         .login-title {
-            font-size: 1.75rem; /* Sesuaikan ukuran font */
+            font-size: 1.75rem;
             font-weight: bold;
-            color: #fff; /* Warna teks putih */
-            margin-bottom: 1.5rem; /* Sesuaikan jarak antara judul dan card */
-            text-transform: uppercase; /* Jika teks huruf kapital */
-            letter-spacing: 2px; /* Jarak antar huruf */
+            color: #fff;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
         .login-card {
-            background: rgba(255, 255, 255, 0.52); /* Latar belakang card semi-transparan */
+            background: rgba(255, 255, 255, 0.52);
             padding: 2rem;
-            border-radius: 15px; /* Sesuaikan border radius */
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Efek shadow */
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             width: 100%;
         }
         .login-card .form-control {
-            margin-bottom: 1.5rem; /* Sesuaikan jarak antar input */
-            border-radius: 8px; /* Sesuaikan border radius input */
-            border: 1px solid #ddd; /* Warna border input */
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #ddd;
             padding: 0.75rem;
             font-size: 1rem;
         }
         .login-card .form-control:focus {
-            border-color: #007bff; /* Warna border saat input aktif */
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Efek shadow saat input aktif */
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
         }
         .login-card .btn {
             width: 100%;
-            background-color: #007bff; /* Warna tombol */
+            background-color: #007bff;
             border: none;
             padding: 0.75rem;
-            border-radius: 8px; /* Sesuaikan border radius tombol */
+            border-radius: 8px;
             font-size: 1rem;
             font-weight: bold;
-            color: #fff; /* Warna teks tombol */
-            transition: background-color 0.3s ease; /* Efek transisi */
+            color: #fff;
+            transition: background-color 0.3s ease;
         }
         .login-card .btn:hover {
-            background-color: #0056b3; /* Warna tombol saat hover */
+            background-color: #0056b3;
         }
         .login-card label {
             font-weight: bold;
-            color: #333; /* Warna teks label */
-            margin-bottom: 0.5rem; /* Jarak antara label dan input */
+            color: #333;
+            margin-bottom: 0.5rem;
             display: block;
-            text-align: left; /* Label rata kiri */
+            text-align: left;
+        }
+        .text-center a {
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
     <div class="login-container">
-        <!-- Judul di atas card -->
         <div class="login-title">
             Sistem Informasi Penilaian OBE
         </div>
-        <!-- Card login -->
         <div class="login-card">
             @if ($errors->has('login'))
                 <div class="alert alert-danger">
@@ -109,6 +110,12 @@
                     <input type="password" id="password" name="password" class="form-control" placeholder="Masukkan Password" required>
                 </div>
                 <button type="submit" class="btn btn-primary">LOGIN</button>
+                <!-- Tambahan Reset Password -->
+                <div class="text-center mt-3">
+                    <a href="{{ route('password.request') }}" class="text-decoration-none text-primary">
+                        Lupa Password?
+                    </a>
+                </div>
             </form>
         </div>
     </div>

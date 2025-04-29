@@ -94,5 +94,11 @@ class DosenController extends Controller
     {
         $dosen->delete();
         return redirect()->route('dosen.index')->with('success', 'Dosen berhasil dihapus.');
+
+    }
+    public function showKompetensi($id)
+    {
+        $dosen = Dosen::findOrFail($id);
+        return view('dosen.kompetensi', compact('dosen'));
     }
 }

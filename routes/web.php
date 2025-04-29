@@ -12,10 +12,15 @@ use App\Http\Controllers\CplController;
 use App\Http\Controllers\CpmkController;
 use App\Http\Controllers\ProdiController;
 
+
 // Route untuk halaman utama (arahkan ke login)
 Route::get('/', function () {
     return view('auth.login');
 });
+
+Route::get('password/reset', function () {
+    return view('auth.passwords.email');
+})->name('password.request');
 
 // Tambahkan route autentikasi
 Auth::routes();
@@ -55,6 +60,8 @@ Route::middleware('auth')->group(function () {
         });
     });
 });
+
+Route::get('/dosen/{id}/kompetensi', [DosenController::class, 'showKompetensi'])->name('dosen.kompetensi');
 
 // Logout
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
