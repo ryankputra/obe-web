@@ -19,43 +19,56 @@ class CpmkController extends Controller
         
     }
 
+    // app/Http/Controllers/CpmkController.php (Store Method)
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'kode_cpl' => 'required|exists:cpls,kode_cpl',
-            'kode_cpmk' => 'required|numeric|min:1|max:999',
-            'mata_kuliah' => 'required|exists:mata_kuliahs,kode_mk',
+            'kode_cpl' => 'required',
+            'kode_cpmk' => 'required|integer',
+            'mata_kuliah' => 'required',
             'deskripsi' => 'required',
-            'pic' => 'required'
+            'pic' => 'required',
         ]);
 
-        // Generate combined code
-        $combinedCode = $validated['kode_cpl'] . str_pad($validated['kode_cpmk'], 3, '0', STR_PAD_LEFT);
+        $cpl = Cpl::where('kode_cpl', $validated['kode_cpl'])->firstOrFail();
+        $cplNumber = substr($cpl->kode_cpl, 3); // Remove 'CPL' prefix
+        $kode_cpmk = 'CPMK' . $cplNumber . str_pad($validated['kode_cpmk'], 3, '0', STR_PAD_LEFT);
+
+        if (Cpmk::where('kode_cpmk', $kode_cpmk)->exists()) {
+            return back()->withErrors(['kode_cpmk' => 'Kode CPMK sudah ada.'])->withInput();
+        }
 
         Cpmk::create([
             'kode_cpl' => $validated['kode_cpl'],
-            'kode_cpmk' => $combinedCode,
+            'kode_cpmk' => $kode_cpmk,
             'mata_kuliah' => $validated['mata_kuliah'],
             'deskripsi' => $validated['deskripsi'],
-            'pic' => $validated['pic']
+            'pic' => $validated['pic'],
         ]);
 
-        return redirect()->route('cpmk.index')->with('success', 'CPMK berhasil ditambahkan.');
+        return redirect()->route('cpmk.index')->with('success', 'CPMK berhasil ditambahkan');
     }
 
-    public function update(Request $request, Cpmk $cpmk)
+    // app/Http/Controllers/CpmkController.php (Update Method)
+    public function update(Request $request, $id)
     {
         $validated = $request->validate([
-            'kode_cpl' => 'required|exists:cpls,kode_cpl',
-            'mata_kuliah' => 'required|exists:mata_kuliahs,kode_mk',
+            'kode_cpl' => 'required',
+            'kode_cpmk' => 'required',
+            'mata_kuliah' => 'required',
             'deskripsi' => 'required',
-            'pic' => 'required'
+            'pic' => 'required',
         ]);
 
-        $cpmk->update($validated);
-        return redirect()->route('cpmk.index')->with('success', 'CPMK berhasil diperbarui.');
-    }
+        if (Cpmk::where('kode_cpmk', $validated['kode_cpmk'])->where('id', '!=', $id)->exists()) {
+            return back()->withErrors(['kode_cpmk' => 'Kode CPMK sudah ada.'])->withInput();
+        }
 
+        $cpmk = Cpmk::findOrFail($id);
+        $cpmk->update($validated);
+
+        return redirect()->route('cpmk.index')->with('success', 'CPMK berhasil diperbarui');
+    }
     public function destroy(Cpmk $cpmk)
     {
         $cpmk->delete();
