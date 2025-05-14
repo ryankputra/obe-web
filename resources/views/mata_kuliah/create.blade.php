@@ -52,3 +52,39 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('addCourseForm');
+        const modal = new bootstrap.Modal(document.getElementById('addCourseModal'));
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault(); // Hindari reload halaman
+
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+                },
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) throw new Error("Gagal menyimpan data.");
+                return response.json(); // Jika respon JSON
+            })
+            .then(data => {
+                // Setelah berhasil
+                alert("Mata kuliah berhasil ditambahkan!");
+                form.reset(); // Reset form
+                // Fokus ke input pertama (opsional)
+                document.getElementById('kodeMk').focus();
+            })
+            .catch(error => {
+                console.error(error);
+                alert("Terjadi kesalahan saat menambahkan mata kuliah.");
+            });
+        });
+    });
+</script>

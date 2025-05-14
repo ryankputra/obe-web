@@ -6,11 +6,17 @@
 <div class="container-fluid">
     <h1 class="dashboard-heading mt-4">Tambah Dosen Baru</h1>
 
+    <!-- Alert sukses -->
+    <div id="successAlert" class="alert alert-success alert-dismissible fade show d-none" role="alert">
+        Dosen berhasil ditambahkan!
+    </div>
+
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <form method="POST" action="{{ route('dosen.store') }}">
+                    <!-- Form AJAX -->
+                    <form method="POST" action="{{ route('dosen.store') }}" id="addDosenForm">
                         @csrf
                         <div class="mb-3">
                             <label for="nidn" class="form-label">NIDN</label>
@@ -26,7 +32,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="jenis_kelamin" class="form-label">Jenis Kelamin</label>
-                            <select class="form-control text-start" id="jenis_kelamin" name="jenis_kelamin">
+                            <select class="form-control" id="jenis_kelamin" name="jenis_kelamin" required>
                                 <option value="Laki-laki">Laki-laki</option>
                                 <option value="Perempuan">Perempuan</option>
                             </select>
@@ -49,7 +55,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="prodi" class="form-label">Prodi</label>
-                            <select class="form-control text-start" id="prodi" name="prodi">
+                            <select class="form-control" id="prodi" name="prodi" required>
                                 <option value="Informatika">Informatika</option>
                                 <option value="Sistem Informasi">Sistem Informasi</option>
                                 <option value="Rekayasa Perangkat Lunak">Rekayasa Perangkat Lunak</option>
@@ -63,4 +69,47 @@
         </div>
     </div>
 </div>
+
+<!-- Script AJAX -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('addDosenForm');
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+                },
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Gagal menyimpan data dosen.');
+                return response.json();
+            })
+            .then(data => {
+                // Tampilkan alert sukses
+                const alertBox = document.getElementById('successAlert');
+                alertBox.classList.remove('d-none');
+
+                // Sembunyikan alert setelah 3 detik
+                setTimeout(() => {
+                    alertBox.classList.add('d-none');
+                }, 3000);
+
+                // Reset form
+                form.reset();
+                document.getElementById('nidn').focus();
+            })
+            .catch(error => {
+                console.error(error);
+                alert('Terjadi kesalahan saat menambahkan dosen.');
+            });
+        });
+    });
+</script>
 @endsection

@@ -15,19 +15,25 @@ class MataKuliahController extends Controller
 
     public function store(Request $request)
     {
+        // Validasi dan simpan data
         $validated = $request->validate([
-            'kode_mk' => 'required|unique:mata_kuliahs,kode_mk',
+            'kode_mk' => 'required',
             'nama_mk' => 'required',
             'deskripsi' => 'nullable',
             'semester' => 'required|integer',
-            'sks_teori' => 'required|integer|min:0',
-            'sks_praktik' => 'required|integer|min:0',
-            'status_mata_kuliah' => 'required',
+            'sks_teori' => 'required|integer',
+            'sks_praktik' => 'required|integer',
+            'status_mata_kuliah' => 'required'
         ]);
 
-        MataKuliah::create($validated);
-        return redirect()->route('mata_kuliah.index')->with('success', 'Mata Kuliah berhasil ditambahkan.');
+        $mataKuliah = MataKuliah::create($validated);
+
+        return response()->json([
+            'success' => true,
+            'data' => $mataKuliah
+        ]);
     }
+
 
     public function update(Request $request, $id)
     {

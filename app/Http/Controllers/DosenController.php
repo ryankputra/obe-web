@@ -51,7 +51,7 @@ class DosenController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nidn' => 'required|unique:dosens,nidn',
+            'nidn' => 'required',
             'nama' => 'required',
             'gelar' => 'required',
             'jenis_kelamin' => 'required',
@@ -62,10 +62,14 @@ class DosenController extends Controller
             'prodi' => 'required',
         ]);
 
-        Dosen::create($validated);
+        $dosen = Dosen::create($validated);
 
-        return redirect()->route('dosen.index')->with('success', 'Dosen berhasil ditambahkan.');
+        return response()->json([
+            'success' => true,
+            'data' => $dosen
+        ]);
     }
+
 
     public function edit(Dosen $dosen)
     {
