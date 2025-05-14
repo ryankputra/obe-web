@@ -16,7 +16,7 @@
             <!-- Prodi dropdown -->
             <div class="list-group-item text-white py-3 my-1 {{ request()->is('fakultasfst*') || request()->is('mahasiswa*') ? 'active' : '' }} dropdown">
                 <a class="text-white dropdown-toggle" href="#" id="prodiDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-university me-2"></i> Prodi
+                    <i class="fas fa-university me-2"></i> Tambah Data
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end w-100" aria-labelledby="prodiDropdown" style="background-color: #426c8f;">
                     <li>
