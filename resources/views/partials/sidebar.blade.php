@@ -12,9 +12,26 @@
             <a href="{{ route('dosen.index') }}" class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('dosen*') ? 'active' : '' }}">
                 <i class="fas fa-chalkboard-teacher me-2"></i> Dosen
             </a>
-            <a href="{{ route('fakultasfst.index') }}" class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('fakultasfst*') ? 'active' : '' }}">
-                <i class="fas fa-university me-2"></i> Prodi
-            </a>
+
+            <!-- Prodi dropdown -->
+            <div class="list-group-item text-white py-3 my-1 {{ request()->is('fakultasfst*') || request()->is('mahasiswa*') ? 'active' : '' }} dropdown">
+                <a class="text-white dropdown-toggle" href="#" id="prodiDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-university me-2"></i> Prodi
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end w-100" aria-labelledby="prodiDropdown" style="background-color: #426c8f;">
+                    <li>
+                        <a class="dropdown-item text-white {{ request()->is('fakultasfst*') ? 'active' : '' }}" href="{{ route('fakultasfst.index') }}">
+                            <i class="fas fa-building me-2"></i> Daftar Prodi
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item text-white {{ request()->is('mahasiswa*') ? 'active' : '' }}" href="{{ route('mahasiswa.index') }}">
+                            <i class="fas fa-user-graduate me-2"></i> Mahasiswa
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
             <a href="{{ route('cpl.index') }}" class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('cpl*') ? 'active' : '' }}">
                 <i class="fas fa-list-alt me-2"></i> CPL
             </a>
@@ -30,6 +47,9 @@
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="settingsDropdown">
                         <li><a class="dropdown-item" href="{{ route('profile') }}"><i class="fas fa-user me-2"></i> Profil</a></li>
+                        <li><a class="dropdown-item" href="{{ route('users.create') }}"><i class="fas fa-user-plus me-2"></i> Tambah Akun</a></li>
+                        <li><a class="dropdown-item" href="{{ route('users.index') }}"><i class="fas fa-users-cog me-2"></i> Kelola Pengguna</a></li>
+                        <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
                     </ul>
                 </div>
@@ -97,22 +117,6 @@
         color: #fff;
     }
 
-    .dropdown {
-        position: relative;
-        margin-top: 20px;
-    }
-
-    .dropdown-toggle {
-        width: 100%;
-        text-align: left;
-        padding: 10px 15px;
-    }
-
-    .dropdown-toggle::after {
-        float: right;
-        margin-top: 8px;
-    }
-
     .dropdown-menu {
         background-color: #426c8f;
         color: #fff;
@@ -124,6 +128,7 @@
         color: #fff;
     }
 
+    .dropdown-item.active,
     .dropdown-item:hover,
     .dropdown-item:focus {
         background-color: rgb(202, 202, 202);
@@ -150,12 +155,8 @@
 </style>
 
 <script>
-    // Toggle sidebar for mobile view (optional)
     document.addEventListener('DOMContentLoaded', function() {
-        // You can add a button elsewhere to toggle the sidebar if needed
-        // document.getElementById('sidebarToggle').addEventListener('click', function() {
-        //     document.getElementById('sidebar-wrapper').classList.toggle('active');
-        // });
+        // Optional toggle for sidebar in mobile
     });
 </script>
 

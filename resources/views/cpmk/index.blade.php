@@ -24,26 +24,26 @@
         <div class="row">
             <div class="col-12">
                 <div class="table-responsive">
-                    <table class="table table-bordered text-center">
+                    <table class="table table-bordered">
                         <thead style="background-color: #2f5f98; color: #fff;">
                             <tr>
-                                <th>Kode CPL</th>
-                                <th>Kode CPMK</th>
-                                <th>Mata Kuliah</th>
-                                <th>Deskripsi</th>
-                                <th>PIC</th>
-                                <th>Action</th>
+                                <th class="text-start">Kode CPL</th>
+                                <th class="text-start">Kode CPMK</th>
+                                <th class="text-start">Mata Kuliah</th>
+                                <th class="text-start">Deskripsi</th>
+                                <th class="text-start">PIC</th>
+                                <th class="text-start">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($cpmks as $cpmk)
                                 <tr>
-                                    <td>{{ $cpmk->kode_cpl }}</td>
-                                    <td>{{ $cpmk->kode_cpmk }}</td>
-                                    <td>{{ $cpmk->mata_kuliah }}</td>
-                                    <td>{{ $cpmk->deskripsi }}</td>
-                                    <td>{{ $cpmk->pic }}</td>
-                                    <td>
+                                    <td class="text-start">{{ $cpmk->kode_cpl }}</td>
+                                    <td class="text-start">{{ $cpmk->kode_cpmk }}</td>
+                                    <td class="text-start">{{ $cpmk->mata_kuliah }}</td>
+                                    <td class="text-start">{{ $cpmk->deskripsi }}</td>
+                                    <td class="text-start">{{ $cpmk->pic }}</td>
+                                    <td class="text-start">
                                         <a href="#" class="btn btn-outline-info btn-sm" data-bs-toggle="modal"
                                             data-bs-target="#editCpmkModal" data-id="{{ $cpmk->id }}"
                                             data-kode_cpl="{{ $cpmk->kode_cpl }}" data-kode_cpmk="{{ $cpmk->kode_cpmk }}"
@@ -64,7 +64,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="text-center">Tidak ada data CPMK</td>
+                                    <td colspan="6" class="text-start">Tidak ada data CPMK</td>
                                 </tr>
                             @endforelse
                         </tbody>

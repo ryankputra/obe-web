@@ -11,6 +11,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CplController;
 use App\Http\Controllers\CpmkController;
 use App\Http\Controllers\ProdiController;
+use App\Http\Controllers\UserController;
 
 
 // Route untuk halaman utama (arahkan ke login)
@@ -22,6 +23,15 @@ Route::get('password/reset', function () {
     return view('auth.passwords.email');
 })->name('password.request');
 
+
+
+Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
+Route::post('/users', [UserController::class, 'store'])->name('users.store');
+
+Route::get('/users', [UserController::class, 'index'])->name('users.index');
+Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 // Tambahkan route autentikasi
 Auth::routes();
 
