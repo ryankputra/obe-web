@@ -47,9 +47,13 @@
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="settingsDropdown">
                         <li><a class="dropdown-item" href="{{ route('profile') }}"><i class="fas fa-user me-2"></i> Profil</a></li>
-                        <li><a class="dropdown-item" href="{{ route('users.create') }}"><i class="fas fa-user-plus me-2"></i> Tambah Akun</a></li>
-                        <li><a class="dropdown-item" href="{{ route('users.index') }}"><i class="fas fa-users-cog me-2"></i> Kelola Pengguna</a></li>
-                        <li><hr class="dropdown-divider"></li>
+
+                        @if(auth()->user()->role == 'admin')
+                            <li><a class="dropdown-item" href="{{ route('users.create') }}"><i class="fas fa-user-plus me-2"></i> Tambah Akun</a></li>
+                            <li><a class="dropdown-item" href="{{ route('users.index') }}"><i class="fas fa-users-cog me-2"></i> Kelola Pengguna</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                        @endif
+
                         <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
                     </ul>
                 </div>

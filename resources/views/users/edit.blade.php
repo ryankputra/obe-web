@@ -44,7 +44,6 @@
             <select class="form-control @error('role') is-invalid @enderror" id="role" name="role">
                 <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Admin</option>
                 <option value="dosen" {{ $user->role == 'dosen' ? 'selected' : '' }}>Dosen</option>
-                <option value="mahasiswa" {{ $user->role == 'mahasiswa' ? 'selected' : '' }}>Mahasiswa</option>
             </select>
             @error('role')
                 <div class="invalid-feedback">{{ $message }}</div>
