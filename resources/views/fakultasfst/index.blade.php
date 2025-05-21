@@ -4,10 +4,6 @@
 
 @section('content')
     <div class="container-fluid">
-        <div class="mb-4">
-            
-        </div>
-
         <h1 class="mb-4 text-purple">Fakultas Sains dan Teknologi</h1>
 
         <div class="d-flex justify-content-end mb-3">
@@ -38,9 +34,6 @@
                                             class="btn btn-outline-info btn-sm">
                                             Lihat
                                         </a>
-                                        <button class="btn btn-outline-success btn-sm edit-btn"
-                                            data-id="{{ $prodi->id }}" data-nama="{{ $prodi->nama_prodi }}"
-                                            data-jumlah="{{ $prodi->jumlah_mahasiswa }}">Edit</button>
                                         <button class="btn btn-outline-danger btn-sm delete-btn"
                                             data-id="{{ $prodi->id }}"
                                             data-nama="{{ $prodi->nama_prodi }}">Hapus</button>
@@ -69,39 +62,10 @@
                             <label for="prodiNama" class="form-label">Nama Prodi</label>
                             <input type="text" class="form-control" id="prodiNama" name="nama_prodi" required>
                         </div>
-                        {{-- Hapus input jumlah mahasiswa karena dihitung otomatis --}}
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                         <button type="submit" class="btn btn-primary">Tambah</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal untuk Edit Prodi -->
-    <div class="modal fade" id="editProdiModal" tabindex="-1" aria-labelledby="editProdiModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editProdiModalLabel">Edit Prodi</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form id="editProdiForm" method="POST">
-                    @csrf
-                    @method('PUT')
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="editProdiNama" class="form-label">Nama Prodi</label>
-                            <input type="text" class="form-control text-start" id="editProdiNama" name="nama_prodi"
-                                readonly>
-                        </div>
-                        {{-- Hapus input jumlah mahasiswa karena dihitung otomatis --}}
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary">Simpan</button>
                     </div>
                 </form>
             </div>
@@ -154,7 +118,7 @@
         }
 
         .text-purple {
-            color: #5842a8 !important;
+            color: rgb(0, 0, 0) !important;
         }
     </style>
 @endsection
@@ -163,23 +127,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js" crossorigin="anonymous"></script>
     <script>
         $(document).ready(function() {
-            // Handle edit button click
-            $('.edit-btn').click(function() {
-                const id = $(this).data('id');
-                const nama = $(this).data('nama');
-                const jumlah = $(this).data('jumlah');
-
-                $('#editProdiForm').attr('action', `/fakultasfst/prodi/${id}`);
-                $('#editProdiNama').val(nama);
-                $('#editJumlahMahasiswa').val(jumlah);
-
-                $('#editProdiModal').modal('show');
-            });
-
             // Handle delete button click
             $('.delete-btn').click(function() {
                 const id = $(this).data('id');
-                const nama = $(this).data('nama');
+                const nama-cdn = $(this).data('nama');
 
                 $('#deleteProdiForm').attr('action', `/fakultasfst/prodi/${id}`);
                 $('#prodiToDelete').text(nama);
@@ -187,13 +138,7 @@
                 $('#deleteProdiModal').modal('show');
             });
 
-            // Save all button (if needed for bulk operations)
-            $('#saveAllButton').click(function() {
-                // Implement any bulk save functionality here
-                alert('Data berhasil disimpan!');
-            });
-
-            // Form submission handling
+            // Form submission handling for add prodi
             $('#addProdiForm').submit(function(e) {
                 e.preventDefault();
                 const form = $(this);
@@ -206,28 +151,12 @@
                         location.reload();
                     },
                     error: function(xhr) {
-                        alert('Terjadi kesalahan. Silakan coba lagi.');
+                        alert('Terjadi kesalahan: ' + (xhr.responseJSON?.message || 'Silakan coba lagi.'));
                     }
                 });
             });
 
-            $('#editProdiForm').submit(function(e) {
-                e.preventDefault();
-                const form = $(this);
-
-                $.ajax({
-                    url: form.attr('action'),
-                    method: 'POST',
-                    data: form.serialize(),
-                    success: function(response) {
-                        location.reload();
-                    },
-                    error: function(xhr) {
-                        alert('Terjadi kesalahan. Silakan coba lagi.');
-                    }
-                });
-            });
-
+            // Form submission handling for delete prodi
             $('#deleteProdiForm').submit(function(e) {
                 e.preventDefault();
                 const form = $(this);
@@ -240,7 +169,7 @@
                         location.reload();
                     },
                     error: function(xhr) {
-                        alert('Terjadi kesalahan. Silakan coba lagi.');
+                        alert('Terjadi kesalahan: ' + (xhr.responseJSON?.message || 'Silakan coba lagi.'));
                     }
                 });
             });

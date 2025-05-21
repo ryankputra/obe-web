@@ -13,20 +13,25 @@
                 <i class="fas fa-chalkboard-teacher me-2"></i> Dosen
             </a>
 
-            <!-- Prodi dropdown -->
-            <div class="list-group-item text-white py-3 my-1 {{ request()->is('fakultasfst*') || request()->is('mahasiswa*') ? 'active' : '' }} dropdown">
-                <a class="text-white dropdown-toggle" href="#" id="prodiDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-university me-2"></i> Tambah Data
+            <!-- Daftar Prodi sebagai item terpisah -->
+            <a href="{{ route('fakultasfst.index') }}" class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('fakultasfst*') ? 'active' : '' }}">
+                <i class="fas fa-building me-2"></i> Daftar Prodi
+            </a>
+
+            <!-- Mahasiswa dropdown -->
+            <div class="list-group-item text-white py-3 my-1 {{ request()->is('mahasiswa*') ? 'active' : '' }} dropdown">
+                <a class="text-white dropdown-toggle" href="#" id="mahasiswaDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-user-graduate me-2"></i> Mahasiswa
                 </a>
-                <ul class="dropdown-menu dropdown-menu-end w-100" aria-labelledby="prodiDropdown" style="background-color: #426c8f;">
+                <ul class="dropdown-menu dropdown-menu-end w-100" aria-labelledby="mahasiswaDropdown" style="background-color: #426c8f;">
                     <li>
-                        <a class="dropdown-item text-white {{ request()->is('fakultasfst*') ? 'active' : '' }}" href="{{ route('fakultasfst.index') }}">
-                            <i class="fas fa-building me-2"></i> Daftar Prodi
+                        <a class="dropdown-item text-white {{ request()->is('mahasiswa*') ? 'active' : '' }}" href="{{ route('mahasiswa.index') }}">
+                            <i class="fas fa-list me-2"></i> Tampil Mahasiswa
                         </a>
                     </li>
                     <li>
-                        <a class="dropdown-item text-white {{ request()->is('mahasiswa*') ? 'active' : '' }}" href="{{ route('mahasiswa.index') }}">
-                            <i class="fas fa-user-graduate me-2"></i> Mahasiswa
+                        <a class="dropdown-item text-white" href="{{ route('mahasiswa.create') }}">
+                            <i class="fas fa-user-plus me-2"></i> Input Mahasiswa
                         </a>
                     </li>
                 </ul>
@@ -42,7 +47,7 @@
                 <i class="fas fa-tasks me-2"></i> User
             </a>
 
-            <!-- Settings button moved back to bottom -->
+            <!-- Settings button -->
             <div class="mt-auto text-center py-3">
                 <div class="dropdown">
                     <button class="btn btn-secondary dropdown-toggle" type="button" id="settingsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -50,13 +55,11 @@
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="settingsDropdown">
                         <li><a class="dropdown-item" href="{{ route('profile') }}"><i class="fas fa-user me-2"></i> Profil</a></li>
-
                         @if(auth()->user()->role == 'admin')
                             <li><a class="dropdown-item" href="{{ route('users.create') }}"><i class="fas fa-user-plus me-2"></i> Tambah Akun</a></li>
                             <li><a class="dropdown-item" href="{{ route('users.index') }}"><i class="fas fa-users-cog me-2"></i> Kelola Pengguna</a></li>
                             <li><hr class="dropdown-divider"></li>
                         @endif
-
                         <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
                     </ul>
                 </div>

@@ -23,35 +23,32 @@ class ProdiController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama_prodi' => 'required|string|max:255',
+            'nama_prodi' => 'required|string|max:255|unique:prodis',
         ]);
 
         Prodi::create([
             'nama_prodi' => $request->nama_prodi,
         ]);
 
-        return redirect()->route('fakultasfst.index')
-            ->with('success', 'Mahasiswa berhasil ditambahkan');
+        return response()->json(['message' => 'Prodi berhasil ditambahkan']);
     }
-    
-
 
     public function show(Prodi $prodi)
     {
-        return view('fakultasfst.prodi-detail', compact('prodi'));
+        // Redirect ke daftar mahasiswa dengan filter prodi
+        return redirect()->route('mahasiswa.index', ['prodi' => $prodi->nama_prodi]);
     }
 
     public function update(Request $request, $id)
     {
         $request->validate([
-            'nama_prodi' => 'required|string|max:255',
+            'nama_prodi' => 'required|string|max:255|unique:prodis,nama_prodi,' . $id,
         ]);
 
         $prodi = Prodi::findOrFail($id);
         $prodi->update([
             'nama_prodi' => $request->nama_prodi,
         ]);
-
 
         return response()->json(['message' => 'Prodi berhasil diperbarui']);
     }
@@ -60,15 +57,7 @@ class ProdiController extends Controller
     {
         $prodi = Prodi::findOrFail($id);
         $prodi->delete();
-    
+
         return response()->json(['message' => 'Prodi berhasil dihapus']);
     }
-
-   
-
-
-    // Remove the edit() method since you're using modal
 }
-
-
-
