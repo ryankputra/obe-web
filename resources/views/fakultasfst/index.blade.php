@@ -46,7 +46,7 @@
             </div>
         </div>
     </div>
-
+    <!-- cek -->
     <!-- Modal untuk Tambah Prodi -->
     <div class="modal fade" id="addProdiModal" tabindex="-1" aria-labelledby="addProdiModalLabel" aria-hidden="true">
         <div class="modal-dialog">
