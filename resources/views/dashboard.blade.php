@@ -45,7 +45,7 @@
             </div>
         </div>
 
-        <!-- Kalender Akademik - TIDAK DIUBAH STRUKTURNYA -->
+        <!-- Kalender Akademik -->
         <div class="col-lg-6 mb-4">
             <div class="card shadow-sm h-100">
                 <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
@@ -84,23 +84,28 @@
 <!-- Script untuk Chart -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // Inisialisasi chart
     document.addEventListener('DOMContentLoaded', function() {
-        // Data statis untuk chart
+        // Data dinamis dari controller
         const prodiData = {
-            labels: ['Teknik Informatika', 'Sistem Informasi', 'Rekayasa Perangkat Lunak'],
+            labels: [@foreach($prodiData as $data) '{{ $data['nama_prodi'] }}', @endforeach],
             datasets: [{
                 label: 'Jumlah Mahasiswa',
-                data: [320, 280, 150],
+                data: [@foreach($prodiData as $data) {{ $data['jumlah_mahasiswa'] }}, @endforeach],
                 backgroundColor: [
                     'rgba(54, 162, 235, 0.7)',
                     'rgba(255, 99, 132, 0.7)',
-                    'rgba(75, 192, 192, 0.7)'
+                    'rgba(75, 192, 192, 0.7)',
+                    'rgba(255, 205, 86, 0.7)',
+                    'rgba(153, 102, 255, 0.7)',
+                    'rgba(255, 159, 64, 0.7)'
                 ],
                 borderColor: [
                     'rgba(54, 162, 235, 1)',
                     'rgba(255, 99, 132, 1)',
-                    'rgba(75, 192, 192, 1)'
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(255, 205, 86, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
                 ],
                 borderWidth: 1
             }]
@@ -127,7 +132,7 @@
     });
 </script>
 
-<!-- Script Kalender - TIDAK DIUBAH (PERSIS SEPERTI YANG PERTAMA) -->
+<!-- Script Kalender -->
 <script>
     let today = new Date();
     let currentMonth = today.getMonth();
