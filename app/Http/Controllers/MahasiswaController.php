@@ -15,8 +15,6 @@ class MahasiswaController extends Controller
         return view('mahasiswa.index', compact('mahasiswas', 'prodis'));
     }
 
-
-
     public function create()
     {
         $prodis = Prodi::all();
@@ -38,7 +36,16 @@ class MahasiswaController extends Controller
 
         Mahasiswa::create($request->all());
 
-        return redirect()->route('mahasiswa.index')
+        // Check if "Save and Continue" button was clicked
+        if ($request->has('continue')) {
+            return redirect()
+                ->route('mahasiswa.create')
+                ->with('success', 'Mahasiswa berhasil ditambahkan')
+                ->withInput();
+        }
+
+        return redirect()
+            ->route('mahasiswa.index')
             ->with('success', 'Mahasiswa berhasil ditambahkan');
     }
 
@@ -61,24 +68,23 @@ class MahasiswaController extends Controller
             'prodi_id' => 'required|exists:prodis,id',
             'angkatan' => 'required|integer|min:2000|max:' . (date('Y') + 1),
             'alamat' => 'required|string',
-            'email' => 'required|email',
+            'email' => 'required|email|unique:mahasiswas,email,' . $nim . ',nim',
             'no_hp' => 'required'
         ]);
 
-        // Perbaiki bagian ini untuk mencari berdasarkan 'nim' bukan 'id'
         Mahasiswa::where('nim', $nim)->update($request->except('_token', '_method'));
 
-        return redirect()->route('mahasiswa.index')->with('success', 'Data mahasiswa berhasil diubah.');
+        return redirect()
+            ->route('mahasiswa.index')
+            ->with('success', 'Data mahasiswa berhasil diubah.');
     }
-
 
     public function destroy(Mahasiswa $mahasiswa)
     {
         $mahasiswa->delete();
 
-        return redirect()->route('mahasiswa.index')->with('success', 'Data mahasiswa berhasil dihapus.');
+        return redirect()
+            ->route('mahasiswa.index')
+            ->with('success', 'Data mahasiswa berhasil dihapus.');
     }
-
-    
-
 }
