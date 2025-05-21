@@ -6,7 +6,7 @@
 <div class="container-fluid">
     <h1 class="dashboard-heading mt-4">Tambah Mahasiswa</h1>
 
-    <!-- Notifikasi Sukses -->
+    <!-- Notifiikasi Sukses -->
     @if (session('success'))
         <div class="alert alert-success">
             {{ session('success') }}

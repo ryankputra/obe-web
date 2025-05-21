@@ -6,7 +6,7 @@
 <div class="container-fluid">
     <h1 class="mt-4">Edit Mahasiswa</h1>
 
-    <!-- Notifikassi Error -->
+    <!-- Notifikassi Eerror -->
     @if ($errors->any())
         <div class="alert alert-danger">
             <ul class="mb-0">

@@ -67,7 +67,7 @@
                             </select>
                         </div>
 
-                        <!-- Actiion Buttons -->
+                        <!-- Actiiion Buttons -->
                         <div class="col-md-3 d-flex align-items-end">
                             <button type="submit" class="btn btn-primary me-2">
                                 <i class="fas fa-search me-1"></i> Filter

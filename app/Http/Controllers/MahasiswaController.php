@@ -1,5 +1,5 @@
 <?php
-//cek
+//cekk
 namespace App\Http\Controllers;
 
 use App\Models\Mahasiswa;
