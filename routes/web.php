@@ -55,6 +55,9 @@ Route::middleware('auth')->group(function () {
 
     // Mahasiswa
     Route::resource('mahasiswa', MahasiswaController::class);
+    Route::get('mahasiswa/{nim}/edit', [MahasiswaController::class, 'edit'])->name('mahasiswa.edit');
+    Route::put('mahasiswa/{nim}', [MahasiswaController::class, 'update'])->name('mahasiswa.update');
+
 
     // Fakultas FST Routes
     Route::prefix('fakultasfst')->group(function () {

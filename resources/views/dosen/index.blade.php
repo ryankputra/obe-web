@@ -11,6 +11,18 @@
             </div>
         @endif
 
+        <!-- Action Buttons -->
+        <div class="row mb-3">
+            <div class="col-12 d-flex justify-content-end align-items-center">
+                <a href="{{ route('dosen.create') }}"
+                    class="btn btn-success rounded-circle me-2 d-flex justify-content-center align-items-center"
+                    style="width: 40px; height: 40px;">
+                    <i class="fas fa-plus text-white"></i>
+                </a>
+            </div>
+        </div>
+
+
         <!-- Filter Form -->
         <div class="row mb-3">
             <div class="col-12">
@@ -70,17 +82,7 @@
             </div>
         </div>
 
-        <!-- Action Buttons -->
-        <div class="row mb-3">
-            <div class="col-12 d-flex justify-content-end align-items-center">
-                <a href="{{ route('dosen.create') }}"
-                    class="btn btn-success rounded-circle me-2 d-flex justify-content-center align-items-center"
-                    style="width: 40px; height: 40px;">
-                    <i class="fas fa-plus text-white"></i>
-                </a>
-            </div>
-        </div>
-
+        
         <!-- Dosen Table -->
         <div class="row">
             <div class="col-12">

@@ -16,8 +16,9 @@ return new class extends Migration
             $table->string('nim')->unique()->primary();
             $table->string('nama');
             $table->year('angkatan');
+            $table->string('alamat');
             $table->string('email')->unique();
-            $table->integer('nohp');
+            $table->integer('no_hp');
             $table->string('jenis_kelamin');
             $table->timestamps();
         });

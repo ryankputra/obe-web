@@ -14,7 +14,7 @@ class Prodi extends Model
         'jumlah_mahasiswa'
     ];
 
-    public function mahasiswa()
+    public function mahasiswas()
     {
         return $this->hasMany(Mahasiswa::class); // Also works without second parameter
     }

@@ -7,7 +7,7 @@
         <h1 class="dashboard-heading mt-4">Daftar Mata Kuliah</h1>
         <div class="row mb-3">
             <div class="col-12 d-flex justify-content-end align-items-center">
-                <button class="btn btn-primary rounded-circle me-2 d-flex justify-content-center align-items-center"
+                <button class="btn btn-success rounded-circle me-2 d-flex justify-content-center align-items-center"
                     style="width: 40px; height: 40px;" data-bs-toggle="modal" data-bs-target="#addCourseModal">
                     <i class="fas fa-plus text-white"></i>
                 </button>
@@ -15,42 +15,44 @@
         </div>
         
         <!-- Filter Section -->
-        <div class="row mb-4">
-            <div class="col-md-12">
-                <div class="card shadow-sm">
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <i class="fas fa-filter me-2"></i>Filter Mata Kuliah
+                    </div>
                     <div class="card-body">
-                        <div class="row">
+                        <div class="row g-3">
                             <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="searchInput">Cari Mata Kuliah</label>
-                                    <input type="text" class="form-control" id="searchInput" placeholder="Kode atau Nama MK">
-                                </div>
+                                <label for="searchInput" class="form-label">Cari (Kode/Nama MK)</label>
+                                <input type="text" class="form-control" id="searchInput" placeholder="Masukkan pencarian...">
                             </div>
                             <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="semesterFilter">Filter Semester</label>
-                                    <select class="form-control" id="semesterFilter">
-                                        <option value="">Semua Semester</option>
-                                        @for($i = 1; $i <= 8; $i++)
-                                            <option value="{{ $i }}">Semester {{ $i }}</option>
-                                        @endfor
-                                    </select>
-                                </div>
+                                <label for="semesterFilter" class="form-label">Semester</label>
+                                <select class="form-control" id="semesterFilter">
+                                    <option value="">Semua Semester</option>
+                                    @for($i = 1; $i <= 8; $i++)
+                                        <option value="{{ $i }}">Semester {{ $i }}</option>
+                                    @endfor
+                                </select>
                             </div>
                             <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="statusFilter">Filter Status</label>
-                                    <select class="form-control" id="statusFilter">
-                                        <option value="">Semua Status</option>
-                                        <option value="Wajib Prodi">Wajib Prodi</option>
-                                        <option value="Pilihan">Pilihan</option>
-                                        <option value="Wajib Fakultas">Wajib Fakultas</option>
-                                        <option value="Wajib Universitas">Wajib Universitas</option>
-                                    </select>
-                                </div>
+                                <label for="statusFilter" class="form-label">Status</label>
+                                <select class="form-control" id="statusFilter">
+                                    <option value="">Semua Status</option>
+                                    <option value="Wajib Prodi">Wajib Prodi</option>
+                                    <option value="Pilihan">Pilihan</option>
+                                    <option value="Wajib Fakultas">Wajib Fakultas</option>
+                                    <option value="Wajib Universitas">Wajib Universitas</option>
+                                </select>
                             </div>
                             <div class="col-md-3 d-flex align-items-end">
-                                <button class="btn btn-secondary" id="resetFilter">Reset Filter</button>
+                                <button class="btn btn-primary me-2" id="filterButton">
+                                    <i class="fas fa-search me-1"></i> Filter
+                                </button>
+                                <button class="btn btn-secondary" id="resetFilter">
+                                    <i class="fas fa-sync-alt me-1"></i> Reset
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -191,21 +193,13 @@
         }
 
         .btn-primary {
-            background-color:rgb(40, 187, 72) !important;
+            background-color: rgb(0, 114, 202) !important;
             border: none;
         }
 
         .btn-success {
             background-color: #28a745 !important;
             border: none;
-        }
-        
-        .card {
-            border-radius: 10px;
-        }
-        
-        .form-control {
-            border-radius: 5px;
         }
     </style>
 @endsection
@@ -216,17 +210,13 @@
             // Populate Form Fields
             document.getElementById('editCourseModal').addEventListener('show.bs.modal', function(event) {
                 const button = event.relatedTarget;
-                // document.getElementById('editCourseId').value = button.getAttribute('data-id');
-                // Populate fields with fallback for null values
                 document.getElementById('kodeMk').value = button.getAttribute('data-kode') || '';
                 document.getElementById('namaMk').value = button.getAttribute('data-nama') || '';
-                document.getElementById('deskripsi').value = button.getAttribute('data-deskripsi') ||
-                ''; // Handles null
+                document.getElementById('deskripsi').value = button.getAttribute('data-deskripsi') || '';
                 document.getElementById('semester').value = button.getAttribute('data-semester') || '';
                 document.getElementById('sksTeori').value = button.getAttribute('data-teori') || '';
                 document.getElementById('sksPraktik').value = button.getAttribute('data-praktik') || '';
-                document.getElementById('statusMataKuliah').value = button.getAttribute('data-status') ||
-                    'Wajib Prodi';
+                document.getElementById('statusMataKuliah').value = button.getAttribute('data-status') || 'Wajib Prodi';
 
                 // Update form action URL
                 const form = document.getElementById('editCourseForm');
@@ -250,12 +240,11 @@
                     .then(data => {
                         if (data.success) {
                             // Close Modal
-                            const modal = bootstrap.Modal.getInstance(document.getElementById(
-                                'editCourseModal'));
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('editCourseModal'));
                             if (modal) modal.hide();
 
                             // Update Table Row
-                            const row = document.querySelector(`tr[data-id="${data.id}"]`);
+                            const row = document.querySelector(tr[data-id="${data.id}"]);
                             if (row) {
                                 row.cells[0].textContent = data.kode_mk;
                                 row.cells[1].textContent = data.nama_mk;
@@ -287,6 +276,7 @@
             const searchInput = document.getElementById('searchInput');
             const semesterFilter = document.getElementById('semesterFilter');
             const statusFilter = document.getElementById('statusFilter');
+            const filterButton = document.getElementById('filterButton');
             const resetFilter = document.getElementById('resetFilter');
             const courseTableBody = document.getElementById('courseTableBody');
             const rows = courseTableBody.querySelectorAll('tr');
@@ -323,7 +313,7 @@
                 });
                 
                 // Update total SKS display
-                document.getElementById('totalSKS').textContent = `Total SKS: ${totalSKS}`;
+                document.getElementById('totalSKS').textContent = Total SKS: ${totalSKS};
                 
                 // If no rows visible, show message
                 if (visibleRows === 0) {
@@ -351,6 +341,7 @@
             searchInput.addEventListener('input', filterCourses);
             semesterFilter.addEventListener('change', filterCourses);
             statusFilter.addEventListener('change', filterCourses);
+            filterButton.addEventListener('click', filterCourses);
             
             // Reset filter
             resetFilter.addEventListener('click', function() {
@@ -373,7 +364,7 @@
                     }
                 });
                 
-                document.getElementById('totalSKS').textContent = `Total SKS: ${total}`;
+                document.getElementById('totalSKS').textContent = Total SKS: ${total};
             }
         });
     </script>

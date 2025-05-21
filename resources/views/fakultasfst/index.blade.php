@@ -69,11 +69,7 @@
                             <label for="prodiNama" class="form-label">Nama Prodi</label>
                             <input type="text" class="form-control" id="prodiNama" name="nama_prodi" required>
                         </div>
-                        <div class="mb-3">
-                            <label for="jumlahMahasiswa" class="form-label">Jumlah Mahasiswa</label>
-                            <input type="number" class="form-control" id="jumlahMahasiswa" name="jumlah_mahasiswa"
-                                required>
-                        </div>
+                        {{-- Hapus input jumlah mahasiswa karena dihitung otomatis --}}
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
@@ -101,11 +97,7 @@
                             <input type="text" class="form-control text-start" id="editProdiNama" name="nama_prodi"
                                 readonly>
                         </div>
-                        <div class="mb-3">
-                            <label for="editJumlahMahasiswa" class="form-label">Jumlah Mahasiswa</label>
-                            <input type="number" class="form-control" id="editJumlahMahasiswa" name="jumlah_mahasiswa"
-                                required>
-                        </div>
+                        {{-- Hapus input jumlah mahasiswa karena dihitung otomatis --}}
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>

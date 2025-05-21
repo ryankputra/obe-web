@@ -11,8 +11,11 @@ class MahasiswaController extends Controller
     public function index()
     {
         $mahasiswas = Mahasiswa::with('prodi')->get();
-        return view('fakultasfst.index', compact('mahasiswas'));
+        $prodis = Prodi::all();
+        return view('mahasiswa.index', compact('mahasiswas', 'prodis'));
     }
+
+
 
     public function create()
     {
@@ -28,8 +31,9 @@ class MahasiswaController extends Controller
             'nama' => 'required|string|max:255',
             'angkatan' => 'required|integer|min:2000|max:' . (date('Y') + 1),
             'email' => 'required|email|unique:mahasiswas',
-            'nohp' => 'required|string|max:20',
-            'jenis_kelamin' => 'required|in:L,P'
+            'no_hp' => 'required|string|max:20',
+            'jenis_kelamin' => 'required|in:L,P',
+            'alamat' => 'required|string'
         ]);
 
         Mahasiswa::create($request->all());
@@ -49,29 +53,32 @@ class MahasiswaController extends Controller
         return view('mahasiswa.edit', compact('mahasiswa', 'prodis'));
     }
 
-    public function update(Request $request, Mahasiswa $mahasiswa)
+    public function update(Request $request, $nim)
     {
         $request->validate([
+            'nama' => 'required|string',
+            'jenis_kelamin' => 'required|in:L,P',
             'prodi_id' => 'required|exists:prodis,id',
-            'nim' => 'required|string|max:20|unique:mahasiswas,nim,' . $mahasiswa->nim,
-            'nama' => 'required|string|max:255',
             'angkatan' => 'required|integer|min:2000|max:' . (date('Y') + 1),
-            'email' => 'required|email|unique:mahasiswas,email,' . $mahasiswa->nim,
-            'nohp' => 'required|string|max:20',
-            'jenis_kelamin' => 'required|in:L,P'
+            'alamat' => 'required|string',
+            'email' => 'required|email',
+            'no_hp' => 'required'
         ]);
 
-        $mahasiswa->update($request->all());
+        // Perbaiki bagian ini untuk mencari berdasarkan 'nim' bukan 'id'
+        Mahasiswa::where('nim', $nim)->update($request->except('_token', '_method'));
 
-        return redirect()->route('mahasiswa.index')
-            ->with('success', 'Mahasiswa berhasil diperbarui');
+        return redirect()->route('mahasiswa.index')->with('success', 'Data mahasiswa berhasil diubah.');
     }
+
 
     public function destroy(Mahasiswa $mahasiswa)
     {
         $mahasiswa->delete();
 
-        return redirect()->route('mahasiswa.index')
-            ->with('success', 'Mahasiswa berhasil dihapus');
+        return redirect()->route('mahasiswa.index')->with('success', 'Data mahasiswa berhasil dihapus.');
     }
+
+    
+
 }

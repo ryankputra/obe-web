@@ -11,12 +11,17 @@ class CpmkController extends Controller
 {
     public function index()
     {
-        $cpmks = Cpmk::with('cpl')->get();
-        $cpls = Cpl::all();
-        $matakuliahs = MataKuliah::all();
-        return view('cpmk.index', compact('cpmks', 'cpls', 'matakuliahs'));
+        $cpmks = Cpmk::with('cpl')->get()->sortBy(function ($item) {
+            return (int) filter_var($item->kode_cpl, FILTER_SANITIZE_NUMBER_INT);
+        });
 
-        
+        $cpls = Cpl::all()->sortBy(function ($item) {
+            return (int) filter_var($item->kode_cpl, FILTER_SANITIZE_NUMBER_INT);
+        });
+
+        $matakuliahs = MataKuliah::all();
+
+        return view('cpmk.index', compact('cpmks', 'cpls', 'matakuliahs'));
     }
 
     // app/Http/Controllers/CpmkController.php (Store Method)

@@ -9,48 +9,66 @@ class ProdiController extends Controller
 {
     public function index()
     {
-        $prodis = Prodi::all();
+        $prodis = Prodi::withCount('mahasiswas')->get()->map(function ($prodi) {
+            return (object)[
+                'id' => $prodi->id,
+                'nama_prodi' => $prodi->nama_prodi,
+                'jumlah_mahasiswa' => $prodi->mahasiswas_count,
+            ];
+        });
+
         return view('fakultasfst.index', compact('prodis'));
     }
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'nama_prodi' => 'required|string|max:255|unique:prodis',
-            'jumlah_mahasiswa' => 'required|integer|min:0',
+        $request->validate([
+            'nama_prodi' => 'required|string|max:255',
         ]);
 
-        Prodi::create($validated);
+        Prodi::create([
+            'nama_prodi' => $request->nama_prodi,
+        ]);
 
         return redirect()->route('fakultasfst.index')
-            ->with('success', 'Program studi berhasil ditambahkan');
+            ->with('success', 'Mahasiswa berhasil ditambahkan');
     }
+    
+
 
     public function show(Prodi $prodi)
     {
         return view('fakultasfst.prodi-detail', compact('prodi'));
     }
 
-    public function update(Request $request, Prodi $prodi)
+    public function update(Request $request, $id)
     {
-        $validated = $request->validate([
-            'nama_prodi' => 'required|string|max:255|unique:prodis,nama_prodi,' . $prodi->id,
-            'jumlah_mahasiswa' => 'required|integer|min:0',
+        $request->validate([
+            'nama_prodi' => 'required|string|max:255',
         ]);
 
-        $prodi->update($validated);
+        $prodi = Prodi::findOrFail($id);
+        $prodi->update([
+            'nama_prodi' => $request->nama_prodi,
+        ]);
 
-        return redirect()->route('fakultasfst.index')
-            ->with('success', 'Program studi berhasil diperbarui');
+
+        return response()->json(['message' => 'Prodi berhasil diperbarui']);
     }
 
-    public function destroy(Prodi $prodi)
+    public function destroy($id)
     {
+        $prodi = Prodi::findOrFail($id);
         $prodi->delete();
-
-        return redirect()->route('fakultasfst.index')
-            ->with('success', 'Program studi berhasil dihapus');
+    
+        return response()->json(['message' => 'Prodi berhasil dihapus']);
     }
+
+   
+
 
     // Remove the edit() method since you're using modal
 }
+
+
+

@@ -43,7 +43,6 @@
             <select class="form-control @error('role') is-invalid @enderror" id="role" name="role">
                 <option value="admin">Admin</option>
                 <option value="dosen">Dosen</option>
-                <option value="mahasiswa">Mahasiswa</option>
             </select>
             @error('role')
                 <div class="invalid-feedback">{{ $message }}</div>

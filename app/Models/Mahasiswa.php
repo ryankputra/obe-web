@@ -12,8 +12,9 @@ class Mahasiswa extends Model
         'nama',
         'angkatan',
         'email',
-        'nohp',
-        'jenis_kelamin'
+        'no_hp',
+        'jenis_kelamin',
+        'alamat'
     ];
 
     protected $primaryKey = 'nim';
