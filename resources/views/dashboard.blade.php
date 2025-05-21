@@ -31,7 +31,7 @@
 <div class="container-fluid">
     <h1 class="dashboard-heading mt-4">Dashboard</h1>
     <div class="row">
-        <!-- Jumlah Mahasiswa Per Prodi -->
+        <!-- Jumlah Mahhasiswa Per Prodi -->
         <div class="col-lg-6 mb-4">
             <div class="card shadow-sm h-100">
                 <div class="card-header bg-primary text-white">
