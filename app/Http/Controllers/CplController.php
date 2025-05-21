@@ -50,4 +50,10 @@ class CplController extends Controller
         $cpl->delete();
         return redirect()->route('cpl.index')->with('success', 'CPL berhasil dihapus.');
     }
+    public function show($id)
+    {
+        $cpl = Cpl::with('cpmks')->findOrFail($id);
+        
+        return view('cpl.show', compact('cpl'));
+    }
 }

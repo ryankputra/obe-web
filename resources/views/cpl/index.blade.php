@@ -5,76 +5,60 @@
 @section('content')
 <div class="container-fluid">
     <h1 class="mt-4">CPL</h1>
-    
+
     @if(session('success'))
         <div class="alert alert-success">
             {{ session('success') }}
         </div>
     @endif
 
-    <!-- Action Buttons -->
     <div class="d-flex justify-content-end align-items-center mb-3">
-        <div class="d-flex">
-            <a href="{{ route('cpl.create') }}" class="btn btn-success rounded-circle me-2 d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;">
-                <i class="fas fa-plus text-white"></i>
-            </a>
-        </div>
+        <a href="{{ route('cpl.create') }}" class="btn btn-success rounded-circle me-2 d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;">
+            <i class="fas fa-plus text-white"></i>
+        </a>
     </div>
 
-    <!-- CPL Table -->
-    <div class="row">
-        <div class="col-12">
-            <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th style="width: 15%">Kode CPL</th>
-                            <th style="width: 65%">Deskripsi</th>
-                            <th style="width: 20%">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($cpls as $cpl)
-                        <tr>
-                            <td>{{ $cpl->kode_cpl }}</td>
-                            <td class="text-start">{{ $cpl->deskripsi }}</td>
-                            <td>
-                                <div class="action-buttons">
-                                    <a href="{{ route('cpl.edit', $cpl->id) }}" class="btn btn-outline-success btn-sm">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </a>
-                                    <form action="{{ route('cpl.destroy', $cpl->id) }}" method="POST" style="display: inline-block;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus CPL ini?')">
-                                            <i class="fas fa-trash"></i> Hapus
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="3" class="text-center py-4">Tidak ada data CPL</td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-
-                <!-- Pagination Buttons -->
-                <div class="d-flex justify-content-end mt-3">
-                    <button class="btn btn-primary me-2" onclick="navigateToPage('{{ $cpls->previousPageUrl() }}')" {{ $cpls->onFirstPage() ? 'disabled' : '' }}>
-                        <i class="fas fa-chevron-left"></i> Halaman Sebelumnya
-                    </button>
-                    <button class="btn btn-primary" onclick="navigateToPage('{{ $cpls->nextPageUrl() }}')" {{ $cpls->hasMorePages() ? '' : 'disabled' }}>
-                        Halaman Selanjutnya <i class="fas fa-chevron-right"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Kode CPL</th>
+                    <th>Deskripsi</th>
+                    <th>Bobot Total</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($cpls as $cpl)
+                    <tr>
+                        <td>{{ $cpl->kode_cpl }}</td>
+                        <td>{{ $cpl->deskripsi }}</td>
+                        <td class="text-center">
+                            {{ $cpl->cpmks->sum('bobot') }}
+                            <br>
+                            <a href="{{ route('cpl.show', $cpl->id) }}" class="btn btn-sm btn-outline-primary mt-1">Detail</a>
+                        </td>
+                        <td>
+                            <a href="{{ route('cpl.edit', $cpl->id) }}" class="btn btn-outline-success btn-sm">Edit</a>
+                            <form action="{{ route('cpl.destroy', $cpl->id) }}" method="POST" class="d-inline-block">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
+                            </form>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="4" class="text-center">Tidak ada data CPL</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
     </div>
 </div>
 @endsection
+
+
 
 @section('styles')
 <style>
