@@ -38,6 +38,9 @@
             <a href="{{ route('cpmk.index') }}" class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('cpmk*') ? 'active' : '' }}">
                 <i class="fas fa-tasks me-2"></i> CPMK
             </a>
+            <a href="{{ route('users.index') }}" class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('user*') ? 'active' : '' }}">
+                <i class="fas fa-tasks me-2"></i> User
+            </a>
 
             <!-- Settings button moved back to bottom -->
             <div class="mt-auto text-center py-3">

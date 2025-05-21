@@ -30,7 +30,7 @@ class MahasiswaController extends Controller
             'nim' => 'required|string|max:20|unique:mahasiswas',
             'nama' => 'required|string|max:255',
             'angkatan' => 'required|integer|min:2000|max:' . (date('Y') + 1),
-            'email' => 'required|email|unique:mahasiswas',
+            'email' => 'nullable|email|unique:mahasiswas',
             'no_hp' => 'required|string|max:20',
             'jenis_kelamin' => 'required|in:L,P',
             'alamat' => 'required|string'
