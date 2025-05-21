@@ -19,6 +19,7 @@ return new class extends Migration
             $table->longText('deskripsi');
             $table->string('pic');
             $table->timestamps();
+            $table->float('bobot')->default(0);
         });
     }
 

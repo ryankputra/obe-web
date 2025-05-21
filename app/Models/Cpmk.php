@@ -14,8 +14,10 @@ class Cpmk extends Model
         'kode_cpmk',
         'mata_kuliah',
         'deskripsi',
-        'pic'
+        'pic',
+        'bobot',
     ];
+    
 
     public function cpl()
     {

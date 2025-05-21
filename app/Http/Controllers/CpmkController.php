@@ -11,9 +11,8 @@ class CpmkController extends Controller
 {
     public function index()
     {
-        $cpmks = Cpmk::with('cpl')->get()->sortBy(function ($item) {
-            return (int) filter_var($item->kode_cpl, FILTER_SANITIZE_NUMBER_INT);
-        });
+        $cpmks = Cpmk::with('cpl')->orderByRaw("CAST(SUBSTRING(kode_cpmk, 6) AS UNSIGNED)")->get();
+
 
         $cpls = Cpl::all()->sortBy(function ($item) {
             return (int) filter_var($item->kode_cpl, FILTER_SANITIZE_NUMBER_INT);
@@ -33,6 +32,8 @@ class CpmkController extends Controller
             'mata_kuliah' => 'required',
             'deskripsi' => 'required',
             'pic' => 'required',
+            'bobot' => 'required|numeric|min:0|max:100',
+
         ]);
 
         $cpl = Cpl::where('kode_cpl', $validated['kode_cpl'])->firstOrFail();
@@ -49,6 +50,7 @@ class CpmkController extends Controller
             'mata_kuliah' => $validated['mata_kuliah'],
             'deskripsi' => $validated['deskripsi'],
             'pic' => $validated['pic'],
+            'bobot' => $validated['bobot'],
         ]);
 
         return redirect()->route('cpmk.index')->with('success', 'CPMK berhasil ditambahkan');
@@ -63,6 +65,8 @@ class CpmkController extends Controller
             'mata_kuliah' => 'required',
             'deskripsi' => 'required',
             'pic' => 'required',
+            'bobot' => 'required|numeric|min:0|max:100',
+
         ]);
 
         if (Cpmk::where('kode_cpmk', $validated['kode_cpmk'])->where('id', '!=', $id)->exists()) {

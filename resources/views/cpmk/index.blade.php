@@ -11,8 +11,7 @@
                 {{ session('success') }}
             </div>
         @endif
-
-        <div class="d-flex justify-content-end align-items-center mb-3">
+                <div class="d-flex justify-content-end align-items-center mb-3">
             <div class="d-flex">
                 <button class="btn btn-success rounded-circle me-2 d-flex justify-content-center align-items-center"
                     style="width: 40px; height: 40px;" data-bs-toggle="modal" data-bs-target="#addCpmkModal">
@@ -20,6 +19,51 @@
                 </button>
             </div>
         </div>
+                <!-- Filter Section -->
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <i class="fas fa-filter me-2"></i>Filter CPMK
+                    </div>
+                    <div class="card-body">
+                        <form method="GET" action="{{ route('cpmk.index') }}">
+                            <div class="row g-3">
+                                <div class="col-md-2">
+                                    <label for="kode_cpmk" class="form-label">Kode CPMK</label>
+                                    <input type="text" name="kode_cpmk" class="form-control" value="{{ request('kode_cpmk') }}">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="kode_cpl" class="form-label">Kode CPL</label>
+                                    <input type="text" name="kode_cpl" class="form-control" value="{{ request('kode_cpl') }}">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="mata_kuliah" class="form-label">Mata Kuliah</label>
+                                    <input type="text" name="mata_kuliah" class="form-control" value="{{ request('mata_kuliah') }}">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="pic" class="form-label">PIC</label>
+                                    <input type="text" name="pic" class="form-control" value="{{ request('pic') }}">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="bobot" class="form-label">Bobot</label>
+                                    <input type="number" name="bobot" class="form-control" value="{{ request('bobot') }}">
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-primary me-2 w-100">
+                                        <i class="fas fa-search me-1"></i>Filter
+                                    </button>
+                                    <a href="{{ route('cpmk.index') }}" class="btn btn-secondary w-100 mt-2">
+                                        <i class="fas fa-sync-alt me-1"></i>Reset
+                                    </a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
         <div class="row">
             <div class="col-12">
@@ -27,10 +71,11 @@
                     <table class="table table-bordered">
                         <thead style="background-color: #2f5f98; color: #fff;">
                             <tr>
-                                <th class="text-start">Kode CPL</th>
                                 <th class="text-start">Kode CPMK</th>
-                                <th class="text-start">Mata Kuliah</th>
                                 <th class="text-start">Deskripsi</th>
+                                <th class="text-start">Kode CPL</th>
+                                <th class="text-start">Mata Kuliah</th>
+                                <th class="text-start">Bobot</th>
                                 <th class="text-start">PIC</th>
                                 <th class="text-start">Action</th>
                             </tr>
@@ -38,17 +83,22 @@
                         <tbody>
                             @forelse($cpmks as $cpmk)
                                 <tr>
-                                    <td class="text-start">{{ $cpmk->kode_cpl }}</td>
                                     <td class="text-start">{{ $cpmk->kode_cpmk }}</td>
-                                    <td class="text-start">{{ $cpmk->mata_kuliah }}</td>
                                     <td class="text-start">{{ $cpmk->deskripsi }}</td>
+                                    <td class="text-start">{{ $cpmk->kode_cpl }}</td>
+                                    <td class="text-start">{{ $cpmk->mata_kuliah }}</td>
+                                    <td class="text-start">{{ $cpmk->bobot }}</td>
                                     <td class="text-start">{{ $cpmk->pic }}</td>
                                     <td class="text-start">
                                         <a href="#" class="btn btn-outline-info btn-sm" data-bs-toggle="modal"
                                             data-bs-target="#editCpmkModal" data-id="{{ $cpmk->id }}"
-                                            data-kode_cpl="{{ $cpmk->kode_cpl }}" data-kode_cpmk="{{ $cpmk->kode_cpmk }}"
+                                            data-kode_cpmk="{{ $cpmk->kode_cpmk }}"
+                                            data-deskripsi="{{ $cpmk->deskripsi }}"
+                                            data-kode_cpl="{{ $cpmk->kode_cpl }}"
                                             data-mata_kuliah="{{ $cpmk->mata_kuliah }}"
-                                            data-deskripsi="{{ $cpmk->deskripsi }}" data-pic="{{ $cpmk->pic }}">
+                                            data-bobot="{{ $cpmk->bobot }}"
+                                            data-pic="{{ $cpmk->pic }}">
+                                            
                                             Edit
                                         </a>
                                         <form action="{{ route('cpmk.destroy', $cpmk->id) }}" method="POST"
@@ -114,6 +164,10 @@
                             <textarea class="form-control" id="deskripsi" name="deskripsi" rows="4" required></textarea>
                         </div>
                         <div class="mb-3">
+                            <label for="bobot" class="form-label">Bobot</label>
+                            <input type="number" class="form-control" id="bobot" name="bobot" required>
+                        </div>
+                        <div class="mb-3">
                             <label for="pic" class="form-label">PIC</label>
                             <input type="text" class="form-control" id="pic" name="pic" required>
                         </div>
@@ -164,6 +218,10 @@
                         <div class="mb-3">
                             <label for="edit_deskripsi" class="form-label">Deskripsi</label>
                             <textarea class="form-control" id="edit_deskripsi" name="deskripsi" rows="4" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_bobot" class="form-label">Bobot</label>
+                            <input type="number" class="form-control" id="edit_bobot" name="bobot" required>
                         </div>
                         <div class="mb-3">
                             <label for="edit_pic" class="form-label">PIC</label>
@@ -256,6 +314,7 @@
             const mataKuliah = button.getAttribute('data-mata_kuliah');
             const deskripsi = button.getAttribute('data-deskripsi');
             const pic = button.getAttribute('data-pic');
+            const bobot = button.getAttribute('data-bobot');
 
             const modal = this;
             const existingNumber = kodeCpmk.slice(-3);
@@ -266,6 +325,7 @@
             modal.querySelector('#edit_mata_kuliah').value = mataKuliah;
             modal.querySelector('#edit_deskripsi').value = deskripsi;
             modal.querySelector('#edit_pic').value = pic;
+            modal.querySelector('#edit_bobot').value = bobot;
             modal.querySelector('#editForm').action = `/cpmk/${id}`;
 
             modal.dataset.existingNumber = existingNumber;
@@ -305,5 +365,73 @@
             cplSelect.addEventListener('change', updatePreview);
             cpmkInput.addEventListener('input', updatePreview);
         });
+
+        const filterKodeCpmk = document.getElementById('filterKodeCpmk');
+    const filterKodeCpl = document.getElementById('filterKodeCpl');
+    const filterMataKuliah = document.getElementById('filterMataKuliah');
+    const filterPIC = document.getElementById('filterPIC');
+    const filterBobot = document.getElementById('filterBobot');
+    const filterButton = document.getElementById('filterButton');
+    const resetFilter = document.getElementById('resetFilter');
+    const tableBody = document.getElementById('cpmkTableBody');
+    const rows = tableBody.querySelectorAll('tr');
+
+    function filterCPMK() {
+        const kodeCpmkValue = filterKodeCpmk.value.toLowerCase();
+        const kodeCplValue = filterKodeCpl.value.toLowerCase();
+        const mataKuliahValue = filterMataKuliah.value.toLowerCase();
+        const picValue = filterPIC.value.toLowerCase();
+        const bobotValue = filterBobot.value;
+
+        let visibleRows = 0;
+
+        rows.forEach(row => {
+            const kodeCpmk = row.cells[0].textContent.toLowerCase();
+            const kodeCpl = row.cells[1].textContent.toLowerCase();
+            const mataKuliah = row.cells[2].textContent.toLowerCase();
+            const pic = row.cells[3].textContent.toLowerCase();
+            const bobot = row.cells[4].textContent;
+
+            const matchCpmk = kodeCpmk.includes(kodeCpmkValue);
+            const matchCpl = kodeCpl.includes(kodeCplValue);
+            const matchMk = mataKuliah.includes(mataKuliahValue);
+            const matchPic = pic.includes(picValue);
+            const matchBobot = bobotValue === '' || bobot === bobotValue;
+
+            if (matchCpmk && matchCpl && matchMk && matchPic && matchBobot) {
+                row.style.display = '';
+                visibleRows++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        // Tampilkan pesan jika tidak ada hasil
+        const existingNoResults = document.getElementById('noResultsRow');
+        if (visibleRows === 0) {
+            if (!existingNoResults) {
+                const noResultsRow = document.createElement('tr');
+                noResultsRow.innerHTML = '<td colspan="6" class="text-center">Tidak ada data yang sesuai dengan filter</td>';
+                noResultsRow.id = 'noResultsRow';
+                tableBody.appendChild(noResultsRow);
+            }
+        } else {
+            if (existingNoResults) {
+                existingNoResults.remove();
+            }
+        }
+    }
+
+    // Event listeners
+    filterButton.addEventListener('click', filterCPMK);
+    resetFilter.addEventListener('click', function () {
+        filterKodeCpmk.value = '';
+        filterKodeCpl.value = '';
+        filterMataKuliah.value = '';
+        filterPIC.value = '';
+        filterBobot.value = '';
+        filterCPMK();
+    });
     </script>
 @endsection
+
