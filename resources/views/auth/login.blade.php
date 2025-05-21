@@ -6,6 +6,8 @@
     <title>Login - Sistem Informasi Penilaian UPITRA</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         body {
             background-image: url('/images/background.png');
@@ -86,6 +88,19 @@
         .text-center a {
             font-size: 0.9rem;
         }
+        .password-container {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: #333;
+        }
     </style>
 </head>
 <body>
@@ -107,7 +122,10 @@
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" name="password" class="form-control" placeholder="Masukkan Password" required>
+                    <div class="password-container">
+                        <input type="password" id="password" name="password" class="form-control" placeholder="Masukkan Password" required>
+                        <i class="bi bi-eye-slash password-toggle" id="togglePassword" onclick="togglePassword()"></i>
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-primary">LOGIN</button>
                 <!-- Tambahan Reset Password -->
@@ -119,5 +137,21 @@
             </form>
         </div>
     </div>
+
+    <script>
+        function togglePassword() {
+            var passwordField = document.getElementById("password");
+            var toggleIcon = document.getElementById("togglePassword");
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                toggleIcon.classList.remove("bi-eye-slash");
+                toggleIcon.classList.add("bi-eye");
+            } else {
+                passwordField.type = "password";
+                toggleIcon.classList.remove("bi-eye");
+                toggleIcon.classList.add("bi-eye-slash");
+            }
+        }
+    </script>
 </body>
 </html>
