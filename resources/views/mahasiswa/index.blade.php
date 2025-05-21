@@ -16,12 +16,9 @@
 
     <div class="row mb-3">
         <div class="col-12 d-flex justify-content-between align-items-center">
-            <a href="/" class="btn btn-secondary">
-                <i class="fas fa-arrow-left me-1"></i> Kembali
-            </a>
-            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addMahasiswaModal">
+            <a href="{{ route('mahasiswa.create') }}" class="btn btn-success">
                 <i class="fas fa-plus me-1"></i> Tambah Mahasiswa
-            </button>
+            </a>
         </div>
     </div>
 
@@ -62,80 +59,6 @@
                 @endforeach
             </tbody>
         </table>
-    </div>
-</div>
-
-<!-- Modal Tambah Mahasiswa -->
-<div class="modal fade" id="addMahasiswaModal" tabindex="-1" aria-labelledby="addMahasiswaModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <form method="POST" action="{{ route('mahasiswa.store') }}">
-            @csrf
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addMahasiswaModalLabel">Tambah Mahasiswa</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    {{-- Tampilkan pesan error validasi jika ada --}}
-                    @if ($errors->any())
-                        <div class="alert alert-danger">
-                            <ul class="mb-0">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
-
-                    <div class="mb-3">
-                        <label>NIM</label>
-                        <input type="text" name="nim" class="form-control" required value="{{ old('nim') }}">
-                    </div>
-                    <div class="mb-3">
-                        <label>Nama</label>
-                        <input type="text" name="nama" class="form-control" required value="{{ old('nama') }}">
-                    </div>
-                    <div class="mb-3">
-                        <label>Jenis Kelamin</label>
-                        <select name="jenis_kelamin" class="form-control" required>
-                            <option value="">Pilih</option>
-                            <option value="L" {{ old('jenis_kelamin') == 'L' ? 'selected' : '' }}>Laki-laki</option>
-                            <option value="P" {{ old('jenis_kelamin') == 'P' ? 'selected' : '' }}>Perempuan</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label>Prodi</label>
-                        <select name="prodi_id" class="form-control" required>
-                            <option value="">Pilih Prodi</option>
-                            @foreach($prodis as $prodi)
-                                <option value="{{ $prodi->id }}" {{ old('prodi_id') == $prodi->id ? 'selected' : '' }}>
-                                    {{ $prodi->nama_prodi }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label>Angkatan</label>
-                        <input type="number" name="angkatan" class="form-control" min="2000" max="{{ date('Y') + 1 }}" required value="{{ old('angkatan') }}">
-                    </div>
-                    <div class="mb-3">
-                        <label>Alamat</label>
-                        <textarea name="alamat" class="form-control" required>{{ old('alamat') }}</textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label>Email</label>
-                        <input type="email" name="email" class="form-control" required value="{{ old('email') }}">
-                    </div>
-                    <div class="mb-3">
-                        <label>No HP</label>
-                        <input type="text" name="no_hp" class="form-control" required value="{{ old('no_hp') }}">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Simpan</button>
-                </div>
-            </div>
-        </form>
     </div>
 </div>
 @endsection
