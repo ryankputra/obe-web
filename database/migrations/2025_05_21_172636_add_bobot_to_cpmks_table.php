@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('role')->after('password'); // Replace 'existing_column_name' with the column you want to place it after
+        Schema::table('cpmks', function (Blueprint $table) {
+            $table->integer('bobot')->default(0)->after('kode_cpmk');
         });
     }
 
@@ -21,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::table('cpmks', function (Blueprint $table) {
+            $table->dropColumn('bobot');
+        });
     }
 };
