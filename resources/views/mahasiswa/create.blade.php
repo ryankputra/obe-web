@@ -6,14 +6,14 @@
 <div class="container-fluid">
     <h1 class="dashboard-heading mt-4">Tambah Mahasiswa</h1>
 
-    <!-- Notifiikasi Sukses -->
+    <!-- Notifikasi Sukses -->
     @if (session('success'))
         <div class="alert alert-success">
             {{ session('success') }}
         </div>
     @endif
 
-    <!-- Notifiikasi Error -->
+    <!-- Notifikasi Error -->
     @if ($errors->any())
         <div class="alert alert-danger">
             <ul class="mb-0">
@@ -24,7 +24,7 @@
         </div>
     @endif
 
-    <!-- Back Button -->
+    <!-- Action Buttons -->
     <div class="row mb-3">
         <div class="col-12 d-flex justify-content-end align-items-center">
             <a href="{{ route('mahasiswa.index') }}"
@@ -86,12 +86,9 @@
                     <label for="alamat" class="form-label">Alamat</label>
                     <textarea name="alamat" id="alamat" class="form-control" required>{{ old('alamat') }}</textarea>
                 </div>
-                <div class="col-12 d-flex justify-content-between">
+                <div class="col-12">
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save me-1"></i> Simpan
-                    </button>
-                    <button type="submit" name="continue" value="1" class="btn btn-success">
-                        <i class="fas fa-save me-1"></i> Simpan dan Tambah Lagi
                     </button>
                 </div>
             </form>
@@ -101,20 +98,20 @@
 @endsection
 
 @section('styles')
-<style>
-    body {
-        background-color: #def4ff;
-    }
+    <style>
+        body {
+            background-color: #def4ff;
+        }
 
-    .dashboard-heading {
-        font-size: 2rem;
-        font-weight: bold;
-        color: #333;
-    }
+        .dashboard-heading {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+        }
 
-    .card-header {
-        background-color: rgb(0, 114, 202);
-        color: white;
-    }
-</style>
+        .card-header {
+            background-color: rgb(0, 114, 202);
+            color: white;
+        }
+    </style>
 @endsection
