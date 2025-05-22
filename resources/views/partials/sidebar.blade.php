@@ -1,3 +1,4 @@
+
 <div class="d-flex" style="min-height: 100vh;">
     <!-- Sidebar -->
     <div class="bg-primary border-right" id="sidebar-wrapper">
@@ -43,9 +44,13 @@
             <a href="{{ route('cpmk.index') }}" class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('cpmk*') ? 'active' : '' }}">
                 <i class="fas fa-tasks me-2"></i> CPMK
             </a>
-            <a href="{{ route('users.index') }}" class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('user*') ? 'active' : '' }}">
-                <i class="fas fa-tasks me-2"></i> User
-            </a>
+
+            <!-- User menu item, visible only to admin -->
+            @if(auth()->user()->role == 'admin')
+                <a href="{{ route('users.index') }}" class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('user*') ? 'active' : '' }}">
+                    <i class="fas fa-users me-2"></i> User
+                </a>
+            @endif
 
             <!-- Settings button -->
             <div class="mt-auto text-center py-3">
@@ -55,11 +60,6 @@
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="settingsDropdown">
                         <li><a class="dropdown-item" href="{{ route('profile') }}"><i class="fas fa-user me-2"></i> Profil</a></li>
-                        @if(auth()->user()->role == 'admin')
-                            <li><a class="dropdown-item" href="{{ route('users.create') }}"><i class="fas fa-user-plus me-2"></i> Tambah Akun</a></li>
-                            <li><a class="dropdown-item" href="{{ route('users.index') }}"><i class="fas fa-users-cog me-2"></i> Kelola Pengguna</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                        @endif
                         <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
                     </ul>
                 </div>
