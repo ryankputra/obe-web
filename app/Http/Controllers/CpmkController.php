@@ -9,19 +9,32 @@ use Illuminate\Http\Request;
 
 class CpmkController extends Controller
 {
-    public function index()
+    public function create()
     {
-        $cpmks = Cpmk::with('cpl')->orderByRaw("CAST(SUBSTRING(kode_cpmk, 6) AS UNSIGNED)")->get();
-
-
-        $cpls = Cpl::all()->sortBy(function ($item) {
-            return (int) filter_var($item->kode_cpl, FILTER_SANITIZE_NUMBER_INT);
-        });
-
-        $matakuliahs = MataKuliah::all();
-
-        return view('cpmk.index', compact('cpmks', 'cpls', 'matakuliahs'));
+        $cpls = Cpl::all(); // Ambil data CPL untuk select
+        $matakuliahs = MataKuliah::all(); // Ambil data Mata Kuliah
+        return view('cpmk.create', compact('cpls', 'matakuliahs'));
     }
+
+    public function index()
+{
+    $cpmks = Cpmk::with('cpl')
+        ->join('cpls', 'cpmks.kode_cpl', '=', 'cpls.kode_cpl') // ganti ke kolom yang benar
+        ->orderByRaw("CAST(SUBSTRING(cpls.kode_cpl, 4) AS UNSIGNED) ASC")
+        ->orderByRaw("CAST(SUBSTRING(cpmks.kode_cpmk, 6) AS UNSIGNED) ASC")
+        ->select('cpmks.*')
+        ->get();
+
+    $cpls = Cpl::all()->sortBy(function ($item) {
+        return (int) filter_var($item->kode_cpl, FILTER_SANITIZE_NUMBER_INT);
+    });
+
+    $matakuliahs = MataKuliah::all();
+
+    return view('cpmk.index', compact('cpmks', 'cpls', 'matakuliahs'));
+}
+
+
 
     // app/Http/Controllers/CpmkController.php (Store Method)
     public function store(Request $request)

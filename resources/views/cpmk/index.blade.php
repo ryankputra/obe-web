@@ -12,13 +12,16 @@
             </div>
         @endif
                 <div class="d-flex justify-content-end align-items-center mb-3">
-            <div class="d-flex">
-                <button class="btn btn-success rounded-circle me-2 d-flex justify-content-center align-items-center"
-                    style="width: 40px; height: 40px;" data-bs-toggle="modal" data-bs-target="#addCpmkModal">
-                    <i class="fas fa-plus text-white"></i>
-                </button>
-            </div>
+                <div class="d-flex">
+                    <a href="{{ route('cpmk.create') }}" class="btn btn-success rounded-circle me-2 d-flex justify-content-center align-items-center"
+                        style="width: 40px; height: 40px;">
+                        <i class="fas fa-plus text-white"></i>
+                    </a>
+                </div>
+
         </div>
+
+        
                 <!-- Filter Section -->
         <div class="row mb-3">
             <div class="col-12">
@@ -365,73 +368,5 @@
             cplSelect.addEventListener('change', updatePreview);
             cpmkInput.addEventListener('input', updatePreview);
         });
-
-        const filterKodeCpmk = document.getElementById('filterKodeCpmk');
-    const filterKodeCpl = document.getElementById('filterKodeCpl');
-    const filterMataKuliah = document.getElementById('filterMataKuliah');
-    const filterPIC = document.getElementById('filterPIC');
-    const filterBobot = document.getElementById('filterBobot');
-    const filterButton = document.getElementById('filterButton');
-    const resetFilter = document.getElementById('resetFilter');
-    const tableBody = document.getElementById('cpmkTableBody');
-    const rows = tableBody.querySelectorAll('tr');
-
-    function filterCPMK() {
-        const kodeCpmkValue = filterKodeCpmk.value.toLowerCase();
-        const kodeCplValue = filterKodeCpl.value.toLowerCase();
-        const mataKuliahValue = filterMataKuliah.value.toLowerCase();
-        const picValue = filterPIC.value.toLowerCase();
-        const bobotValue = filterBobot.value;
-
-        let visibleRows = 0;
-
-        rows.forEach(row => {
-            const kodeCpmk = row.cells[0].textContent.toLowerCase();
-            const kodeCpl = row.cells[1].textContent.toLowerCase();
-            const mataKuliah = row.cells[2].textContent.toLowerCase();
-            const pic = row.cells[3].textContent.toLowerCase();
-            const bobot = row.cells[4].textContent;
-
-            const matchCpmk = kodeCpmk.includes(kodeCpmkValue);
-            const matchCpl = kodeCpl.includes(kodeCplValue);
-            const matchMk = mataKuliah.includes(mataKuliahValue);
-            const matchPic = pic.includes(picValue);
-            const matchBobot = bobotValue === '' || bobot === bobotValue;
-
-            if (matchCpmk && matchCpl && matchMk && matchPic && matchBobot) {
-                row.style.display = '';
-                visibleRows++;
-            } else {
-                row.style.display = 'none';
-            }
-        });
-
-        // Tampilkan pesan jika tidak ada hasil
-        const existingNoResults = document.getElementById('noResultsRow');
-        if (visibleRows === 0) {
-            if (!existingNoResults) {
-                const noResultsRow = document.createElement('tr');
-                noResultsRow.innerHTML = '<td colspan="6" class="text-center">Tidak ada data yang sesuai dengan filter</td>';
-                noResultsRow.id = 'noResultsRow';
-                tableBody.appendChild(noResultsRow);
-            }
-        } else {
-            if (existingNoResults) {
-                existingNoResults.remove();
-            }
-        }
-    }
-
-    // Event listeners
-    filterButton.addEventListener('click', filterCPMK);
-    resetFilter.addEventListener('click', function () {
-        filterKodeCpmk.value = '';
-        filterKodeCpl.value = '';
-        filterMataKuliah.value = '';
-        filterPIC.value = '';
-        filterBobot.value = '';
-        filterCPMK();
-    });
     </script>
 @endsection
-
