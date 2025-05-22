@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class MataKuliah extends Model
 {
     use HasFactory;
+    protected $table = 'mata_kuliahs';
 
     protected $fillable = [
         'kode_mk',
@@ -21,4 +22,9 @@ class MataKuliah extends Model
     protected $primaryKey = 'kode_mk';
     public $incrementing = false;
     protected $keyType = 'string';
+
+    public function getRouteKeyName()
+    {
+        return 'kode_mk';
+    }
 }

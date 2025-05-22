@@ -1,5 +1,5 @@
 <?php
-//cek
+
 namespace App\Http\Controllers;
 
 use App\Models\MataKuliah;
@@ -7,27 +7,38 @@ use Illuminate\Http\Request;
 
 class MataKuliahController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $mataKuliahs = MataKuliah::all();
-        return view('mata_kuliah.index', compact('mataKuliahs'));
-    }
+        $query = MataKuliah::query();
 
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'kode_mk' => 'required|string|max:10',
-            'nama_mk' => 'required|string|max:255',
-            'deskripsi' => 'nullable|string',
-            'semester' => 'required|integer|min:1|max:8',
-            'sks_teori' => 'required|integer|min:0',
-            'sks_praktik' => 'required|integer|min:0',
-            'status_mata_kuliah' => 'required|string',
+        // Apply filters
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('kode_mk', 'like', "%$search%")
+                    ->orWhere('nama_mk', 'like', "%$search%");
+            });
+        }
+
+        if ($request->filled('semester')) {
+            $query->where('semester', $request->input('semester'));
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status_mata_kuliah', $request->input('status'));
+        }
+
+        $mataKuliahs = $query->paginate(10);
+
+        $totalSKS = $query->get()->sum(function ($mk) {
+            return $mk->sks_teori + $mk->sks_praktik;
+        });
+
+
+        return view('mata_kuliah.index', [
+            'mataKuliahs' => $mataKuliahs,
+            'totalSKS' => $totalSKS
         ]);
-
-        MataKuliah::create($validated);
-
-        return redirect()->route('mata_kuliah.create')->with('success', 'Data mata kuliah berhasil disimpan!');
     }
 
     public function create()
@@ -35,39 +46,53 @@ class MataKuliahController extends Controller
         return view('mata_kuliah.create');
     }
 
-
-    public function update(Request $request, $id)
+    public function store(Request $request)
     {
-        $request->validate([
-            'kode_mk' => 'required|string|max:255',
-            'nama_mk' => 'required|string|max:255',
-            'deskripsi' => 'nullable|string',
-            'semester' => 'required|integer',
-            'sks_teori' => 'required|integer',
-            'sks_praktik' => 'required|integer',
-            'status_mata_kuliah' => 'required|string',
+        $validated = $request->validate([
+            'kode_mk' => 'required|unique:mata_kuliahs,kode_mk',
+            'nama_mk' => 'required',
+            'deskripsi' => 'nullable',
+            'semester' => 'required|integer|between:1,8',
+            'sks_teori' => 'required|integer|min:0',
+            'sks_praktik' => 'required|integer|min:0',
+            'status_mata_kuliah' => 'required|in:Wajib Prodi,Pilihan,Wajib Fakultas,Wajib Universitas',
         ]);
 
-        $mataKuliah = MataKuliah::findOrFail($id);
-        $mataKuliah->update($request->all());
+        MataKuliah::create($validated);
 
-        return response()->json([
-            'success' => true,
-            'id' => $mataKuliah->id,
-            'kode_mk' => $mataKuliah->kode_mk,
-            'nama_mk' => $mataKuliah->nama_mk,
-            'deskripsi' => $mataKuliah->deskripsi,
-            'semester' => $mataKuliah->semester,
-            'sks_teori' => $mataKuliah->sks_teori,
-            'sks_praktik' => $mataKuliah->sks_praktik,
-            'status_mata_kuliah' => $mataKuliah->status_mata_kuliah,
-        ]);
+        return redirect()->route('mata_kuliah.index')
+            ->with('success', 'Mata kuliah berhasil ditambahkan');
     }
 
-    public function destroy($id)
+    public function edit(MataKuliah $mataKuliah)
     {
-        $mataKuliah = MataKuliah::findOrFail($id);
+        return view('mata_kuliah.edit', compact('mataKuliah'));
+    }
+
+    public function update(Request $request, MataKuliah $mataKuliah)
+    {
+        $validated = $request->validate([
+            'kode_mk' => 'required|unique:mata_kuliahs,kode_mk,' . $mataKuliah->kode_mk . ',kode_mk',
+
+            'nama_mk' => 'required',
+            'deskripsi' => 'nullable',
+            'semester' => 'required|integer|between:1,8',
+            'sks_teori' => 'required|integer|min:0',
+            'sks_praktik' => 'required|integer|min:0',
+            'status_mata_kuliah' => 'required|in:Wajib Prodi,Pilihan,Wajib Fakultas,Wajib Universitas',
+        ]);
+
+        $mataKuliah->update($validated);
+
+        return redirect()->route('mata_kuliah.index')
+            ->with('success', 'Mata kuliah berhasil diperbarui');
+    }
+
+    public function destroy(MataKuliah $mataKuliah)
+    {
         $mataKuliah->delete();
-        return response()->json(['success' => true]);
+
+        return redirect()->route('mata_kuliah.index')
+            ->with('success', 'Mata kuliah berhasil dihapus');
     }
 }
