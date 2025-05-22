@@ -6,11 +6,14 @@
     <div class="container-fluid">
         <h1 class="dashboard-heading mt-4">Daftar Mata Kuliah</h1>
         <div class="row mb-3">
+        <!-- Action Buttons -->
+        <div class="row mb-3">
             <div class="col-12 d-flex justify-content-end align-items-center">
-                <button class="btn btn-primary rounded-circle me-2 d-flex justify-content-center align-items-center"
-                    style="width: 40px; height: 40px;" data-bs-toggle="modal" data-bs-target="#addCourseModal">
+                <a href="{{ route('mata_kuliah.create') }}"
+                    class="btn btn-success rounded-circle me-2 d-flex justify-content-center align-items-center"
+                    style="width: 40px; height: 40px;">
                     <i class="fas fa-plus text-white"></i>
-                </button>
+                </a>
             </div>
         </div>
         
@@ -116,8 +119,6 @@
         </div>
     </div>
 
-    <!-- Tambah Mata Kuliah Modal -->
-    @include('mata_kuliah.create')
 
     <!-- Edit Mata Kuliah Modal -->
     @include('mata_kuliah.edit')

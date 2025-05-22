@@ -1,90 +1,87 @@
-<div class="modal fade" id="addCourseModal" tabindex="-1" aria-labelledby="addCourseModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addCourseModalLabel">Tambah Mata Kuliah</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form id="addCourseForm" method="post" action="{{ route('mata_kuliah.store') }}">
-                <div class="modal-body">
+@extends('layouts.app')
 
-                    @csrf
-                    <div class="mb-3">
-                        <label for="kodeMk" class="form-label">Kode MK</label>
-                        <input type="text" class="form-control text-start" id="kodeMk" name="kode_mk">
-                    </div>
-                    <div class="mb-3">
-                        <label for="namaMk" class="form-label">Nama MK</label>
-                        <input type="text" class="form-control text-start" id="namaMk" name="nama_mk">
-                    </div>
-                    <div class="mb-3">
-                        <label for="deskripsi" class="form-label">Deskripsi</label>
-                        <textarea class="form-control text-start" id="deskripsi" name="deskripsi" rows="4"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="semester" class="form-label">Semester</label>
-                        <input type="number" class="form-control text-start" id="semester" name="semester">
-                    </div>
-                    <div class="mb-3">
-                        <label for="sksTeori" class="form-label">SKS Teori</label>
-                        <input type="number" class="form-control text-start" id="sksTeori" name="sks_teori">
-                    </div>
-                    <div class="mb-3">
-                        <label for="sksPraktik" class="form-label">SKS Praktik</label>
-                        <input type="number" class="form-control text-start" id="sksPraktik" name="sks_praktik">
-                    </div>
-                    <div class="mb-3">
-                        <label for="statusMataKuliah" class="form-label">Status Mata Kuliah</label>
-                        <select class="form-control text-start" id="statusMataKuliah" name="status_mata_kuliah">
-                            <option value="Wajib Prodi">Wajib Prodi</option>
-                            <option value="Wajib Universitas">Wajib Universitas</option>
-                            <option value="Wajib Fakultas">Wajib Fakultas</option>
-                            <option value="Pilihan">Pilihan</option>
-                        </select>
-                    </div>
+@section('title', 'Tambah Mata Kuliah')
 
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary" id="addCourseButton">Tambah</button>
-                </div>
-            </form>
+@section('content')
+<div class="container mt-4">
+    <h1 class="mb-4">Tambah Mata Kuliah</h1>
+
+    @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+
+    <form action="{{ route('mata_kuliah.store') }}" method="POST">
+        @csrf
+        <div class="mb-3">
+            <label for="kode_mk" class="form-label">Kode Mata Kuliah</label>
+            <input type="text" name="kode_mk" id="kode_mk" class="form-control" value="{{ old('kode_mk') }}" required>
+            @error('kode_mk')
+                <small class="text-danger">{{ $message }}</small>
+            @enderror
         </div>
-    </div>
+
+        <div class="mb-3">
+            <label for="nama_mk" class="form-label">Nama Mata Kuliah</label>
+            <input type="text" name="nama_mk" id="nama_mk" class="form-control" value="{{ old('nama_mk') }}" required>
+            @error('nama_mk')
+                <small class="text-danger">{{ $message }}</small>
+            @enderror
+        </div>
+
+        <div class="mb-3">
+            <label for="deskripsi" class="form-label">Deskripsi</label>
+            <textarea name="deskripsi" id="deskripsi" class="form-control" rows="3">{{ old('deskripsi') }}</textarea>
+            @error('deskripsi')
+                <small class="text-danger">{{ $message }}</small>
+            @enderror
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label for="semester" class="form-label">Semester</label>
+                <select name="semester" id="semester" class="form-control" required>
+                    <option value="">-- Pilih Semester --</option>
+                    @for($i = 1; $i <= 8; $i++)
+                        <option value="{{ $i }}" {{ old('semester') == $i ? 'selected' : '' }}>{{ $i }}</option>
+                    @endfor
+                </select>
+                @error('semester')
+                    <small class="text-danger">{{ $message }}</small>
+                @enderror
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label for="sks_teori" class="form-label">SKS Teori</label>
+                <input type="number" name="sks_teori" id="sks_teori" class="form-control" value="{{ old('sks_teori') }}" required>
+                @error('sks_teori')
+                    <small class="text-danger">{{ $message }}</small>
+                @enderror
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label for="sks_praktik" class="form-label">SKS Praktik</label>
+                <input type="number" name="sks_praktik" id="sks_praktik" class="form-control" value="{{ old('sks_praktik') }}" required>
+                @error('sks_praktik')
+                    <small class="text-danger">{{ $message }}</small>
+                @enderror
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="status_mata_kuliah" class="form-label">Status Mata Kuliah</label>
+            <select name="status_mata_kuliah" id="status_mata_kuliah" class="form-control" required>
+                <option value="Wajib Prodi" {{ old('status_mata_kuliah') == 'Wajib Prodi' ? 'selected' : '' }}>Wajib Prodi</option>
+                <option value="Pilihan" {{ old('status_mata_kuliah') == 'Pilihan' ? 'selected' : '' }}>Pilihan</option>
+                <option value="Wajib Fakultas" {{ old('status_mata_kuliah') == 'Wajib Fakultas' ? 'selected' : '' }}>Wajib Fakultas</option>
+                <option value="Wajib Universitas" {{ old('status_mata_kuliah') == 'Wajib Universitas' ? 'selected' : '' }}>Wajib Universitas</option>
+            </select>
+            @error('status_mata_kuliah')
+                <small class="text-danger">{{ $message }}</small>
+            @enderror
+        </div>
+
+        <button type="submit" class="btn btn-success">Simpan</button>
+        <a href="{{ route('mata_kuliah.index') }}" class="btn btn-secondary">Kembali</a>
+    </form>
 </div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const form = document.getElementById('addCourseForm');
-        const modal = new bootstrap.Modal(document.getElementById('addCourseModal'));
-
-        form.addEventListener('submit', function (e) {
-            e.preventDefault(); // Hindari reload halaman
-
-            const formData = new FormData(form);
-
-            fetch(form.action, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
-                },
-                body: formData
-            })
-            .then(response => {
-                if (!response.ok) throw new Error("Gagal menyimpan data.");
-                return response.json(); // Jika respon JSON
-            })
-            .then(data => {
-                // Setelah berhasil
-                alert("Mata kuliah berhasil ditambahkan!");
-                form.reset(); // Reset form
-                // Fokus ke input pertama (opsional)
-                document.getElementById('kodeMk').focus();
-            })
-            .catch(error => {
-                console.error(error);
-                alert("Terjadi kesalahan saat menambahkan mata kuliah.");
-            });
-        });
-    });
-</script>
+@endsection
