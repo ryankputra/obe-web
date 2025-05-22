@@ -1,75 +1,118 @@
-<div class="modal fade" id="editCourseModal" tabindex="-1" aria-labelledby="editCourseModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editCourseModalLabel">Edit Mata Kuliah</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+@extends('layouts.app')
+
+@section('title', 'Edit Mata Kuliah')
+
+@section('content')
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">Edit Mata Kuliah</h4>
+                </div>
+                <div class="card-body">
+                    @if(session('success'))
+                        <div class="alert alert-success">{{ session('success') }}</div>
+                    @endif
+
+                    <form action="{{ route('mata_kuliah.update', $mataKuliah->kode_mk) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+                        
+                        <div class="mb-3">
+                            <label for="kode_mk" class="form-label">Kode Mata Kuliah</label>
+                            <input type="text" name="kode_mk" id="kode_mk" class="form-control" 
+                                value="{{ old('kode_mk', $mataKuliah->kode_mk) }}" required>
+                            @error('kode_mk')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="nama_mk" class="form-label">Nama Mata Kuliah</label>
+                            <input type="text" name="nama_mk" id="nama_mk" class="form-control" 
+                                value="{{ old('nama_mk', $mataKuliah->nama_mk) }}" required>
+                            @error('nama_mk')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="deskripsi" class="form-label">Deskripsi</label>
+                            <textarea name="deskripsi" id="deskripsi" class="form-control" rows="3">{{ old('deskripsi', $mataKuliah->deskripsi) }}</textarea>
+                            @error('deskripsi')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="semester" class="form-label">Semester</label>
+                                <select name="semester" id="semester" class="form-control" required>
+                                    <option value="">-- Pilih Semester --</option>
+                                    @for($i = 1; $i <= 8; $i++)
+                                        <option value="{{ $i }}" {{ old('semester', $mataKuliah->semester) == $i ? 'selected' : '' }}>
+                                            {{ $i }}
+                                        </option>
+                                    @endfor
+                                </select>
+                                @error('semester')
+                                    <small class="text-danger">{{ $message }}</small>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label for="sks_teori" class="form-label">SKS Teori</label>
+                                <input type="number" name="sks_teori" id="sks_teori" class="form-control" 
+                                    value="{{ old('sks_teori', $mataKuliah->sks_teori) }}" required>
+                                @error('sks_teori')
+                                    <small class="text-danger">{{ $message }}</small>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label for="sks_praktik" class="form-label">SKS Praktik</label>
+                                <input type="number" name="sks_praktik" id="sks_praktik" class="form-control" 
+                                    value="{{ old('sks_praktik', $mataKuliah->sks_praktik) }}" required>
+                                @error('sks_praktik')
+                                    <small class="text-danger">{{ $message }}</small>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="status_mata_kuliah" class="form-label">Status Mata Kuliah</label>
+                            <select name="status_mata_kuliah" id="status_mata_kuliah" class="form-control" required>
+                                <option value="Wajib Prodi" {{ old('status_mata_kuliah', $mataKuliah->status_mata_kuliah) == 'Wajib Prodi' ? 'selected' : '' }}>
+                                    Wajib Prodi
+                                </option>
+                                <option value="Pilihan" {{ old('status_mata_kuliah', $mataKuliah->status_mata_kuliah) == 'Pilihan' ? 'selected' : '' }}>
+                                    Pilihan
+                                </option>
+                                <option value="Wajib Fakultas" {{ old('status_mata_kuliah', $mataKuliah->status_mata_kuliah) == 'Wajib Fakultas' ? 'selected' : '' }}>
+                                    Wajib Fakultas
+                                </option>
+                                <option value="Wajib Universitas" {{ old('status_mata_kuliah', $mataKuliah->status_mata_kuliah) == 'Wajib Universitas' ? 'selected' : '' }}>
+                                    Wajib Universitas
+                                </option>
+                            </select>
+                            @error('status_mata_kuliah')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
+
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-primary me-2">
+                                <i class="fas fa-save me-1"></i> Simpan Perubahan
+                            </button>
+                            <a href="{{ route('mata_kuliah.index') }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-1"></i> Kembali
+                            </a>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <form id="editCourseForm" method="POST" action="">
-                @csrf
-                @method('PUT')
-                <div class="modal-body">
-                    <input type="hidden" name="id" id="editCourseId">
-
-                    <!-- Kode MK -->
-                    <div class="mb-3">
-                        <label for="kodeMk" class="form-label">Kode MK</label>
-                        <input type="text" class="form-control text-start" id="kodeMk" name="kode_mk">
-                        @error('kode_mk')<div class="text-danger">{{ $message }}</div>@enderror
-                    </div>
-
-                    <!-- Nama MK -->
-                    <div class="mb-3">
-                        <label for="namaMk" class="form-label">Nama MK</label>
-                        <input type="text" class="form-control text-start" id="namaMk" name="nama_mk">
-                        @error('nama_mk')<div class="text-danger">{{ $message }}</div>@enderror
-                    </div>
-
-                    <!-- Deskripsi -->
-                    <div class="mb-3">
-                        <label for="deskripsi" class="form-label">Deskripsi</label>
-                        <textarea class="form-control text-start" id="deskripsi" name="deskripsi" rows="4"></textarea>
-                        @error('deskripsi')<div class="text-danger">{{ $message }}</div>@enderror
-                    </div>
-
-                    <!-- Semester -->
-                    <div class="mb-3">
-                        <label for="semester" class="form-label">Semester</label>
-                        <input type="number" class="form-control text-start" id="semester" name="semester">
-                        @error('semester')<div class="text-danger">{{ $message }}</div>@enderror
-                    </div>
-
-                    <!-- SKS Teori -->
-                    <div class="mb-3">
-                        <label for="sksTeori" class="form-label">SKS Teori</label>
-                        <input type="number" class="form-control text-start" id="sksTeori" name="sks_teori">
-                        @error('sks_teori')<div class="text-danger">{{ $message }}</div>@enderror
-                    </div>
-
-                    <!-- SKS Praktik -->
-                    <div class="mb-3">
-                        <label for="sksPraktik" class="form-label">SKS Praktik</label>
-                        <input type="number" class="form-control text-start" id="sksPraktik" name="sks_praktik">
-                        @error('sks_praktik')<div class="text-danger">{{ $message }}</div>@enderror
-                    </div>
-
-                    <!-- Status Mata Kuliah -->
-                    <div class="mb-3">
-                        <label for="statusMataKuliah" class="form-label">Status Mata Kuliah</label>
-                        <select class="form-control text-start" id="statusMataKuliah" name="status_mata_kuliah">
-                            <option value="Wajib Prodi">Wajib Prodi</option>
-                            <option value="Wajib Universitas">Wajib Universitas</option>
-                            <option value="Wajib Fakultas">Wajib Fakultas</option>
-                            <option value="Pilihan">Pilihan</option>
-                        </select>
-                        @error('status_mata_kuliah')<div class="text-danger">{{ $message }}</div>@enderror
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
-                </div>
-            </form>
         </div>
     </div>
 </div>
+@endsection
