@@ -23,70 +23,49 @@
 
         
                 <!-- Filter Section -->
-<div class="row mb-3">
-    <div class="col-12">
-        <div class="card mb-4">
-            <div class="card-header bg-primary text-white">
-                <i class="fas fa-filter me-2"></i>Filter CPMK
-            </div>
-            <div class="card-body">
-                <form method="GET" action="{{ route('cpmk.index') }}">
-                    <div class="row g-3">
-                        <div class="col-md-2">
-                            <label for="kode_cpmk" class="form-label">Kode CPMK</label>
-                            <input type="text" name="kode_cpmk" class="form-control" value="{{ request('kode_cpmk') }}">
-                        </div>
-                        <div class="col-md-2">
-                            <label for="kode_cpl" class="form-label">Kode CPL</label>
-                            <select name="kode_cpl" class="form-control">
-                                <option value="">Semua CPL</option>
-                                @foreach($availableCpls as $cpl)
-                                    <option value="{{ $cpl->kode_cpl }}" {{ request('kode_cpl') == $cpl->kode_cpl ? 'selected' : '' }}>
-                                        {{ $cpl->kode_cpl }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="mata_kuliah" class="form-label">Mata Kuliah</label>
-                            <select name="mata_kuliah" class="form-control">
-                                <option value="">Semua MK</option>
-                                @foreach($availableMatakuliahs as $mk)
-                                    <option value="{{ $mk->kode_mk }}" {{ request('mata_kuliah') == $mk->kode_mk ? 'selected' : '' }}>
-                                        {{ $mk->kode_mk }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="pic" class="form-label">PIC</label>
-                            <select name="pic" class="form-control">
-                                <option value="">Semua PIC</option>
-                                @foreach($availablePics as $pic)
-                                    <option value="{{ $pic }}" {{ request('pic') == $pic ? 'selected' : '' }}>
-                                        {{ $pic }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="bobot" class="form-label">Bobot</label>
-                            <input type="number" name="bobot" class="form-control" value="{{ request('bobot') }}">
-                        </div>
-                        <div class="col-md-2 d-flex align-items-end">
-                            <button type="submit" class="btn btn-primary me-2 w-100">
-                                <i class="fas fa-search me-1"></i>Filter
-                            </button>
-                            <a href="{{ route('cpmk.index') }}" class="btn btn-secondary w-100 mt-2">
-                                <i class="fas fa-sync-alt me-1"></i>Reset
-                            </a>
-                        </div>
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <i class="fas fa-filter me-2"></i>Filter CPMK
                     </div>
-                </form>
+                    <div class="card-body">
+                        <form method="GET" action="{{ route('cpmk.index') }}">
+                            <div class="row g-3">
+                                <div class="col-md-2">
+                                    <label for="kode_cpmk" class="form-label">Kode CPMK</label>
+                                    <input type="text" name="kode_cpmk" class="form-control" value="{{ request('kode_cpmk') }}">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="kode_cpl" class="form-label">Kode CPL</label>
+                                    <input type="text" name="kode_cpl" class="form-control" value="{{ request('kode_cpl') }}">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="mata_kuliah" class="form-label">Mata Kuliah</label>
+                                    <input type="text" name="mata_kuliah" class="form-control" value="{{ request('mata_kuliah') }}">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="pic" class="form-label">PIC</label>
+                                    <input type="text" name="pic" class="form-control" value="{{ request('pic') }}">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="bobot" class="form-label">Bobot</label>
+                                    <input type="number" name="bobot" class="form-control" value="{{ request('bobot') }}">
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-primary me-2 w-100">
+                                        <i class="fas fa-search me-1"></i>Filter
+                                    </button>
+                                    <a href="{{ route('cpmk.index') }}" class="btn btn-secondary w-100 mt-2">
+                                        <i class="fas fa-sync-alt me-1"></i>Reset
+                                    </a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
 
         <div class="row">

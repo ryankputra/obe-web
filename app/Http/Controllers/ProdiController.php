@@ -9,14 +9,7 @@ class ProdiController extends Controller
 {
     public function index()
     {
-        $prodis = Prodi::withCount('mahasiswas')->get()->map(function ($prodi) {
-            return (object)[
-                'id' => $prodi->id,
-                'nama_prodi' => $prodi->nama_prodi,
-                'jumlah_mahasiswa' => $prodi->mahasiswas_count,
-            ];
-        });
-
+        $prodis = Prodi::withCount('mahasiswas')->get();
         return view('fakultasfst.index', compact('prodis'));
     }
 
@@ -24,10 +17,12 @@ class ProdiController extends Controller
     {
         $request->validate([
             'nama_prodi' => 'required|string|max:255|unique:prodis',
+            'status' => 'required|in:aktif,nonaktif',
         ]);
 
         Prodi::create([
             'nama_prodi' => $request->nama_prodi,
+            'status' => $request->status,
         ]);
 
         return response()->json(['message' => 'Prodi berhasil ditambahkan']);
@@ -43,11 +38,13 @@ class ProdiController extends Controller
     {
         $request->validate([
             'nama_prodi' => 'required|string|max:255|unique:prodis,nama_prodi,' . $id,
+            'status' => 'required|in:aktif,nonaktif',
         ]);
 
         $prodi = Prodi::findOrFail($id);
         $prodi->update([
             'nama_prodi' => $request->nama_prodi,
+            'status' => $request->status,
         ]);
 
         return response()->json(['message' => 'Prodi berhasil diperbarui']);
