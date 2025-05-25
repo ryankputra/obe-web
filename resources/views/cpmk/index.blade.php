@@ -11,18 +11,19 @@
                 {{ session('success') }}
             </div>
         @endif
-                <div class="d-flex justify-content-end align-items-center mb-3">
-                <div class="d-flex">
-                    <a href="{{ route('cpmk.create') }}" class="btn btn-success rounded-circle me-2 d-flex justify-content-center align-items-center"
-                        style="width: 40px; height: 40px;">
-                        <i class="fas fa-plus text-white"></i>
-                    </a>
-                </div>
+        <div class="d-flex justify-content-end align-items-center mb-3">
+            <div class="d-flex">
+                <a href="{{ route('cpmk.create') }}"
+                    class="btn btn-success rounded-circle me-2 d-flex justify-content-center align-items-center"
+                    style="width: 40px; height: 40px;">
+                    <i class="fas fa-plus text-white"></i>
+                </a>
+            </div>
 
         </div>
 
-        
-                <!-- Filter Section -->
+
+        <!-- Filter Section -->
         <div class="row mb-3">
             <div class="col-12">
                 <div class="card mb-4">
@@ -34,23 +35,49 @@
                             <div class="row g-3">
                                 <div class="col-md-2">
                                     <label for="kode_cpmk" class="form-label">Kode CPMK</label>
-                                    <input type="text" name="kode_cpmk" class="form-control" value="{{ request('kode_cpmk') }}">
+                                    <input type="text" name="kode_cpmk" class="form-control"
+                                        value="{{ request('kode_cpmk') }}">
                                 </div>
                                 <div class="col-md-2">
                                     <label for="kode_cpl" class="form-label">Kode CPL</label>
-                                    <input type="text" name="kode_cpl" class="form-control" value="{{ request('kode_cpl') }}">
+                                    <select name="kode_cpl" class="form-control">
+                                        <option value="">Semua CPL</option>
+                                        @foreach ($availableCpls as $cpl)
+                                            <option value="{{ $cpl->kode_cpl }}"
+                                                {{ request('kode_cpl') == $cpl->kode_cpl ? 'selected' : '' }}>
+                                                {{ $cpl->kode_cpl }}
+                                            </option>
+                                        @endforeach
+                                    </select>
                                 </div>
                                 <div class="col-md-2">
                                     <label for="mata_kuliah" class="form-label">Mata Kuliah</label>
-                                    <input type="text" name="mata_kuliah" class="form-control" value="{{ request('mata_kuliah') }}">
+                                    <select name="mata_kuliah" class="form-control">
+                                        <option value="">Semua MK</option>
+                                        @foreach ($availableMatakuliahs as $mk)
+                                            <option value="{{ $mk->kode_mk }}"
+                                                {{ request('mata_kuliah') == $mk->kode_mk ? 'selected' : '' }}>
+                                                {{ $mk->kode_mk }}
+                                            </option>
+                                        @endforeach
+                                    </select>
                                 </div>
                                 <div class="col-md-2">
                                     <label for="pic" class="form-label">PIC</label>
-                                    <input type="text" name="pic" class="form-control" value="{{ request('pic') }}">
+                                    <select name="pic" class="form-control">
+                                        <option value="">Semua PIC</option>
+                                        @foreach ($availablePics as $pic)
+                                            <option value="{{ $pic }}"
+                                                {{ request('pic') == $pic ? 'selected' : '' }}>
+                                                {{ $pic }}
+                                            </option>
+                                        @endforeach
+                                    </select>
                                 </div>
                                 <div class="col-md-2">
                                     <label for="bobot" class="form-label">Bobot</label>
-                                    <input type="number" name="bobot" class="form-control" value="{{ request('bobot') }}">
+                                    <input type="number" name="bobot" class="form-control"
+                                        value="{{ request('bobot') }}">
                                 </div>
                                 <div class="col-md-2 d-flex align-items-end">
                                     <button type="submit" class="btn btn-primary me-2 w-100">
@@ -96,12 +123,10 @@
                                         <a href="#" class="btn btn-outline-info btn-sm" data-bs-toggle="modal"
                                             data-bs-target="#editCpmkModal" data-id="{{ $cpmk->id }}"
                                             data-kode_cpmk="{{ $cpmk->kode_cpmk }}"
-                                            data-deskripsi="{{ $cpmk->deskripsi }}"
-                                            data-kode_cpl="{{ $cpmk->kode_cpl }}"
-                                            data-mata_kuliah="{{ $cpmk->mata_kuliah }}"
-                                            data-bobot="{{ $cpmk->bobot }}"
+                                            data-deskripsi="{{ $cpmk->deskripsi }}" data-kode_cpl="{{ $cpmk->kode_cpl }}"
+                                            data-mata_kuliah="{{ $cpmk->mata_kuliah }}" data-bobot="{{ $cpmk->bobot }}"
                                             data-pic="{{ $cpmk->pic }}">
-                                            
+
                                             Edit
                                         </a>
                                         <form action="{{ route('cpmk.destroy', $cpmk->id) }}" method="POST"
