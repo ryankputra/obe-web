@@ -9,55 +9,60 @@
         <!-- Action Buttons -->
         <div class="row mb-3">
             <div class="col-12 d-flex justify-content-end align-items-center">
-                <a href="{{ route('mata_kuliah.create') }}" class="btn btn-success">
-                    <i class="fas fa-plus me-1"></i> Tambah Mata Kuliah
+                <a href="{{ route('mata_kuliah.create') }}"
+                    class="btn btn-success rounded-circle me-2 d-flex justify-content-center align-items-center"
+                    style="width: 40px; height: 40px;">
+                    <i class="fas fa-plus text-white"></i>
                 </a>
             </div>
         </div>
-        
+
         <!-- Filter Section -->
-        <div class="row mb-4">
-            <div class="col-md-12">
-                <div class="card shadow-sm">
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <i class="fas fa-filter me-2"></i>Filter Mata Kuliah
+                    </div>
                     <div class="card-body">
-                        <form method="GET" action="{{ route('mata_kuliah.index') }}">
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="search">Cari Mata Kuliah</label>
-                                        <input type="text" name="search" class="form-control" 
-                                            placeholder="Kode atau Nama MK" value="{{ request('search') }}">
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="semester">Filter Semester</label>
-                                        <select class="form-control" name="semester">
-                                            <option value="">Semua Semester</option>
-                                            @for($i = 1; $i <= 8; $i++)
-                                                <option value="{{ $i }}" {{ request('semester') == $i ? 'selected' : '' }}>
-                                                    Semester {{ $i }}
-                                                </option>
-                                            @endfor
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="status">Filter Status</label>
-                                        <select class="form-control" name="status">
-                                            <option value="">Semua Status</option>
-                                            <option value="Wajib Prodi" {{ request('status') == 'Wajib Prodi' ? 'selected' : '' }}>Wajib Prodi</option>
-                                            <option value="Pilihan" {{ request('status') == 'Pilihan' ? 'selected' : '' }}>Pilihan</option>
-                                            <option value="Wajib Fakultas" {{ request('status') == 'Wajib Fakultas' ? 'selected' : '' }}>Wajib Fakultas</option>
-                                            <option value="Wajib Universitas" {{ request('status') == 'Wajib Universitas' ? 'selected' : '' }}>Wajib Universitas</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 d-flex align-items-end">
-                                    <button type="submit" class="btn btn-primary me-2">Filter</button>
-                                    <a href="{{ route('mata_kuliah.index') }}" class="btn btn-secondary">Reset</a>
-                                </div>
+                        <form method="GET" action="{{ route('mata_kuliah.index') }}" class="row g-3">
+                            <!-- Search Field -->
+                            <div class="col-md-3">
+                                <label for="search" class="form-label">Cari (Kode/Nama MK)</label>
+                                <input type="text" class="form-control" id="search" name="search"
+                                    placeholder="Kode atau Nama MK" value="{{ request('search') }}">
+                            </div>
+                            <!-- Semester Dropdown -->
+                            <div class="col-md-3">
+                                <label for="semester" class="form-label">Filter Semester</label>
+                                <select class="form-control" id="semester" name="semester">
+                                    <option value="">Semua Semester</option>
+                                    @for($i = 1; $i <= 8; $i++)
+                                        <option value="{{ $i }}" {{ request('semester') == $i ? 'selected' : '' }}>
+                                            Semester {{ $i }}
+                                        </option>
+                                    @endfor
+                                </select>
+                            </div>
+                            <!-- Status Dropdown -->
+                            <div class="col-md-3">
+                                <label for="status" class="form-label">Filter Status</label>
+                                <select class="form-control" id="status" name="status">
+                                    <option value="">Semua Status</option>
+                                    <option value="Wajib Prodi" {{ request('status') == 'Wajib Prodi' ? 'selected' : '' }}>Wajib Prodi</option>
+                                    <option value="Pilihan" {{ request('status') == 'Pilihan' ? 'selected' : '' }}>Pilihan</option>
+                                    <option value="Wajib Fakultas" {{ request('status') == 'Wajib Fakultas' ? 'selected' : '' }}>Wajib Fakultas</option>
+                                    <option value="Wajib Universitas" {{ request('status') == 'Wajib Universitas' ? 'selected' : '' }}>Wajib Universitas</option>
+                                </select>
+                            </div>
+                            <!-- Action Buttons -->
+                            <div class="col-md-3 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary me-2">
+                                    <i class="fas fa-search me-1"></i> Filter
+                                </button>
+                                <a href="{{ route('mata_kuliah.index') }}" class="btn btn-secondary">
+                                    <i class="fas fa-sync-alt me-1"></i> Reset
+                                </a>
                             </div>
                         </form>
                     </div>
@@ -116,9 +121,18 @@
                         </tbody>
                     </table>
                     
-                    <!-- Pagination -->
-                    <div class="d-flex justify-content-center">
-                        {{ $mataKuliahs->links() }}
+                    <!-- Pagination Controls -->
+                    <div class="d-flex justify-content-end align-items-center mt-3">
+                        <button class="btn btn-primary me-2"
+                            onclick="navigateToPage('{{ $mataKuliahs->appends(request()->query())->previousPageUrl() }}')"
+                            {{ $mataKuliahs->onFirstPage() ? 'disabled' : '' }}>
+                            <i class="fas fa-chevron-left"></i> Halaman Sebelumnya
+                        </button>
+                        <button class="btn btn-primary"
+                            onclick="navigateToPage('{{ $mataKuliahs->appends(request()->query())->nextPageUrl() }}')"
+                            {{ $mataKuliahs->hasMorePages() ? '' : 'disabled' }}>
+                            Halaman Selanjutnya <i class="fas fa-chevron-right"></i>
+                        </button>
                     </div>
                     
                     <div class="d-flex justify-content-start mt-3">
@@ -148,7 +162,7 @@
 @section('styles')
     <style>
         body {
-            background-color: #def4ff !important;
+            background-color: #def4ff;
         }
 
         .dashboard-heading {
@@ -190,37 +204,101 @@
             color: #28a745;
         }
 
+        .btn-outline-success:hover {
+            background-color: #28a745;
+            color: white;
+        }
+
         .btn-outline-danger {
             border-color: #dc3545;
             color: #dc3545;
         }
 
+        .btn-outline-danger:hover {
+            background-color: #dc3545;
+            color: white;
+        }
+
         .btn-primary {
-            background-color: rgb(40, 187, 72) !important;
-            border: none;
+            background-color: rgb(0, 114, 202) !important;
+            border-color: rgb(0, 114, 202) !important;
+        }
+
+        .btn-primary:hover {
+            background-color: rgb(0, 94, 182) !important;
+            border-color: rgb(0, 94, 182) !important;
         }
 
         .btn-success {
             background-color: #28a745 !important;
-            border: none;
+            border-color: #28a745 !important;
         }
-        
+
+        .btn-success:hover {
+            background-color: #218838 !important;
+            border-color: #218838 !important;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d !important;
+            border-color: #6c757d !important;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268 !important;
+            border-color: #5a6268 !important;
+        }
+
         .card {
             border-radius: 10px;
         }
-        
+
+        .card-header {
+            border-radius: 10px 10px 0 0 !important;
+            font-weight: bold;
+        }
+
         .form-control {
             border-radius: 5px;
+            border: 1px solid #ced4da;
         }
-        
-        /* Pagination styling */
-        .pagination .page-item.active .page-link {
-            background-color: rgb(0, 114, 202);
+
+        .form-control:focus {
             border-color: rgb(0, 114, 202);
+            box-shadow: 0 0 5px rgba(0, 114, 202, 0.3);
         }
-        
-        .pagination .page-link {
-            color: rgb(0, 114, 202);
+
+        .form-label {
+            font-weight: 500;
+            color: #333;
         }
     </style>
+@endsection
+
+@section('scripts')
+    <script>
+        function navigateToPage(url) {
+            if (url) {
+                window.location.href = url;
+            }
+        }
+
+        // Auto-submit form when dropdowns change
+        document.addEventListener('DOMContentLoaded', function() {
+            const semesterSelect = document.getElementById('semester');
+            const statusSelect = document.getElementById('status');
+
+            if (semesterSelect) {
+                semesterSelect.addEventListener('change', function() {
+                    this.form.submit();
+                });
+            }
+
+            if (statusSelect) {
+                statusSelect.addEventListener('change', function() {
+                    this.form.submit();
+                });
+            }
+        });
+    </script>
 @endsection
