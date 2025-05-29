@@ -23,6 +23,13 @@ class Dosen extends Model
 
     public function mataKuliahs()
     {
-        return $this->belongsToMany(MataKuliah::class, 'dosen_matakuliah', 'dosen_id', 'mata_kuliah_kode_mk');
+        return $this->belongsToMany(
+            \App\Models\MataKuliah::class,
+            'dosen_matakuliah',
+            'dosen_id',
+            'mata_kuliah_kode_mk',
+            'id',
+            'kode_mk'
+        );
     }
 }

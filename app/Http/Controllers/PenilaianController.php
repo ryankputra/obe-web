@@ -12,29 +12,29 @@ class PenilaianController extends Controller
 {
     public function index(Request $request): View
     {
-        $dosen = Auth::user();
+        $user = auth()->user();
         // Inisialisasi sebagai Paginator kosong
         // Parameter: items, total, perPage
         $assignedCoursesPaginated = new LengthAwarePaginator([], 0, 10);
         $assignedCoursesPaginated->withPath($request->url()); // Agar link paginasi benar
 
-        if ($dosen && $dosen->role === 'dosen') { // Pastikan kondisi role ini sudah benar
-            if (method_exists($dosen, 'mataKuliahYangDiampu')) {
-                $query = $dosen->mataKuliahYangDiampu();
+        if ($user && $user->role === 'dosen') { // Pastikan kondisi role ini sudah benar
+            if (method_exists($user, 'mataKuliahYangDiampu')) {
+                $query = $user->mataKuliahYangDiampu();
 
                 if ($request->filled('search_penilaian')) {
                     $search = $request->input('search_penilaian');
                     $query->where(function ($q) use ($search) {
                         $q->where('kode_mk', 'like', "%{$search}%")
-                          ->orWhere('nama_mk', 'like', "%{$search}%");
+                            ->orWhere('nama_mk', 'like', "%{$search}%");
                     });
                 }
 
                 // Jika query menghasilkan data, maka $assignedCoursesPaginated akan di-override
                 $paginatorInstance = $query->withCount('mahasiswas')
-                                          ->orderBy('kode_mk', 'asc')
-                                          ->paginate(10) // Menghasilkan LengthAwarePaginator
-                                          ->withQueryString(); // Agar filter tetap ada saat paginasi
+                    ->orderBy('kode_mk', 'asc')
+                    ->paginate(10) // Menghasilkan LengthAwarePaginator
+                    ->withQueryString(); // Agar filter tetap ada saat paginasi
 
                 // Transformasi item menggunakan through() pada Paginator
                 $transformedPaginator = $paginatorInstance->through(function ($course) {
@@ -50,11 +50,11 @@ class PenilaianController extends Controller
                 $assignedCoursesPaginated = $transformedPaginator; // Override dengan Paginator yang sudah ditransformasi
             } else {
                 // Dosen tidak punya method 'mataKuliahYangDiampu', $assignedCoursesPaginated tetap Paginator kosong
-                 \Illuminate\Support\Facades\Log::warning('Pengguna dosen ' . $dosen->name . ' tidak memiliki method relasi mataKuliahYangDiampu.');
+                \Illuminate\Support\Facades\Log::warning('Pengguna dosen ' . $user->name . ' tidak memiliki method relasi mataKuliahYangDiampu.');
             }
         } else {
             // Bukan dosen atau tidak login, $assignedCoursesPaginated tetap Paginator kosong
-             \Illuminate\Support\Facades\Log::info('Pengguna saat ini bukan dosen atau tidak terautentikasi saat mengakses penilaian index.');
+            \Illuminate\Support\Facades\Log::info('Pengguna saat ini bukan dosen atau tidak terautentikasi saat mengakses penilaian index.');
         }
 
         return view('penilaian.index', [

@@ -16,26 +16,40 @@ class UserController extends Controller
 
     public function create()
     {
-        return view('users.create');
+        return view('users.create', [
+            'dosens' => \App\Models\Dosen::all()
+        ]);
     }
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $rules = [
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:6|confirmed',
             'role' => 'required|in:admin,dosen',
-        ]);
+        ];
 
-        User::create([
+        if ($request->role === 'dosen') {
+            $rules['dosen_id'] = 'required|exists:dosens,id';
+        }
+
+        $validated = $request->validate($rules);
+
+        $user = \App\Models\User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
+            'password' => bcrypt($validated['password']),
             'role' => $validated['role'],
         ]);
 
-        return redirect()->route('users.index')->with('success', 'Akun berhasil dibuat!');
+        // Assign dosen_id if role is dosen
+        if ($user->role === 'dosen') {
+            $user->dosen_id = $validated['dosen_id'];
+            $user->save();
+        }
+
+        return redirect()->route('users.index')->with('success', 'User berhasil ditambahkan');
     }
 
     public function index()
@@ -46,34 +60,41 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-        return view('users.edit', compact('user'));
+        return view('users.edit', [
+            'user' => $user,
+            'dosens' => \App\Models\Dosen::all(),
+        ]);
     }
 
     public function update(Request $request, User $user)
     {
-        $validated = $request->validate([
+        $rules = [
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'email' => 'required|email|unique:users,email,' . $user->id,
             'role' => 'required|in:admin,dosen',
-            'password' => 'nullable|string|min:8|confirmed',
-        ]);
+            'password' => 'nullable|string|min:6|confirmed',
+        ];
 
-        try {
-            $updated = $user->update([
-                'name' => $validated['name'],
-                'email' => $validated['email'],
-                'role' => $validated['role'],
-                'password' => $validated['password'] ? Hash::make($validated['password']) : $user->password,
-            ]);
-
-            if (!$updated) {
-                return redirect()->back()->with('error', 'Gagal memperbarui akun. Silakan coba lagi.');
-            }
-
-            return redirect()->route('users.index')->with('success', 'Akun berhasil diperbarui!');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        if ($request->role === 'dosen') {
+            $rules['dosen_id'] = 'required|exists:dosens,id';
         }
+
+        $validated = $request->validate($rules);
+
+        $user->name = $validated['name'];
+        $user->email = $validated['email'];
+        $user->role = $validated['role'];
+        if ($request->role === 'dosen') {
+            $user->dosen_id = $validated['dosen_id'];
+        } else {
+            $user->dosen_id = null;
+        }
+        if (!empty($validated['password'])) {
+            $user->password = bcrypt($validated['password']);
+        }
+        $user->save();
+
+        return redirect()->route('users.index')->with('success', 'User berhasil diperbarui');
     }
 
     public function destroy(User $user)
