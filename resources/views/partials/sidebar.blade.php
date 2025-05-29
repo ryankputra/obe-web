@@ -3,8 +3,14 @@
         <div class="sidebar-heading text-white text-center py-4">OBE-WEB</div>
         <div class="list-group list-group-flush flex-grow-1">
 
-            {{-- Item Penilaian: Hanya tampil jika role adalah 'dosen' --}}
+            {{-- Item untuk role 'dosen' --}}
             @if(auth()->check() && auth()->user()->role == 'dosen')
+                {{-- Item Dashboard: Ditambahkan untuk role 'dosen' dan diletakkan di atas Penilaian --}}
+                <a href="{{ route('dashboard') }}" class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('dashboard') ? 'active' : '' }}">
+                    <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+                </a>
+
+                {{-- Item Penilaian: Hanya tampil jika role adalah 'dosen' --}}
                 <a href="{{ route('penilaian.index') }}" class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('penilaian*') ? 'active' : '' }}">
                     <i class="fas fa-clipboard-check me-2"></i> Penilaian
                 </a>
@@ -46,12 +52,12 @@
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end w-100" aria-labelledby="mahasiswaDropdown" style="background-color: #426c8f;">
                         <li>
-                            <a class="dropdown-item text-white {{ request()->is('mahasiswa*') ? 'active' : '' }}" href="{{ route('mahasiswa.index') }}">
+                            <a class="dropdown-item text-white {{ request()->is('mahasiswa*') && !request()->routeIs('mahasiswa.create') ? 'active' : '' }}" href="{{ route('mahasiswa.index') }}">
                                 <i class="fas fa-list me-2"></i> Tampil Mahasiswa
                             </a>
                         </li>
                         <li>
-                            <a class="dropdown-item text-white" href="{{ route('mahasiswa.create') }}">
+                            <a class="dropdown-item text-white {{ request()->routeIs('mahasiswa.create') ? 'active' : '' }}" href="{{ route('mahasiswa.create') }}">
                                 <i class="fas fa-user-plus me-2"></i> Input Mahasiswa
                             </a>
                         </li>
@@ -74,8 +80,6 @@
             @endif
 
             {{-- User menu item: Hanya tampil jika role adalah 'admin'. --}}
-            {{-- Ini secara implisit tidak akan tampil untuk 'dosen' jika 'dosen' bukan 'admin'. --}}
-            {{-- Jika 'dosen' login, kondisi auth()->user()->role == 'admin' akan false. --}}
             @if(auth()->check() && auth()->user()->role == 'admin')
                 <a href="{{ route('users.index') }}" class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('user*') ? 'active' : '' }}">
                     <i class="fas fa-users me-2"></i> User
@@ -99,7 +103,8 @@
     </div>
 
     <div class="flex-grow-1 p-4" id="main-content">
-        </div>
+        {{-- Konten utama Anda akan dirender di sini --}}
+    </div>
 </div>
 
 <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
@@ -195,6 +200,9 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Optional toggle for sidebar in mobile
+        // Jika Anda menggunakan Bootstrap 5, dropdown dan modal biasanya
+        // sudah otomatis berfungsi tanpa perlu inisialisasi manual di sini,
+        // kecuali jika ada kasus khusus.
     });
 </script>
 
