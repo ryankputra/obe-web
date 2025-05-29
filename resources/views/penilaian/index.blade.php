@@ -29,10 +29,14 @@
                     <table class="table table-bordered table-hover mb-0 text-center">
                         <thead>
                             <tr>
-                                <th style="width: 15%;">Kode MK</th>
-                                <th class="text-start" style="width: 45%;">Nama Mata Kuliah</th>
-                                <th style="width: 20%;">Jumlah Mahasiswa</th>
-                                <th style="width: 20%;">SKS</th>
+                                <th rowspan="2" style="width: 15%; vertical-align: middle;">Kode MK</th>
+                                <th rowspan="2" class="text-start" style="width: 45%; vertical-align: middle;">Nama Mata Kuliah</th>
+                                <th rowspan="2" style="width: 20%; vertical-align: middle;">Jumlah Mahasiswa</th>
+                                <th colspan="2" style="width: 20%;">SKS</th>
+                            </tr>
+                            <tr>
+                                <th style="width: 10%;">Teori</th>
+                                <th style="width: 10%;">Praktik</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -47,17 +51,16 @@
                                             </a>
                                         </td>
                                         <td class="align-middle">
-                                            {{-- You can add logic to count mahasiswa if you have the relation --}}
+                                            {{-- Anda bisa menambahkan logika untuk menghitung mahasiswa jika ada relasinya --}}
                                             {{ $course->mahasiswas_count ?? '-' }}
                                         </td>
-                                        <td class="align-middle">
-                                            {{ ($course->sks_teori ?? 0) + ($course->sks_praktik ?? 0) }}
-                                        </td>
+                                        <td class="align-middle">{{ $course->sks_teori ?? 0 }}</td>
+                                        <td class="align-middle">{{ $course->sks_praktik ?? 0 }}</td>
                                     </tr>
                                 @endforeach
                             @else
                                 <tr>
-                                    <td colspan="4" class="text-center py-5">
+                                    <td colspan="5" class="text-center py-5"> {{-- Colspan diubah menjadi 5 --}}
                                         <i class="fas fa-info-circle fa-2x text-muted mb-2"></i><br>
                                         Tidak ada mata kuliah yang tersedia.
                                     </td>
@@ -95,7 +98,7 @@
         .table thead th {
             background-color: rgb(0, 114, 202) !important;
             color: white !important;
-            vertical-align: middle;
+            vertical-align: middle; /* Pastikan semua header th ter-align secara vertikal */
             padding: 0.9rem 0.75rem;
             font-size: 0.9rem;
             font-weight: bold;
