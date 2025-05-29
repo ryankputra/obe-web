@@ -20,4 +20,9 @@ class Dosen extends Model
         'kompetensi',
         'prodi',
     ];
+
+    public function mataKuliahs()
+    {
+        return $this->belongsToMany(MataKuliah::class, 'dosen_matakuliah', 'dosen_id', 'mata_kuliah_kode_mk');
+    }
 }
