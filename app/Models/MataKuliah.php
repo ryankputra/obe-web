@@ -31,4 +31,15 @@ class MataKuliah extends Model
     {
         return $this->belongsToMany(Dosen::class, 'dosen_matakuliah', 'mata_kuliah_kode_mk', 'dosen_id');
     }
+    public function mahasiswas()
+    {
+        return $this->belongsToMany(
+            \App\Models\Mahasiswa::class,
+            'mahasiswa_matakuliah',
+            'mata_kuliah_kode_mk',  // foreign key di pivot untuk MataKuliah
+            'mahasiswa_nim',        // foreign key di pivot untuk Mahasiswa
+            'kode_mk',              // local key di MataKuliah
+            'nim'                   // local key di Mahasiswa
+        );
+    }
 }

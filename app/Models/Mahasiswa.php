@@ -25,4 +25,16 @@ class Mahasiswa extends Model
     {
         return $this->belongsTo(Prodi::class); // Removed second parameter as it follows convention
     }
+
+    public function mataKuliahs()
+    {
+        return $this->belongsToMany(
+            \App\Models\MataKuliah::class,
+            'mahasiswa_matakuliah',
+            'mahasiswa_nim',        // foreign key di pivot untuk Mahasiswa
+            'mata_kuliah_kode_mk',  // foreign key di pivot untuk MataKuliah
+            'nim',                  // local key di Mahasiswa
+            'kode_mk'               // local key di MataKuliah
+        );
+    }
 }

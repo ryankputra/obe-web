@@ -19,7 +19,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role', // Tambahkan role
+        'role',
+        'dosen_id', // Add this line
     ];
 
     /**
@@ -43,5 +44,19 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function dosen()
+    {
+        return $this->belongsTo(\App\Models\Dosen::class, 'dosen_id');
+    }
+    public function mataKuliahYangDiampu()
+    {
+        // Only works if user is dosen and has dosen_id
+        if ($this->role === 'dosen' && $this->dosen) {
+            return $this->dosen->mataKuliahs();
+        }
+        // Return empty query if not dosen
+        return \App\Models\MataKuliah::query()->whereRaw('0=1');
     }
 }
