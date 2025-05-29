@@ -6,12 +6,13 @@ use App\Http\Controllers\MataKuliahController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DosenController;
 use App\Http\Controllers\MahasiswaController;
-use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\LoginController; // Pastikan path ini benar
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CplController;
 use App\Http\Controllers\CpmkController;
 use App\Http\Controllers\ProdiController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\PenilaianController; // Pastikan sudah di-import
 
 // Route untuk halaman utama (arahkan ke login)
 Route::get('/', function () {
@@ -22,7 +23,7 @@ Route::get('password/reset', function () {
     return view('auth.passwords.email');
 })->name('password.request');
 
-// User Management (outside auth for account creation)
+// User Management (pertimbangkan untuk memindahkan sebagian besar ke dalam middleware 'auth')
 Route::prefix('users')->group(function () {
     Route::get('/', [UserController::class, 'index'])->name('users.index');
     Route::get('/create', [UserController::class, 'create'])->name('users.create');
@@ -64,10 +65,19 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{prodi}', [ProdiController::class, 'destroy'])->name('fakultasfst.prodi.destroy');
         });
     });
+
+    // --- Route untuk Penilaian ---
+    Route::prefix('penilaian')->name('penilaian.')->group(function () {
+        Route::get('/', [PenilaianController::class, 'index'])->name('index'); // Akan menjadi route('penilaian.index')
+        Route::get('/mata-kuliah/{id_mata_kuliah}', [PenilaianController::class, 'showPenilaianMataKuliah'])->name('mata_kuliah.show'); // Akan menjadi route('penilaian.mata_kuliah.show')
+        // Anda bisa menambahkan route lain di sini, misalnya untuk menyimpan nilai:
+        // Route::post('/mata-kuliah/{id_mata_kuliah}/store', [PenilaianController::class, 'storeNilai'])->name('nilai.store');
+    });
+    // --- Akhir Route untuk Penilaian ---
 });
 
-// Additional dosen route (consider moving inside auth group if it needs authentication)
-Route::get('/dosen/{id}/kompetensi', [DosenController::class, 'showKompetensi'])->name('dosen.kompetensi');
+// Additional dosen route (pertimbangkan untuk memindahkannya ke dalam grup 'auth' jika perlu login)
+Route::get('/dosen/{id}/kompetensi', [DosenController::class, 'showKompetensi'])->name('dosen.kompetensi')->middleware('auth'); // Contoh jika diproteksi
 
 // Logout
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
