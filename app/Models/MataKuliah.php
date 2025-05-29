@@ -27,4 +27,8 @@ class MataKuliah extends Model
     {
         return 'kode_mk';
     }
+    public function dosens()
+    {
+        return $this->belongsToMany(Dosen::class, 'dosen_matakuliah', 'mata_kuliah_kode_mk', 'dosen_id');
+    }
 }
