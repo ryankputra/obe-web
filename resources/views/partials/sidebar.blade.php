@@ -79,9 +79,17 @@
                 </a>
             @endif
 
-            {{-- User menu item: Hanya tampil jika role adalah 'admin'. --}}
+            {{-- Menu items untuk role 'admin' --}}
             @if(auth()->check() && auth()->user()->role == 'admin')
+                {{-- Item Bobot Nilai: Hanya tampil jika role adalah 'admin'. --}}
+                <a href="{{ route('bobot_nilai.index') }}" class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('bobot-nilai*') ? 'active' : '' }}">
+                    {{--                                                                                                  ^^^ PERUBAHAN DI SINI ^^^ --}}
+                    <i class="fas fa-balance-scale me-2"></i> Bobot Nilai
+                </a>
+
+                {{-- Item User: Hanya tampil jika role adalah 'admin'. --}}
                 <a href="{{ route('users.index') }}" class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('user*') ? 'active' : '' }}">
+                    {{-- Untuk 'users', jika URL-nya adalah /users, maka 'user*' sudah benar. Jika URL-nya /user-management, maka perlu disesuaikan juga. --}}
                     <i class="fas fa-users me-2"></i> User
                 </a>
             @endif
@@ -156,7 +164,7 @@
     }
 
     .list-group-item.active {
-        background-color: #007bff;
+        background-color: #007bff; /* Warna biru untuk item aktif */
         color: #fff;
     }
 

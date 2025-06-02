@@ -13,7 +13,7 @@ use App\Http\Controllers\CpmkController;
 use App\Http\Controllers\ProdiController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PenilaianController;
-
+use App\Http\Controllers\BobotNilaiController; // <-- Tambahkan ini
 
 Route::get('/', function () {
     return view('auth.login');
@@ -24,12 +24,27 @@ Route::get('password/reset', function () {
 })->name('password.request');
 
 Route::prefix('users')->name('users.')->group(function () {
+    // PERTIMBANGKAN: Tambahkan ->middleware(['auth', 'admin']) ke grup ini
+    // jika proteksi belum ditangani di dalam UserController.
     Route::get('/', [UserController::class, 'index'])->name('index');
     Route::get('/create', [UserController::class, 'create'])->name('create');
     Route::post('/', [UserController::class, 'store'])->name('store');
     Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit');
     Route::put('/{user}', [UserController::class, 'update'])->name('update');
     Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
+});
+
+// RUTE BOBOT NILAI (KHUSUS ADMIN)
+// Pastikan Anda telah membuat BobotNilaiController (misalnya dengan `php artisan make:controller BobotNilaiController`)
+// dan mendaftarkan middleware 'admin' di app/Http/Kernel.php.
+Route::prefix('bobot-nilai')->name('bobot_nilai.')->middleware(['auth', 'admin'])->group(function () {
+    Route::get('/', [BobotNilaiController::class, 'index'])->name('index');
+    // Anda bisa menambahkan rute CRUD lainnya untuk Bobot Nilai di sini jika diperlukan:
+    // Route::get('/create', [BobotNilaiController::class, 'create'])->name('create');
+    // Route::post('/', [BobotNilaiController::class, 'store'])->name('store');
+    // Route::get('/{bobotNilai}/edit', [BobotNilaiController::class, 'edit'])->name('edit');
+    // Route::put('/{bobotNilai}', [BobotNilaiController::class, 'update'])->name('update');
+    // Route::delete('/{bobotNilai}', [BobotNilaiController::class, 'destroy'])->name('destroy');
 });
 
 Auth::routes();
@@ -69,3 +84,4 @@ Route::middleware('auth')->group(function () {
 Route::get('/dosen/{dosen}/kompetensi', [DosenController::class, 'showKompetensi'])->name('dosen.kompetensi')->middleware('auth');
 
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
