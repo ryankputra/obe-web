@@ -5,15 +5,14 @@
 @section('styles')
 <style>
     body {
-        background-color: #def4ff; /* Diambil dari CSS Pilih Mata Kuliah */
+        background-color: #def4ff;
     }
 
-    /* Disesuaikan dari .penilaian-heading di CSS Pilih Mata Kuliah */
     .page-title {
         font-size: 2rem;
         font-weight: bold;
-        color: #545CD8; /* Warna dari Pilih Mata Kuliah */
-        margin-bottom: 20px; /* Dipertahankan dari styling awal show_mata_kuliah */
+        color: #545CD8;
+        margin-bottom: 20px;
     }
 
     .header-container {
@@ -26,59 +25,56 @@
     .back-button,
     .print-icon {
         font-size: 1.5rem;
-        color: #545CD8; /* Disesuaikan dengan warna .page-title baru */
+        color: #545CD8;
         text-decoration: none;
     }
     .print-icon {
         cursor: pointer;
     }
 
-    /* Menggunakan gaya tabel dari CSS Pilih Mata Kuliah, diterapkan ke .table-penilaian */
     .table-penilaian thead th {
-        background-color: rgb(0, 114, 202) !important; /* Dari Pilih Mata Kuliah */
-        color: white !important; /* Dari Pilih Mata Kuliah */
+        background-color: rgb(0, 114, 202) !important;
+        color: white !important;
         vertical-align: middle;
-        padding: 0.9rem 0.75rem; /* Dari Pilih Mata Kuliah */
-        font-size: 0.9rem; /* Dari Pilih Mata Kuliah */
-        font-weight: bold; /* Dari Pilih Mata Kuliah */
-        text-align: center; /* Default untuk header tabel nilai */
-        border: 1px solid #dee2e6; /* Dari Pilih Mata Kuliah */
+        padding: 0.9rem 0.75rem;
+        font-size: 0.9rem;
+        font-weight: bold;
+        text-align: center;
+        border: 1px solid #dee2e6;
     }
 
     .table-penilaian th.text-start,
     .table-penilaian td.text-start {
-        text-align: left !important; /* Dari Pilih Mata Kuliah, jika ada kolom yg butuh ini */
+        text-align: left !important;
     }
 
     .table-penilaian tbody td {
         vertical-align: middle;
-        padding: 0.8rem 0.75rem; /* Dari Pilih Mata Kuliah */
-        font-size: 0.875rem; /* Dari Pilih Mata Kuliah */
-        color: #5a5c69; /* Dari Pilih Mata Kuliah */
-        border: 1px solid #dee2e6; /* Dari Pilih Mata Kuliah */
-        text-align: center; /* Default untuk sel data nilai */
+        padding: 0.8rem 0.75rem;
+        font-size: 0.875rem;
+        color: #5a5c69;
+        border: 1px solid #dee2e6;
+        text-align: center;
     }
 
-    /* Spesifik untuk halaman input nilai, dipertahankan */
     .table-penilaian td:first-child,
     .table-penilaian td:nth-child(2) {
-        text-align: left !important; /* NIM dan Nama rata kiri */
+        text-align: left !important;
     }
 
     .table-penilaian td input[type="number"] {
-        width: 80px; /* Bisa disesuaikan jika perlu lebih lebar */
+        width: 80px;
         text-align: center;
         border: 1px solid #ced4da;
         border-radius: 0.25rem;
         padding: 0.375rem 0.75rem;
-        box-sizing: border-box; /* Untuk memastikan padding tidak menambah lebar total */
+        box-sizing: border-box;
     }
 
     .total-score {
         font-weight: bold;
     }
 
-    /* Gaya card dari CSS Pilih Mata Kuliah */
     .card.shadow {
         border: none;
     }
@@ -87,7 +83,6 @@
         overflow-x: auto;
     }
 
-    /* Tombol aksi dipertahankan gayanya karena spesifik untuk halaman ini */
     .action-buttons .btn-batal {
         background-color: white;
         border: 1px solid #dc3545;
@@ -130,7 +125,7 @@
         <div class="card shadow">
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-bordered table-penilaian mb-0"> {{-- table-hover bisa ditambahkan jika diinginkan --}}
+                    <table class="table table-bordered table-penilaian mb-0">
                         <thead>
                             <tr>
                                 <th style="width: 10%;">NIM</th>
@@ -170,8 +165,6 @@
                             @else
                                 <tr>
                                     <td colspan="7" class="text-center py-5">
-                                        {{-- Menggunakan ikon FontAwesome jika tersedia, jika tidak, bisa dikosongkan atau teks biasa --}}
-                                        {{-- <i class="fas fa-info-circle fa-2x text-muted mb-2"></i><br> --}}
                                         Tidak ada mahasiswa yang terdaftar pada mata kuliah ini.
                                     </td>
                                 </tr>
@@ -198,18 +191,16 @@ document.addEventListener('DOMContentLoaded', function () {
     const rows = document.querySelectorAll('.table-penilaian tbody tr');
 
     rows.forEach((row, rowIndex) => {
-        // Pastikan baris ini bukan baris 'Tidak ada mahasiswa'
         if (!row.querySelector('td[colspan="7"]')) {
             const inputs = row.querySelectorAll('.nilai-input');
             const totalCell = row.querySelector('.total-score');
-
             function calculateAverage() {
                 let sum = 0;
                 let count = 0;
                 inputs.forEach(input => {
                     const value = parseFloat(input.value);
                     if (!isNaN(value) && value >= 0 && value <= 100) { // Validasi sederhana
-                        sum += value;
+                        sum += value; //
                         count++;
                     }
                 });
@@ -221,19 +212,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
             inputs.forEach(input => {
                 input.addEventListener('input', calculateAverage);
-                // Tambahkan validasi agar nilai tidak di luar 0-100 saat input
                 input.addEventListener('change', function() {
                     let value = parseFloat(this.value);
                     if (isNaN(value) || value < 0) {
-                        this.value = ''; // Atau 0
+                        this.value = '';
                     } else if (value > 100) {
                         this.value = 100;
                     }
-                    calculateAverage(); // Hitung ulang setelah koreksi
+                    calculateAverage();
                 });
             });
 
-            // Calculate initial average on page load if there are values
             calculateAverage();
         }
     });
