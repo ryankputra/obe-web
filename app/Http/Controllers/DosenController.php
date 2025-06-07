@@ -45,7 +45,8 @@ class DosenController extends Controller
 
     public function create()
     {
-        return view('dosen.create');
+        $prodis = \App\Models\Prodi::orderBy('nama_prodi')->get();
+        return view('dosen.create', compact('prodis'));
     }
 
     public function store(Request $request)
@@ -66,6 +67,7 @@ class DosenController extends Controller
 
         return response()->json([
             'success' => true,
+            'message' => 'Dosen berhasil ditambahkan.',
             'data' => $dosen
         ]);
     }
@@ -73,7 +75,8 @@ class DosenController extends Controller
 
     public function edit(Dosen $dosen)
     {
-        return view('dosen.edit', compact('dosen'));
+        $prodis = \App\Models\Prodi::orderBy('nama_prodi')->get();
+        return view('dosen.edit', compact('dosen', 'prodis'));
     }
 
     public function update(Request $request, Dosen $dosen)
