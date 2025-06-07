@@ -92,14 +92,12 @@
                 {{-- Item Bobot Nilai: Hanya tampil jika role adalah 'admin'. --}}
                 <a href="{{ route('bobot_nilai.index') }}"
                     class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('bobot-nilai*') ? 'active' : '' }}">
-                    {{--                                                                                                  ^^^ PERUBAHAN DI SINI ^^^ --}}
                     <i class="fas fa-balance-scale me-2"></i> Bobot Nilai
                 </a>
 
                 {{-- Item User: Hanya tampil jika role adalah 'admin'. --}}
                 <a href="{{ route('users.index') }}"
                     class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('user*') ? 'active' : '' }}">
-                    {{-- Untuk 'users', jika URL-nya adalah /users, maka 'user*' sudah benar. Jika URL-nya /user-management, maka perlu disesuaikan juga. --}}
                     <i class="fas fa-users me-2"></i> User
                 </a>
             @endif
@@ -129,6 +127,7 @@
     </div>
 </div>
 
+<!-- Logout Modal -->
 <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -181,20 +180,10 @@
 
     .list-group-item.active {
         background-color: #007bff;
-        /* Warna biru untuk item aktif */
         color: #fff;
     }
 
-    .list-group {
-        position: relative;
-        z-index: 1050;
-        /* Higher than modal backdrop */
-    }
-
     .dropdown-menu {
-        position: absolute;
-        z-index: 1051;
-        /* Higher than list-group */
         background-color: #426c8f;
         color: #fff;
         border: none;
@@ -205,18 +194,27 @@
         color: #fff;
     }
 
-    .dropdown-item.active,
     .dropdown-item:hover,
     .dropdown-item:focus {
-        background-color: rgb(202, 202, 202);
-        color: #000;
+        background-color: #5b82a6;
+        color: #fff;
     }
 
-    /* Ensure modals don't block sidebar interactions */
+    /* Modal fixes */
     .modal {
-        z-index: 1049;
+        z-index: 1060 !important;
+    }
+    
+    .modal-backdrop {
+        z-index: 1050 !important;
     }
 
+    /* Dropdown fixes */
+    .dropdown-menu {
+        z-index: 1061 !important;
+    }
+
+    /* Mobile responsive */
     @media (max-width: 768px) {
         #sidebar-wrapper {
             position: fixed;
@@ -235,7 +233,7 @@
         }
     }
 
-    /* Add these new styles to your existing sidebar styles */
+    /* Dropdown submenu styles */
     .sidebar-dropdown .collapse {
         background-color: rgba(0, 0, 0, 0.1);
     }
@@ -249,31 +247,41 @@
         background-color: rgba(255, 255, 255, 0.1);
     }
 
-    /* Remove dropdown arrow styling since we're using collapse */
     .sidebar-dropdown .dropdown-toggle::after {
         display: none;
     }
 </style>
 
+<!-- Load Bootstrap JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Initialize all dropdowns
+        // Initialize Bootstrap components
         var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))
-        var dropdownList = dropdownElementList.map(function(dropdownToggleEl) {
-            return new bootstrap.Dropdown(dropdownToggleEl, {
-                hover: false,
-                autoClose: true
-            })
+        var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+            return new bootstrap.Dropdown(dropdownToggleEl)
         })
 
-        // Ensure dropdowns work even when modals are open
-        document.querySelectorAll('.dropdown-toggle').forEach(function(element) {
+        // Initialize logout modal
+        var logoutModal = document.getElementById('logoutModal')
+        if (logoutModal) {
+            var modal = new bootstrap.Modal(logoutModal)
+            
+            // Ensure modal closes properly
+            logoutModal.addEventListener('hidden.bs.modal', function () {
+                document.body.classList.remove('modal-open')
+                document.querySelector('.modal-backdrop').remove()
+            })
+        }
+
+        // Prevent dropdown from closing when clicking inside
+        document.querySelectorAll('.dropdown-menu').forEach(function(element) {
             element.addEventListener('click', function(e) {
                 e.stopPropagation()
             })
         })
-    });
+    })
 </script>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
-    crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
