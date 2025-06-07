@@ -43,7 +43,7 @@
                                 <th>Kode MK</th>
                                 <th>Nama Mata Kuliah</th>
                                 <th>Jumlah Mahasiswa</th>
-                                <th>Aksi</th> {{-- Kolom aksi jika diperlukan untuk mengatur bobot --}}
+                                <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -52,14 +52,12 @@
                                     <td>{{ $mataKuliahs->firstItem() + $index }}</td>
                                     <td>{{ $mk->kode_mk }}</td>
                                     <td class="text-start">{{ $mk->nama_mk }}</td>
-                                    <td>{{ $mk->mahasiswas_count }}</td> {{-- Menggunakan hasil dari withCount --}}
+                                    <td>{{ $mk->mahasiswas_count }}</td>
                                     <td>
-                                        {{-- Tombol untuk mengatur bobot nilai per mata kuliah bisa ditambahkan di sini --}}
-                                        {{-- Contoh: --}}
-                                        {{-- <a href="{{ route('bobot_nilai.edit', $mk->id) }}" class="btn btn-outline-success btn-sm">
-                                            Atur Bobot
-                                        </a> --}}
-                                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="aturBobot('{{ $mk->id }}', '{{ $mk->nama_mk }}')">
+                                        <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal"
+                                            data-bs-target="#aturBobotModal"
+                                            data-mk-id="{{ $mk->id }}"
+                                            data-mk-nama="{{ $mk->nama_mk }}">
                                             Atur Bobot
                                         </button>
                                     </td>
@@ -91,7 +89,7 @@
         </div>
     </div>
 
-    {{-- Modal untuk Atur Bobot (Contoh) --}}
+    <!-- Modal untuk Atur Bobot -->
     <div class="modal fade" id="aturBobotModal" tabindex="-1" aria-labelledby="aturBobotModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -102,8 +100,8 @@
           <div class="modal-body">
             <p>Formulir untuk mengatur bobot nilai (misalnya: Tugas, UTS, UAS, dll.) akan ditampilkan di sini.</p>
             <p>ID Mata Kuliah: <span id="modalIdMK"></span></p>
-            {{-- Contoh Form --}}
-            {{-- <form id="formAturBobot">
+            <!-- Example form structure -->
+            <form id="formAturBobot">
                 <input type="hidden" id="inputMataKuliahId" name="mata_kuliah_id">
                 <div class="mb-3">
                     <label for="bobot_tugas" class="form-label">Bobot Tugas (%)</label>
@@ -118,16 +116,15 @@
                     <input type="number" class="form-control" id="bobot_uas" name="bobot_uas" min="0" max="100">
                 </div>
                 <div class="alert alert-info">Pastikan total bobot adalah 100%.</div>
-            </form> --}}
+            </form>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-            <button type="button" class="btn btn-primary" onclick="simpanBobot()">Simpan Bobot</button>
+            <button type="button" class="btn btn-primary" id="simpanBobotBtn">Simpan Bobot</button>
           </div>
         </div>
       </div>
     </div>
-
 
     @if (session('success'))
         <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
@@ -163,41 +160,29 @@
 @section('styles')
     <style>
         body {
-            background-color: #def4ff; /* Warna latar belakang yang lebih lembut */
+            background-color: #def4ff;
         }
 
         .dashboard-heading {
             font-size: 2rem;
             font-weight: bold;
-            color: #333; /* Warna teks yang lebih gelap untuk kontras */
+            color: #333;
         }
 
         .table thead th {
-            background-color: rgb(0, 114, 202) !important; /* Biru primer yang konsisten */
+            background-color: rgb(0, 114, 202) !important;
             color: white !important;
             vertical-align: middle;
         }
 
         .table tbody tr:hover {
-            background-color: #cceeff; /* Warna hover yang lebih jelas */
+            background-color: #cceeff;
         }
 
         .table-bordered th,
         .table-bordered td {
-            border: 1px solid #b8daff; /* Border yang lebih halus */
+            border: 1px solid #b8daff;
             vertical-align: middle;
-        }
-
-        .table th {
-            font-size: 1rem; /* Ukuran font standar */
-        }
-
-        .table td {
-            font-size: 0.9rem; /* Ukuran font sedikit lebih kecil untuk data */
-        }
-
-        .text-start {
-            text-align: left !important;
         }
 
         .btn-outline-primary {
@@ -209,101 +194,95 @@
             color: white;
         }
 
-        .btn-primary {
-            background-color: rgb(0, 114, 202) !important;
-            border-color: rgb(0, 114, 202) !important;
+        /* Modal fixes */
+        .modal-backdrop {
+            z-index: 1040 !important;
         }
-
-        .btn-primary:hover {
-            background-color: rgb(0, 94, 182) !important; /* Warna hover yang sedikit lebih gelap */
-            border-color: rgb(0, 94, 182) !important;
-        }
-
-        .btn-secondary {
-            background-color: #6c757d !important;
-            border-color: #6c757d !important;
-        }
-
-        .btn-secondary:hover {
-            background-color: #5a6268 !important;
-            border-color: #5a6268 !important;
-        }
-
-        .card {
-            border-radius: 0.5rem; /* Radius border yang lebih halus */
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Shadow halus */
-        }
-
-        .card-header {
-            border-radius: 0.5rem 0.5rem 0 0 !important;
-            font-weight: bold;
-        }
-
-        .form-control {
-            border-radius: 0.25rem; /* Radius border standar */
-            border: 1px solid #ced4da;
-        }
-
-        .form-control:focus {
-            border-color: rgb(0, 114, 202);
-            box-shadow: 0 0 0 0.2rem rgba(0, 114, 202, 0.25); /* Shadow fokus yang lebih standar */
-        }
-
-        .form-label {
-            font-weight: 500;
-            color: #333;
+        .modal {
+            z-index: 1050 !important;
         }
     </style>
 @endsection
 
 @section('scripts')
+    <!-- Load Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script>
+        // Initialize modal functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set up the Atur Bobot modal
+            const aturBobotModal = document.getElementById('aturBobotModal');
+            if (aturBobotModal) {
+                aturBobotModal.addEventListener('show.bs.modal', function(event) {
+                    const button = event.relatedTarget;
+                    const mkId = button.getAttribute('data-mk-id');
+                    const mkNama = button.getAttribute('data-mk-nama');
+                    
+                    // Update modal content
+                    document.getElementById('modalIdMK').textContent = mkId;
+                    document.getElementById('modalNamaMK').textContent = mkNama;
+                    document.getElementById('inputMataKuliahId').value = mkId;
+                    
+                    // Here you could load existing data via AJAX if needed
+                    // loadExistingBobot(mkId);
+                });
+            }
+
+            // Set up the Simpan Bobot button
+            const simpanBobotBtn = document.getElementById('simpanBobotBtn');
+            if (simpanBobotBtn) {
+                simpanBobotBtn.addEventListener('click', function() {
+                    const mataKuliahId = document.getElementById('inputMataKuliahId').value;
+                    const bobotTugas = document.getElementById('bobot_tugas').value;
+                    const bobotUts = document.getElementById('bobot_uts').value;
+                    const bobotUas = document.getElementById('bobot_uas').value;
+                    
+                    // Validate input
+                    if (!bobotTugas || !bobotUts || !bobotUas) {
+                        alert('Harap isi semua bobot nilai');
+                        return;
+                    }
+                    
+                    // Here you would typically make an AJAX call to save the data
+                    console.log('Simpan data untuk MK ID:', mataKuliahId);
+                    console.log('Bobot Tugas:', bobotTugas);
+                    console.log('Bobot UTS:', bobotUts);
+                    console.log('Bobot UAS:', bobotUas);
+                    
+                    // Close modal after saving
+                    bootstrap.Modal.getInstance(aturBobotModal).hide();
+                    
+                    // Show success message (you would replace this with actual response handling)
+                    alert('Bobot nilai berhasil disimpan!');
+                });
+            }
+
+            // Auto-dismiss toasts
+            var toastElList = [].slice.call(document.querySelectorAll('.toast'));
+            var toastList = toastElList.map(function(toastEl) {
+                return new bootstrap.Toast(toastEl, { delay: 5000 }).show();
+            });
+        });
+
         function navigateToPage(url) {
             if (url) {
                 window.location.href = url;
             }
         }
 
-        // Fungsi untuk membuka modal dan mengisi data
-        function aturBobot(mataKuliahId, namaMk) {
-            document.getElementById('modalIdMK').textContent = mataKuliahId;
-            document.getElementById('modalNamaMK').textContent = namaMk;
-            // Jika Anda memiliki form di dalam modal:
-            // document.getElementById('inputMataKuliahId').value = mataKuliahId;
-            
-            // Di sini Anda bisa melakukan fetch data bobot yang sudah ada untuk mata kuliah ini jika perlu
-            // dan mengisi form di dalam modal.
-
-            var aturBobotModal = new bootstrap.Modal(document.getElementById('aturBobotModal'));
-            aturBobotModal.show();
+        // Example function to load existing data
+        function loadExistingBobot(mkId) {
+            // This would be an AJAX call to your backend
+            console.log('Loading existing bobot for MK ID:', mkId);
+            // Example:
+            // fetch(`/api/bobot-nilai/${mkId}`)
+            //     .then(response => response.json())
+            //     .then(data => {
+            //         document.getElementById('bobot_tugas').value = data.bobot_tugas;
+            //         document.getElementById('bobot_uts').value = data.bobot_uts;
+            //         document.getElementById('bobot_uas').value = data.bobot_uas;
+            //     });
         }
-
-        function simpanBobot() {
-            // Logika untuk mengambil data dari form di dalam modal
-            // dan mengirimkannya ke server (misalnya via AJAX)
-            // const mataKuliahId = document.getElementById('inputMataKuliahId').value;
-            // const bobotTugas = document.getElementById('bobot_tugas').value;
-            // const bobotUts = document.getElementById('bobot_uts').value;
-            // const bobotUas = document.getElementById('bobot_uas').value;
-
-            // console.log("Simpan Bobot untuk MK ID:", mataKuliahId);
-            // console.log("Tugas:", bobotTugas, "UTS:", bobotUts, "UAS:", bobotUas);
-
-            // Tutup modal setelah (misalnya) berhasil disimpan
-            // var aturBobotModal = bootstrap.Modal.getInstance(document.getElementById('aturBobotModal'));
-            // aturBobotModal.hide();
-
-            alert("Fungsi simpanBobot() dipanggil. Implementasikan logika penyimpanan di sini.");
-        }
-
-        // Auto-dismiss toasts if any
-        document.addEventListener('DOMContentLoaded', function () {
-            var toastElList = [].slice.call(document.querySelectorAll('.toast'));
-            var toastList = toastElList.map(function (toastEl) {
-                var toast = new bootstrap.Toast(toastEl, { delay: 5000 });
-                toast.show();
-                return toast;
-            });
-        });
     </script>
 @endsection
