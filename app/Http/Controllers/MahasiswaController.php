@@ -22,8 +22,8 @@ class MahasiswaController extends Controller
         if ($search = $request->query('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('nim', 'like', '%' . $search . '%')
-                  ->orWhere('nama', 'like', '%' . $search . '%')
-                  ->orWhere('email', 'like', '%' . $search . '%');
+                    ->orWhere('nama', 'like', '%' . $search . '%')
+                    ->orWhere('email', 'like', '%' . $search . '%');
             });
         }
 
@@ -42,9 +42,9 @@ class MahasiswaController extends Controller
         $mahasiswas = $query->orderBy('nama', 'asc')->paginate(10)->appends($request->query());
         $prodis = Prodi::orderBy('nama_prodi', 'asc')->get(['id', 'nama_prodi']);
         $angkatans = Mahasiswa::select('angkatan')
-                              ->distinct()
-                              ->orderBy('angkatan', 'desc')
-                              ->pluck('angkatan');
+            ->distinct()
+            ->orderBy('angkatan', 'desc')
+            ->pluck('angkatan');
 
         return view('mahasiswa.index', compact('mahasiswas', 'prodis', 'angkatans'));
     }
@@ -82,7 +82,7 @@ class MahasiswaController extends Controller
         Mahasiswa::create($validatedData);
 
         return redirect()->route('mahasiswa.index')
-                         ->with('success', 'Data mahasiswa berhasil ditambahkan.');
+            ->with('success', 'Data mahasiswa berhasil ditambahkan.');
     }
 
     /**
@@ -130,7 +130,7 @@ class MahasiswaController extends Controller
         $mahasiswa->update($validatedData);
 
         return redirect()->route('mahasiswa.index')
-                         ->with('success', 'Data mahasiswa berhasil diperbarui.');
+            ->with('success', 'Data mahasiswa berhasil diperbarui.');
     }
 
     /**
@@ -144,6 +144,6 @@ class MahasiswaController extends Controller
         $mahasiswa->delete();
 
         return redirect()->route('mahasiswa.index')
-                         ->with('success', 'Data mahasiswa berhasil dihapus.');
+            ->with('success', 'Data mahasiswa berhasil dihapus.');
     }
 }

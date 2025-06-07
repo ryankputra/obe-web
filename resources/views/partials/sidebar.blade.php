@@ -4,105 +4,119 @@
         <div class="list-group list-group-flush flex-grow-1">
 
             {{-- Item untuk role 'dosen' --}}
-            @if(auth()->check() && auth()->user()->role == 'dosen')
+            @if (auth()->check() && auth()->user()->role == 'dosen')
                 {{-- Item Dashboard: Ditambahkan untuk role 'dosen' dan diletakkan di atas Penilaian --}}
-                <a href="{{ route('dashboard') }}" class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('dashboard') ? 'active' : '' }}">
+                <a href="{{ route('dashboard') }}"
+                    class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('dashboard') ? 'active' : '' }}">
                     <i class="fas fa-tachometer-alt me-2"></i> Dashboard
                 </a>
 
                 {{-- Item Penilaian: Hanya tampil jika role adalah 'dosen' --}}
-                <a href="{{ route('penilaian.index') }}" class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('penilaian*') ? 'active' : '' }}">
+                <a href="{{ route('penilaian.index') }}"
+                    class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('penilaian*') ? 'active' : '' }}">
                     <i class="fas fa-clipboard-check me-2"></i> Penilaian
                 </a>
             @endif
 
             {{-- Item Dashboard: Tampil jika BUKAN role 'dosen' --}}
-            @if(auth()->check() && auth()->user()->role != 'dosen')
-                <a href="{{ route('dashboard') }}" class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('dashboard') ? 'active' : '' }}">
+            @if (auth()->check() && auth()->user()->role != 'dosen')
+                <a href="{{ route('dashboard') }}"
+                    class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('dashboard') ? 'active' : '' }}">
                     <i class="fas fa-tachometer-alt me-2"></i> Dashboard
                 </a>
             @endif
 
             {{-- Item Mata Kuliah: Tampil jika BUKAN role 'dosen' --}}
-            @if(auth()->check() && auth()->user()->role != 'dosen')
-                <a href="{{ route('mata_kuliah.index') }}" class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('mata_kuliah*') ? 'active' : '' }}">
+            @if (auth()->check() && auth()->user()->role != 'dosen')
+                <a href="{{ route('mata_kuliah.index') }}"
+                    class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('mata_kuliah*') ? 'active' : '' }}">
                     <i class="fas fa-book me-2"></i> Mata Kuliah
                 </a>
             @endif
 
             {{-- Item Dosen: Tampil jika BUKAN role 'dosen' --}}
-            @if(auth()->check() && auth()->user()->role != 'dosen')
-                <a href="{{ route('dosen.index') }}" class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('dosen*') ? 'active' : '' }}">
+            @if (auth()->check() && auth()->user()->role != 'dosen')
+                <a href="{{ route('dosen.index') }}"
+                    class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('dosen*') ? 'active' : '' }}">
                     <i class="fas fa-chalkboard-teacher me-2"></i> Dosen
                 </a>
             @endif
 
             {{-- Item Daftar Prodi: Tampil jika BUKAN role 'dosen' --}}
-            @if(auth()->check() && auth()->user()->role != 'dosen')
-                <a href="{{ route('fakultasfst.index') }}" class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('fakultasfst*') ? 'active' : '' }}">
+            @if (auth()->check() && auth()->user()->role != 'dosen')
+                <a href="{{ route('fakultasfst.index') }}"
+                    class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('fakultasfst*') ? 'active' : '' }}">
                     <i class="fas fa-building me-2"></i> Daftar Prodi
                 </a>
             @endif
 
             {{-- Mahasiswa dropdown: Tampil jika BUKAN role 'dosen' --}}
-            @if(auth()->check() && auth()->user()->role != 'dosen')
-                <div class="list-group-item text-white py-3 my-1 {{ request()->is('mahasiswa*') ? 'active' : '' }} dropdown">
-                    <a class="text-white dropdown-toggle" href="#" id="mahasiswaDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            @if (auth()->check() && auth()->user()->role != 'dosen')
+                <div
+                    class="list-group-item text-white py-3 my-1 {{ request()->is('mahasiswa*') ? 'active' : '' }} sidebar-dropdown">
+                    <a class="text-white dropdown-toggle text-decoration-none d-block w-100" href="#mahasiswaSubmenu"
+                        data-bs-toggle="collapse" aria-expanded="false">
                         <i class="fas fa-user-graduate me-2"></i> Mahasiswa
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end w-100" aria-labelledby="mahasiswaDropdown" style="background-color: #426c8f;">
-                        <li>
-                            <a class="dropdown-item text-white {{ request()->is('mahasiswa*') && !request()->routeIs('mahasiswa.create') ? 'active' : '' }}" href="{{ route('mahasiswa.index') }}">
+                    <div class="collapse" id="mahasiswaSubmenu">
+                        <div class="list-group mt-2">
+                            <a class="list-group-item text-white py-2" href="{{ route('mahasiswa.index') }}">
                                 <i class="fas fa-list me-2"></i> Tampil Mahasiswa
                             </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item text-white {{ request()->routeIs('mahasiswa.create') ? 'active' : '' }}" href="{{ route('mahasiswa.create') }}">
+                            <a class="list-group-item text-white py-2" href="{{ route('mahasiswa.create') }}">
                                 <i class="fas fa-user-plus me-2"></i> Input Mahasiswa
                             </a>
-                        </li>
-                    </ul>
+                        </div>
+                    </div>
                 </div>
             @endif
 
             {{-- Item CPL: Tampil jika BUKAN role 'dosen' --}}
-            @if(auth()->check() && auth()->user()->role != 'dosen')
-                <a href="{{ route('cpl.index') }}" class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('cpl*') ? 'active' : '' }}">
+            @if (auth()->check() && auth()->user()->role != 'dosen')
+                <a href="{{ route('cpl.index') }}"
+                    class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('cpl*') ? 'active' : '' }}">
                     <i class="fas fa-list-alt me-2"></i> CPL
                 </a>
             @endif
 
             {{-- Item CPMK: Tampil jika BUKAN role 'dosen' --}}
-            @if(auth()->check() && auth()->user()->role != 'dosen')
-                <a href="{{ route('cpmk.index') }}" class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('cpmk*') ? 'active' : '' }}">
+            @if (auth()->check() && auth()->user()->role != 'dosen')
+                <a href="{{ route('cpmk.index') }}"
+                    class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('cpmk*') ? 'active' : '' }}">
                     <i class="fas fa-tasks me-2"></i> CPMK
                 </a>
             @endif
 
             {{-- Menu items untuk role 'admin' --}}
-            @if(auth()->check() && auth()->user()->role == 'admin')
+            @if (auth()->check() && auth()->user()->role == 'admin')
                 {{-- Item Bobot Nilai: Hanya tampil jika role adalah 'admin'. --}}
-                <a href="{{ route('bobot_nilai.index') }}" class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('bobot-nilai*') ? 'active' : '' }}">
+                <a href="{{ route('bobot_nilai.index') }}"
+                    class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('bobot-nilai*') ? 'active' : '' }}">
                     {{--                                                                                                  ^^^ PERUBAHAN DI SINI ^^^ --}}
                     <i class="fas fa-balance-scale me-2"></i> Bobot Nilai
                 </a>
 
                 {{-- Item User: Hanya tampil jika role adalah 'admin'. --}}
-                <a href="{{ route('users.index') }}" class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('user*') ? 'active' : '' }}">
+                <a href="{{ route('users.index') }}"
+                    class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('user*') ? 'active' : '' }}">
                     {{-- Untuk 'users', jika URL-nya adalah /users, maka 'user*' sudah benar. Jika URL-nya /user-management, maka perlu disesuaikan juga. --}}
                     <i class="fas fa-users me-2"></i> User
                 </a>
             @endif
 
-            @if(auth()->check())
+            @if (auth()->check())
                 <div class="mt-auto text-center py-3">
                     <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="settingsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="settingsDropdown"
+                            data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-cog me-2"></i> Pengaturan
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="settingsDropdown">
-                            <li><a class="dropdown-item" href="{{ route('profile') }}"><i class="fas fa-user me-2"></i> Profil</a></li>
-                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+                            <li><a class="dropdown-item" href="{{ route('profile') }}"><i class="fas fa-user me-2"></i>
+                                    Profil</a></li>
+                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal"
+                                    data-bs-target="#logoutModal"><i class="fas fa-sign-out-alt me-2"></i> Logout</a>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -143,6 +157,8 @@
         display: flex;
         flex-direction: column;
         width: 250px;
+        position: fixed;
+        z-index: 1050;
     }
 
     .sidebar-heading {
@@ -164,11 +180,21 @@
     }
 
     .list-group-item.active {
-        background-color: #007bff; /* Warna biru untuk item aktif */
+        background-color: #007bff;
+        /* Warna biru untuk item aktif */
         color: #fff;
     }
 
+    .list-group {
+        position: relative;
+        z-index: 1050;
+        /* Higher than modal backdrop */
+    }
+
     .dropdown-menu {
+        position: absolute;
+        z-index: 1051;
+        /* Higher than list-group */
         background-color: #426c8f;
         color: #fff;
         border: none;
@@ -186,6 +212,11 @@
         color: #000;
     }
 
+    /* Ensure modals don't block sidebar interactions */
+    .modal {
+        z-index: 1049;
+    }
+
     @media (max-width: 768px) {
         #sidebar-wrapper {
             position: fixed;
@@ -193,25 +224,56 @@
             margin-left: -250px;
             transition: all 0.3s;
         }
-        
+
         #sidebar-wrapper.active {
             margin-left: 0;
         }
-        
+
         #main-content {
             width: 100%;
             padding-left: 0;
         }
     }
+
+    /* Add these new styles to your existing sidebar styles */
+    .sidebar-dropdown .collapse {
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+
+    .sidebar-dropdown .list-group-item {
+        padding-left: 2.5rem;
+        border-radius: 0;
+    }
+
+    .sidebar-dropdown .list-group-item:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Remove dropdown arrow styling since we're using collapse */
+    .sidebar-dropdown .dropdown-toggle::after {
+        display: none;
+    }
 </style>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Optional toggle for sidebar in mobile
-        // Jika Anda menggunakan Bootstrap 5, dropdown dan modal biasanya
-        // sudah otomatis berfungsi tanpa perlu inisialisasi manual di sini,
-        // kecuali jika ada kasus khusus.
+        // Initialize all dropdowns
+        var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))
+        var dropdownList = dropdownElementList.map(function(dropdownToggleEl) {
+            return new bootstrap.Dropdown(dropdownToggleEl, {
+                hover: false,
+                autoClose: true
+            })
+        })
+
+        // Ensure dropdowns work even when modals are open
+        document.querySelectorAll('.dropdown-toggle').forEach(function(element) {
+            element.addEventListener('click', function(e) {
+                e.stopPropagation()
+            })
+        })
     });
 </script>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    crossorigin="anonymous">
