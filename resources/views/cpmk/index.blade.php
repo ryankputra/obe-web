@@ -19,9 +19,7 @@
                     <i class="fas fa-plus text-white"></i>
                 </a>
             </div>
-
         </div>
-
 
         <!-- Filter Section -->
         <div class="row mb-3">
@@ -94,7 +92,6 @@
             </div>
         </div>
 
-
         <div class="row">
             <div class="col-12">
                 <div class="table-responsive">
@@ -121,12 +118,14 @@
                                     <td class="text-start">{{ $cpmk->pic }}</td>
                                     <td class="text-start">
                                         <a href="#" class="btn btn-outline-info btn-sm" data-bs-toggle="modal"
-                                            data-bs-target="#editCpmkModal" data-id="{{ $cpmk->id }}"
+                                            data-bs-target="#editCpmkModal" 
+                                            data-id="{{ $cpmk->id }}"
+                                            data-kode_cpl="{{ $cpmk->kode_cpl }}"
                                             data-kode_cpmk="{{ $cpmk->kode_cpmk }}"
-                                            data-deskripsi="{{ $cpmk->deskripsi }}" data-kode_cpl="{{ $cpmk->kode_cpl }}"
-                                            data-mata_kuliah="{{ $cpmk->mata_kuliah }}" data-bobot="{{ $cpmk->bobot }}"
+                                            data-deskripsi="{{ $cpmk->deskripsi }}" 
+                                            data-mata_kuliah="{{ $cpmk->mata_kuliah }}" 
+                                            data-bobot="{{ $cpmk->bobot }}"
                                             data-pic="{{ $cpmk->pic }}">
-
                                             Edit
                                         </a>
                                         <form action="{{ route('cpmk.destroy', $cpmk->id) }}" method="POST"
@@ -142,69 +141,12 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="text-start">Tidak ada data CPMK</td>
+                                    <td colspan="7" class="text-start">Tidak ada data CPMK</td>
                                 </tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Add CPMK Modal -->
-    <div class="modal fade" id="addCpmkModal" tabindex="-1" aria-labelledby="addCpmkModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addCpmkModalLabel">Tambah CPMK</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form method="POST" action="{{ route('cpmk.store') }}">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="kode_cpl" class="form-label">CPL</label>
-                            <select class="form-control" id="kode_cpl" name="kode_cpl" required>
-                                @foreach ($cpls as $cpl)
-                                    <option value="{{ $cpl->kode_cpl }}">{{ $cpl->kode_cpl }} - {{ $cpl->deskripsi }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="kode_cpmk" class="form-label">Nomor CPMK</label>
-                            <input type="number" class="form-control" id="kode_cpmk" name="kode_cpmk" min="1"
-                                max="999" required>
-                            <small class="text-muted">Contoh: 2 akan menjadi [KodeCPL]002</small>
-                        </div>
-                        <div class="mb-3">
-                            <label for="mata_kuliah" class="form-label">Mata Kuliah</label>
-                            <select class="form-control" id="mata_kuliah" name="mata_kuliah" required>
-                                @foreach ($matakuliahs as $matakuliah)
-                                    <option value="{{ $matakuliah->kode_mk }}">{{ $matakuliah->kode_mk }} -
-                                        {{ $matakuliah->nama_mk }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="deskripsi" class="form-label">Deskripsi</label>
-                            <textarea class="form-control" id="deskripsi" name="deskripsi" rows="4" required></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="bobot" class="form-label">Bobot</label>
-                            <input type="number" class="form-control" id="bobot" name="bobot" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="pic" class="form-label">PIC</label>
-                            <input type="text" class="form-control" id="pic" name="pic" required>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary">Simpan</button>
-                    </div>
-                </form>
             </div>
         </div>
     </div>
@@ -232,7 +174,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="edit_kode_cpmk" class="form-label">Kode CPMK</label>
-                            <input type="text" class="form-control" id="edit_kode_cpmk" name="kode_cpmk">
+                            <input type="text" class="form-control" id="edit_kode_cpmk" name="kode_cpmk" readonly>
                         </div>
                         <div class="mb-3">
                             <label for="edit_mata_kuliah" class="form-label">Mata Kuliah</label>
@@ -261,30 +203,6 @@
                         <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
                     </div>
                 </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Delete Confirmation Modal -->
-    <div class="modal fade" id="deleteCpmkModal" tabindex="-1" aria-labelledby="deleteCpmkModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteCpmkModalLabel">Hapus CPMK</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    Apakah Anda yakin ingin menghapus CPMK ini?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <form method="POST" id="deleteForm" style="display: inline-block;">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger">Hapus</button>
-                    </form>
-                </div>
             </div>
         </div>
     </div>
@@ -327,71 +245,63 @@
             background-color: #dc3545;
             border-color: #dc3545;
         }
+        
+        /* Fix for modal overlay */
+        .modal-backdrop {
+            z-index: 1040 !important;
+        }
+        .modal {
+            z-index: 1050 !important;
+        }
     </style>
 @endsection
 
 @section('scripts')
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <!-- Load Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script>
-        // resources/views/cpmk/index.blade.php (JavaScript for Edit Modal)
-        document.getElementById('editCpmkModal').addEventListener('show.bs.modal', function(event) {
-            const button = event.relatedTarget;
-            const id = button.getAttribute('data-id');
-            const kodeCpl = button.getAttribute('data-kode_cpl');
-            const kodeCpmk = button.getAttribute('data-kode_cpmk');
-            const mataKuliah = button.getAttribute('data-mata_kuliah');
-            const deskripsi = button.getAttribute('data-deskripsi');
-            const pic = button.getAttribute('data-pic');
-            const bobot = button.getAttribute('data-bobot');
-
-            const modal = this;
-            const existingNumber = kodeCpmk.slice(-3);
-            const existingCplNumber = kodeCpmk.slice(4, -3); // Extract between "CPMK" and the last 3 digits
-
-            modal.querySelector('#edit_kode_cpl').value = `CPL${existingCplNumber}`;
-            modal.querySelector('#edit_kode_cpmk').value = kodeCpmk;
-            modal.querySelector('#edit_mata_kuliah').value = mataKuliah;
-            modal.querySelector('#edit_deskripsi').value = deskripsi;
-            modal.querySelector('#edit_pic').value = pic;
-            modal.querySelector('#edit_bobot').value = bobot;
-            modal.querySelector('#editForm').action = `/cpmk/${id}`;
-
-            modal.dataset.existingNumber = existingNumber;
-
-            const cplSelect = modal.querySelector('#edit_kode_cpl');
-            cplSelect.addEventListener('change', function() {
-                const newCplKode = this.value;
-                const newCplNumber = newCplKode.replace('CPL', '');
-                const newKodeCpmk = `CPMK${newCplNumber}${modal.dataset.existingNumber}`;
-                modal.querySelector('#edit_kode_cpmk').value = newKodeCpmk;
-            });
-        });
-
-        // Delete Modal Handler
-        document.getElementById('deleteCpmkModal').addEventListener('show.bs.modal', function(event) {
-            const button = event.relatedTarget;
-            const id = button.getAttribute('data-id');
-            const modal = this;
-            modal.querySelector('#deleteForm').action = `/cpmk/${id}`;
-        });
-
-        // resources/views/cpmk/index.blade.php (JavaScript for Add Form)
+        // Edit Modal Handler
         document.addEventListener('DOMContentLoaded', function() {
+            const editModal = document.getElementById('editCpmkModal');
+            
+            if (editModal) {
+                editModal.addEventListener('show.bs.modal', function(event) {
+                    const button = event.relatedTarget;
+                    const form = this.querySelector('#editForm');
+                    
+                    // Set form action
+                    form.action = '/cpmk/' + button.getAttribute('data-id');
+                    
+                    // Fill form fields
+                    document.getElementById('edit_kode_cpl').value = button.getAttribute('data-kode_cpl');
+                    document.getElementById('edit_kode_cpmk').value = button.getAttribute('data-kode_cpmk');
+                    document.getElementById('edit_mata_kuliah').value = button.getAttribute('data-mata_kuliah');
+                    document.getElementById('edit_deskripsi').value = button.getAttribute('data-deskripsi');
+                    document.getElementById('edit_pic').value = button.getAttribute('data-pic');
+                    document.getElementById('edit_bobot').value = button.getAttribute('data-bobot');
+                });
+            }
+            
+            // CPL Number Preview for Add Form
             const cplSelect = document.getElementById('kode_cpl');
             const cpmkInput = document.getElementById('kode_cpmk');
-            const preview = document.createElement('small');
-            preview.className = 'form-text text-primary mt-1';
-            cpmkInput.parentNode.appendChild(preview);
+            
+            if (cplSelect && cpmkInput) {
+                const preview = document.createElement('small');
+                preview.className = 'form-text text-primary mt-1';
+                cpmkInput.parentNode.appendChild(preview);
 
-            function updatePreview() {
-                const cplCode = cplSelect.value;
-                const cplNumber = cplCode.replace('CPL', '');
-                const cpmkNum = cpmkInput.value.padStart(3, '0');
-                preview.textContent = `Kode CPMK akan menjadi: CPMK${cplNumber}${cpmkNum}`;
+                function updatePreview() {
+                    const cplCode = cplSelect.value;
+                    const cplNumber = cplCode.replace('CPL', '');
+                    const cpmkNum = cpmkInput.value.padStart(3, '0');
+                    preview.textContent = `Kode CPMK akan menjadi: CPMK${cplNumber}${cpmkNum}`;
+                }
+
+                cplSelect.addEventListener('change', updatePreview);
+                cpmkInput.addEventListener('input', updatePreview);
             }
-
-            cplSelect.addEventListener('change', updatePreview);
-            cpmkInput.addEventListener('input', updatePreview);
         });
     </script>
 @endsection
