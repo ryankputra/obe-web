@@ -151,6 +151,50 @@
                     @enderror
                 </div>
 
+                {{-- Pilihan Mahasiswa dengan Search dan Tabel --}}
+                <div class="col-12">
+                    <label class="form-label">Mahasiswa Terdaftar (Opsional)</label>
+                    <!-- Input Pencarian Mahasiswa -->
+                    <div class="mb-3">
+                        <input type="text" id="mahasiswa-search-input" class="form-control" placeholder="Cari Mahasiswa berdasarkan Nama atau NIM...">
+                    </div>
+
+                    <!-- Tabel Hasil Pencarian Mahasiswa -->
+                    <div class="table-responsive mb-3" style="max-height: 200px; overflow-y: auto;" id="mahasiswa-search-results-container">
+                        <table class="table table-sm table-bordered table-hover">
+                            <thead class="table-light sticky-top">
+                                <tr>
+                                    <th>NIM</th>
+                                    <th>Nama</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="mahasiswa-search-results-tbody">
+                                <tr><td colspan="3" class="text-center text-muted">Ketik untuk mencari mahasiswa.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Tabel Mahasiswa Terpilih -->
+                    <label class="form-label">Mahasiswa Terpilih:</label>
+                    <div class="table-responsive" id="selected-mahasiswa-container">
+                        <table class="table table-sm table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>NIM</th>
+                                    <th>Nama</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="selected-mahasiswa-tbody"></tbody>
+                        </table>
+                    </div>
+
+                    <!-- Hidden inputs untuk menyimpan NIM mahasiswa terpilih -->
+                    <div id="mahasiswa-hidden-inputs"></div>
+                    @error('mahasiswa_nims') <small class="text-danger">{{ $message }}</small> @enderror
+                    @error('mahasiswa_nims.*') <small class="text-danger">{{ $message }}</small> @enderror
+                </div>
 
                 <div class="col-12 mt-4">
                     <button type="submit" class="btn btn-primary">
@@ -166,11 +210,18 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const dosenButtonsContainer = document.getElementById('dosen-buttons');
-    const hiddenInputsContainer = document.getElementById('dosen-hidden-inputs');
+    const dosenHiddenInputsContainer = document.getElementById('dosen-hidden-inputs');
+
+    // Variabel untuk Mahasiswa Search
+    const mahasiswaSearchInput = document.getElementById('mahasiswa-search-input');
+    const mahasiswaSearchResultsTbody = document.getElementById('mahasiswa-search-results-tbody');
+    const selectedMahasiswaTbody = document.getElementById('selected-mahasiswa-tbody');
+    const mahasiswaHiddenInputsContainer = document.getElementById('mahasiswa-hidden-inputs');
+    let selectedNimsSet = new Set();
 
     // Function to add hidden input for selected dosen
     function addDosenInput(id) {
-        if (!hiddenInputsContainer.querySelector('input[name="dosen_ids[]"][value="' + id + '"]')) {
+        if (!dosenHiddenInputsContainer.querySelector('input[name="dosen_ids[]"][value="' + id + '"]')) {
             const input = document.createElement('input');
             input.type = 'hidden';
             input.name = 'dosen_ids[]';
@@ -181,7 +232,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Function to remove hidden input for deselected dosen
     function removeDosenInput(id) {
-        const input = hiddenInputsContainer.querySelector('input[name="dosen_ids[]"][value="' + id + '"]');
+        const input = dosenHiddenInputsContainer.querySelector('input[name="dosen_ids[]"][value="' + id + '"]');
         if (input) {
             input.remove();
         }
@@ -202,13 +253,129 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Initialize hidden inputs based on currently active buttons (e.g., from old input or existing data)
-    // This part is handled by the Blade template rendering old('dosen_ids') or $mataKuliah->dosens
-    // The script above ensures dynamic changes are reflected.
-    // If you were populating `dosen-hidden-inputs` purely via JS on load, you'd do it here.
-    // However, since Blade handles the initial state of hidden inputs based on `old()` or `$mataKuliah->dosens`,
-    // we just need to make sure the buttons visually match that state.
-    // The `in_array` check in the Blade for button's `active` class and for rendering initial hidden inputs handles this.
+    // --- Fungsi untuk Mahasiswa (Search & Select) ---
+    function debounce(func, delay) {
+        let timeout;
+        return function(...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(this, args), delay);
+        };
+    }
+
+    function addMahasiswaHiddenInput(nim) {
+        if (!mahasiswaHiddenInputsContainer.querySelector('input[name="mahasiswa_nims[]"][value="' + nim + '"]')) {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'mahasiswa_nims[]';
+            input.value = nim;
+            mahasiswaHiddenInputsContainer.appendChild(input);
+        }
+    }
+
+    function removeMahasiswaHiddenInput(nim) {
+        const input = mahasiswaHiddenInputsContainer.querySelector('input[name="mahasiswa_nims[]"][value="' + nim + '"]');
+        if (input) input.remove();
+    }
+
+    function addMahasiswaToSelectedTable(mahasiswa) {
+        if (selectedNimsSet.has(mahasiswa.nim)) return;
+        selectedNimsSet.add(mahasiswa.nim);
+        addMahasiswaHiddenInput(mahasiswa.nim);
+
+        const tr = document.createElement('tr');
+        tr.setAttribute('data-nim', mahasiswa.nim);
+        tr.innerHTML = `
+            <td>${mahasiswa.nim}</td>
+            <td>${mahasiswa.nama}</td>
+            <td><button type="button" class="btn btn-danger btn-sm remove-selected-mahasiswa-btn" data-nim="${mahasiswa.nim}">Hapus</button></td>
+        `;
+        selectedMahasiswaTbody.appendChild(tr);
+        updateSearchResultsTable();
+    }
+
+    function removeMahasiswaFromSelectedTable(nim) {
+        selectedNimsSet.delete(nim);
+        removeMahasiswaHiddenInput(nim);
+        const tr = selectedMahasiswaTbody.querySelector(`tr[data-nim="${nim}"]`);
+        if (tr) tr.remove();
+        updateSearchResultsTable();
+    }
+
+    function renderSearchResults(mahasiswas) {
+        mahasiswaSearchResultsTbody.innerHTML = '';
+        if (mahasiswas.length === 0) {
+            mahasiswaSearchResultsTbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted">Tidak ada mahasiswa ditemukan.</td></tr>';
+            return;
+        }
+        mahasiswas.forEach(mhs => {
+            const tr = document.createElement('tr');
+            const isSelected = selectedNimsSet.has(mhs.nim);
+            tr.innerHTML = `
+                <td>${mhs.nim}</td>
+                <td>${mhs.nama}</td>
+                <td>
+                    <button type="button" class="btn btn-success btn-sm add-mahasiswa-btn" 
+                            data-nim="${mhs.nim}" data-nama="${mhs.nama}" ${isSelected ? 'disabled' : ''}>
+                        Tambah
+                    </button>
+                </td>
+            `;
+            mahasiswaSearchResultsTbody.appendChild(tr);
+        });
+    }
+    
+    function updateSearchResultsTable() {
+        const addButtons = mahasiswaSearchResultsTbody.querySelectorAll('.add-mahasiswa-btn');
+        addButtons.forEach(button => {
+            button.disabled = selectedNimsSet.has(button.getAttribute('data-nim'));
+        });
+    }
+
+    async function fetchMahasiswas(query) {
+        if (query.trim() === '') {
+            mahasiswaSearchResultsTbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted">Ketik untuk mencari mahasiswa.</td></tr>';
+            return;
+        }
+        try {
+            const params = new URLSearchParams();
+            params.append('q', query);
+            Array.from(selectedNimsSet).forEach(nim => params.append('selected_nims[]', nim));
+            
+            const response = await fetch(`{{ route('mahasiswa.search.json') }}?${params.toString()}`);
+            if (!response.ok) {
+                const errorText = await response.text();
+                mahasiswaSearchResultsTbody.innerHTML = `<tr><td colspan="3" class="text-center text-danger">Gagal: ${response.status}</td></tr>`;
+                throw new Error(`Network error: ${response.status} ${errorText}`);
+            }
+            const data = await response.json();
+            renderSearchResults(data);
+        } catch (error) {
+            console.error("Fetch error:", error);
+            if (!mahasiswaSearchResultsTbody.innerHTML.includes('text-danger')) {
+                 mahasiswaSearchResultsTbody.innerHTML = '<tr><td colspan="3" class="text-center text-danger">Error pencarian.</td></tr>';
+            }
+        }
+    }
+
+    mahasiswaSearchInput.addEventListener('input', debounce(e => fetchMahasiswas(e.target.value), 300));
+
+    mahasiswaSearchResultsTbody.addEventListener('click', e => {
+        if (e.target.classList.contains('add-mahasiswa-btn')) {
+            addMahasiswaToSelectedTable({ nim: e.target.dataset.nim, nama: e.target.dataset.nama });
+            e.target.disabled = true;
+        }
+    });
+
+    selectedMahasiswaTbody.addEventListener('click', e => {
+        if (e.target.classList.contains('remove-selected-mahasiswa-btn')) {
+            removeMahasiswaFromSelectedTable(e.target.dataset.nim);
+        }
+    });
+
+    // Inisialisasi Mahasiswa Terpilih dari data mata kuliah atau 'old' input
+    const repopulatedSelectedMahasiswas = {!! json_encode($repopulatedSelectedMahasiswas) !!};
+    repopulatedSelectedMahasiswas.forEach(mhs => addMahasiswaToSelectedTable(mhs));
+    // --- Akhir Fungsi untuk Mahasiswa ---
 });
 </script>
 @endsection
@@ -288,6 +455,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     .btn.rounded-circle:hover {
         box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    /* Style untuk tabel mahasiswa agar header tetap terlihat saat scroll */
+    #mahasiswa-search-results-container .table-light.sticky-top th {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+    #mahasiswa-search-results-container, #selected-mahasiswa-container {
+        background-color: #fff;
     }
 </style>
 @endsection

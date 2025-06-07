@@ -100,6 +100,7 @@
                                 <th rowspan="2">Semester</th>
                                 <th colspan="2">SKS</th>
                                 <th rowspan="2">Status Mata Kuliah</th>
+                                <th rowspan="2">Jumlah Mahasiswa</th>
                                 <th rowspan="2">Action</th>
                             </tr>
                             <tr>
@@ -125,6 +126,7 @@
                                     <td>{{ $mk->sks_teori }}</td>
                                     <td>{{ $mk->sks_praktik }}</td>
                                     <td>{{ $mk->status_mata_kuliah }}</td>
+                                    <td>{{ $mk->mahasiswas_count }}</td>
                                     <td>
                                         <a href="{{ route('mata_kuliah.edit', $mk->kode_mk) }}"
                                             class="btn btn-outline-success btn-sm">
@@ -143,7 +145,7 @@
                                 </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="8" class="text-center">Tidak ada data mata kuliah</td>
+                                        <td colspan="9" class="text-center">Tidak ada data mata kuliah</td>
                                     </tr>
                                 @endforelse
                         </tbody>
@@ -176,8 +178,8 @@
 
     @if (session('success'))
         <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-            <div class="toast align-items-center text-white bg-success border-0 show" role="alert" aria-live="assertive"
-                aria-atomic="true">
+            <div id="successToast" class="toast align-items-center text-white bg-success border-0 show" role="alert" aria-live="assertive"
+                aria-atomic="true" data-bs-delay="3000">
                 <div class="d-flex">
                     <div class="toast-body">
                         {{ session('success') }}
@@ -331,6 +333,15 @@
                 statusSelect.addEventListener('change', function() {
                     this.form.submit();
                 });
+            }
+
+            // Auto-hide session success toast
+            const successToastEl = document.getElementById('successToast');
+            if (successToastEl && successToastEl.classList.contains('show')) {
+                // The toast is rendered with the 'show' class by Blade if session('success') exists.
+                // Initialize it as a Bootstrap toast.
+                // It will then autohide based on its data-bs-delay (set in HTML, e.g., 3000ms) or Bootstrap's default.
+                new bootstrap.Toast(successToastEl);
             }
         });
     </script>

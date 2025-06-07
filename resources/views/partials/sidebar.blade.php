@@ -183,11 +183,23 @@
         color: #fff;
     }
 
+    /* Make the list group scrollable if content overflows */
+    #sidebar-wrapper .list-group.flex-grow-1 {
+        overflow-y: auto; /* Enable scrolling */
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+    }
+
     .dropdown-menu {
         background-color: #426c8f;
         color: #fff;
         border: none;
         width: 100%;
+    }
+
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    #sidebar-wrapper .list-group.flex-grow-1::-webkit-scrollbar {
+        display: none;
     }
 
     .dropdown-item {

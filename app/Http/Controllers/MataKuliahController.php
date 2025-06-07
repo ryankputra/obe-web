@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Dosen;
+use App\Models\Mahasiswa;
 use App\Models\MataKuliah;
 use Illuminate\Http\Request;
 
@@ -10,7 +11,7 @@ class MataKuliahController extends Controller
 {
     public function index(Request $request)
     {
-        $query = MataKuliah::with('dosens');
+        $query = MataKuliah::with('dosens')->withCount('mahasiswas'); // Tambahkan withCount('mahasiswas')
 
         // Apply filters
         if ($request->filled('search')) {
@@ -37,7 +38,7 @@ class MataKuliahController extends Controller
             return (int)$mk->sks_teori + (int)$mk->sks_praktik;
         });
 
-        $mataKuliahs = $query->paginate(10);
+        $mataKuliahs = $query->orderBy('kode_mk')->paginate(10); // Tambahkan orderBy untuk konsistensi
 
         return view('mata_kuliah.index', [
             'mataKuliahs' => $mataKuliahs,
@@ -48,16 +49,48 @@ class MataKuliahController extends Controller
 
     public function create()
     {
+        $oldMahasiswaNims = old('mahasiswa_nims', []);
+        $repopulatedSelectedMahasiswas = [];
+        if (!empty($oldMahasiswaNims)) {
+            $mahasiswaModels = Mahasiswa::whereIn('nim', $oldMahasiswaNims)->get(['nim', 'nama']);
+            // Untuk menjaga urutan dari old() dan memastikan kita memiliki nama
+            $mahasiswaDataMap = $mahasiswaModels->keyBy('nim');
+            foreach ($oldMahasiswaNims as $nim) {
+                if (isset($mahasiswaDataMap[$nim])) {
+                    $repopulatedSelectedMahasiswas[] = (object) ['nim' => $nim, 'nama' => $mahasiswaDataMap[$nim]->nama];
+                }
+            }
+        }
+
         return view('mata_kuliah.create', [
-            'dosens' => Dosen::all()
+            'dosens' => Dosen::orderBy('nama')->get(),
+            'repopulatedSelectedMahasiswas' => $repopulatedSelectedMahasiswas // Kirim mahasiswa yang dipilih sebelumnya
         ]);
     }
 
     public function edit(MataKuliah $mataKuliah)
     {
+        $mataKuliah->load('dosens', 'mahasiswas'); // Pastikan mahasiswa juga di-load
+
+        $oldMahasiswaNims = old('mahasiswa_nims', $mataKuliah->mahasiswas->pluck('nim')->toArray());
+        $repopulatedSelectedMahasiswas = [];
+
+        if (!empty($oldMahasiswaNims)) {
+            // Ambil model Mahasiswa berdasarkan NIM yang ada di oldMahasiswaNims
+            // Ini penting untuk mendapatkan nama mahasiswa jika data berasal dari old() setelah validasi gagal
+            // dan belum tentu semua NIM dari old() ada di relasi $mataKuliah->mahasiswas
+            $mahasiswaModels = Mahasiswa::whereIn('nim', $oldMahasiswaNims)->get(['nim', 'nama']);
+            $mahasiswaDataMap = $mahasiswaModels->keyBy('nim');
+            foreach ($oldMahasiswaNims as $nim) {
+                if (isset($mahasiswaDataMap[$nim])) {
+                    $repopulatedSelectedMahasiswas[] = (object) ['nim' => $nim, 'nama' => $mahasiswaDataMap[$nim]->nama];
+                }
+            }
+        }
         return view('mata_kuliah.edit', [
-            'mataKuliah' => $mataKuliah->load('dosens'),
-            'dosens' => Dosen::all()
+            'mataKuliah' => $mataKuliah,
+            'dosens' => Dosen::orderBy('nama')->get(),
+            'repopulatedSelectedMahasiswas' => $repopulatedSelectedMahasiswas
         ]);
     }
 
@@ -71,13 +104,19 @@ class MataKuliahController extends Controller
             'sks_praktik' => 'required|integer|min:0',
             'status_mata_kuliah' => 'required|in:Wajib Prodi,Pilihan,Wajib Fakultas,Wajib Universitas',
             'dosen_ids' => 'nullable|array',
-            'dosen_ids.*' => 'exists:dosens,id'
+            'dosen_ids.*' => 'exists:dosens,id',
+            'mahasiswa_nims' => 'nullable|array', // Validasi untuk mahasiswa
+            'mahasiswa_nims.*' => 'exists:mahasiswas,nim' // Pastikan NIM mahasiswa ada
         ]);
 
         $mataKuliah = MataKuliah::create($validated);
 
         if ($request->has('dosen_ids')) {
             $mataKuliah->dosens()->sync($request->dosen_ids);
+        }
+
+        if ($request->has('mahasiswa_nims')) {
+            $mataKuliah->mahasiswas()->sync($request->mahasiswa_nims);
         }
 
         return redirect()->route('mata_kuliah.index')
@@ -94,12 +133,15 @@ class MataKuliahController extends Controller
             'sks_praktik' => 'required|integer|min:0',
             'status_mata_kuliah' => 'required|in:Wajib Prodi,Pilihan,Wajib Fakultas,Wajib Universitas',
             'dosen_ids' => 'nullable|array',
-            'dosen_ids.*' => 'exists:dosens,id'
+            'dosen_ids.*' => 'exists:dosens,id',
+            'mahasiswa_nims' => 'nullable|array', // Tambahkan juga di update jika diperlukan
+            'mahasiswa_nims.*' => 'exists:mahasiswas,nim' // Tambahkan juga di update jika diperlukan
         ]);
 
         $mataKuliah->update($validated);
 
         $mataKuliah->dosens()->sync($request->dosen_ids ?? []);
+        $mataKuliah->mahasiswas()->sync($request->mahasiswa_nims ?? []); // Tambahkan juga di update jika diperlukan
 
         return redirect()->route('mata_kuliah.index')
             ->with('success', 'Mata kuliah berhasil diperbarui');
@@ -108,6 +150,7 @@ class MataKuliahController extends Controller
     public function destroy(MataKuliah $mataKuliah)
     {
         $mataKuliah->dosens()->detach();
+        $mataKuliah->mahasiswas()->detach(); // Pastikan relasi mahasiswa juga di-detach
         $mataKuliah->delete();
 
         return redirect()->route('mata_kuliah.index')

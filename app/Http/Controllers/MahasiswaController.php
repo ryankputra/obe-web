@@ -146,4 +146,40 @@ class MahasiswaController extends Controller
         return redirect()->route('mahasiswa.index')
             ->with('success', 'Data mahasiswa berhasil dihapus.');
     }
+
+    /**
+     * Search mahasiswa for AJAX requests.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function searchJson(Request $request)
+    {
+        $queryTerm = $request->input('q', '');
+        $selectedNims = $request->input('selected_nims', []); // Untuk mengecualikan yang sudah dipilih
+
+        // \Illuminate\Support\Facades\Log::info('Search Mahasiswa JSON:', ['query' => $queryTerm, 'selected_nims' => $selectedNims]);
+
+        $mahasiswaQuery = Mahasiswa::where(function ($sq) use ($queryTerm) {
+            $sq->where('nama', 'LIKE', "%{$queryTerm}%")
+               ->orWhere('nim', 'LIKE', "%{$queryTerm}%");
+        });
+
+        // Filter out empty strings from selectedNims if any, and ensure it's an array
+        $validSelectedNims = [];
+        if (is_array($selectedNims)) {
+            foreach ($selectedNims as $nim) {
+                if (!empty(trim((string)$nim))) { // Ensure NIM is not an empty or whitespace-only string
+                    $validSelectedNims[] = (string)$nim;
+                }
+            }
+        }
+
+        if (!empty($validSelectedNims)) {
+            $mahasiswaQuery->whereNotIn('nim', $validSelectedNims);
+        }
+
+        $results = $mahasiswaQuery->take(10)->get(['nim', 'nama']);
+        return response()->json($results);
+    }
 }

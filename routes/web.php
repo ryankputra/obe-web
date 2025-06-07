@@ -49,6 +49,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('cpl', CplController::class);
     Route::resource('cpmk', CpmkController::class);
 
+    // Route untuk pencarian mahasiswa (JSON)
+    Route::get('/api/mahasiswa/search', [MahasiswaController::class, 'searchJson'])->name('mahasiswa.search.json');
+
     Route::resource('mahasiswa', MahasiswaController::class)->except(['update']);
     Route::put('mahasiswa/{mahasiswa}', [MahasiswaController::class, 'update'])->name('mahasiswa.update');
 
