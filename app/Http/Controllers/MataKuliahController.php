@@ -9,11 +9,14 @@ use Illuminate\Http\Request;
 
 class MataKuliahController extends Controller
 {
+    /**
+     * Menampilkan daftar mata kuliah dengan filter dan paginasi.
+     */
     public function index(Request $request)
     {
-        $query = MataKuliah::with('dosens')->withCount('mahasiswas'); // Tambahkan withCount('mahasiswas')
+        $query = MataKuliah::with('dosens')->withCount('mahasiswas');
 
-        // Apply filters
+        // Terapkan filter pencarian
         if ($request->filled('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
@@ -33,27 +36,29 @@ class MataKuliahController extends Controller
             $query->where('status_mata_kuliah', $request->input('status'));
         }
 
-        // Clone the query for total SKS calculation
+        // Hitung total SKS dari hasil query
         $totalSKS = (clone $query)->get()->sum(function ($mk) {
             return (int)$mk->sks_teori + (int)$mk->sks_praktik;
         });
 
-        $mataKuliahs = $query->orderBy('kode_mk')->paginate(10); // Tambahkan orderBy untuk konsistensi
+        $mataKuliahs = $query->orderBy('kode_mk')->paginate(10);
 
         return view('mata_kuliah.index', [
             'mataKuliahs' => $mataKuliahs,
             'totalSKS' => $totalSKS,
-            'dosens' => \App\Models\Dosen::all(),
+            'dosens' => \App\Models\Dosen::orderBy('nama')->get(),
         ]);
     }
 
+    /**
+     * Menampilkan form untuk membuat mata kuliah baru.
+     */
     public function create()
     {
         $oldMahasiswaNims = old('mahasiswa_nims', []);
         $repopulatedSelectedMahasiswas = [];
         if (!empty($oldMahasiswaNims)) {
             $mahasiswaModels = Mahasiswa::whereIn('nim', $oldMahasiswaNims)->get(['nim', 'nama']);
-            // Untuk menjaga urutan dari old() dan memastikan kita memiliki nama
             $mahasiswaDataMap = $mahasiswaModels->keyBy('nim');
             foreach ($oldMahasiswaNims as $nim) {
                 if (isset($mahasiswaDataMap[$nim])) {
@@ -64,21 +69,58 @@ class MataKuliahController extends Controller
 
         return view('mata_kuliah.create', [
             'dosens' => Dosen::orderBy('nama')->get(),
-            'repopulatedSelectedMahasiswas' => $repopulatedSelectedMahasiswas // Kirim mahasiswa yang dipilih sebelumnya
+            'repopulatedSelectedMahasiswas' => $repopulatedSelectedMahasiswas
         ]);
     }
 
+    /**
+     * Menyimpan mata kuliah baru ke database.
+     * Ini adalah method yang sudah diperbaiki.
+     */
+    public function store(Request $request)
+    {
+        // Validasi input, termasuk dosen dan mahasiswa
+        $validatedData = $request->validate([
+            'kode_mk' => 'required|string|max:10|unique:mata_kuliahs,kode_mk',
+            'nama_mk' => 'required|string|max:255',
+            'semester' => 'required|integer|min:1|max:8',
+            'sks_teori' => 'required|integer|min:0',
+            'sks_praktik' => 'required|integer|min:0',
+            'status_mata_kuliah' => 'required|string',
+            'dosen_ids' => 'nullable|array',
+            'dosen_ids.*' => 'exists:dosens,id',
+            'mahasiswa_nims' => 'nullable|array', // Validasi untuk mahasiswa
+            'mahasiswa_nims.*' => 'exists:mahasiswas,nim', // Pastikan NIM mahasiswa ada
+        ]);
+
+        // Buat record mata kuliah
+        $mataKuliah = MataKuliah::create($validatedData);
+
+        // Simpan relasi dosen
+        if ($request->filled('dosen_ids')) {
+            $mataKuliah->dosens()->sync($request->dosen_ids);
+        }
+
+        // Simpan relasi mahasiswa
+        if ($request->filled('mahasiswa_nims')) {
+            $mataKuliah->mahasiswas()->sync($request->mahasiswa_nims);
+        }
+
+        return redirect()->route('mata_kuliah.index')->with('success', 'Mata Kuliah berhasil ditambahkan!');
+    }
+
+
+    /**
+     * Menampilkan form untuk mengedit mata kuliah.
+     */
     public function edit(MataKuliah $mataKuliah)
     {
-        $mataKuliah->load('dosens', 'mahasiswas'); // Pastikan mahasiswa juga di-load
+        $mataKuliah->load('dosens', 'mahasiswas');
 
         $oldMahasiswaNims = old('mahasiswa_nims', $mataKuliah->mahasiswas->pluck('nim')->toArray());
         $repopulatedSelectedMahasiswas = [];
 
         if (!empty($oldMahasiswaNims)) {
-            // Ambil model Mahasiswa berdasarkan NIM yang ada di oldMahasiswaNims
-            // Ini penting untuk mendapatkan nama mahasiswa jika data berasal dari old() setelah validasi gagal
-            // dan belum tentu semua NIM dari old() ada di relasi $mataKuliah->mahasiswas
             $mahasiswaModels = Mahasiswa::whereIn('nim', $oldMahasiswaNims)->get(['nim', 'nama']);
             $mahasiswaDataMap = $mahasiswaModels->keyBy('nim');
             foreach ($oldMahasiswaNims as $nim) {
@@ -94,35 +136,9 @@ class MataKuliahController extends Controller
         ]);
     }
 
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'kode_mk' => 'required|unique:mata_kuliahs,kode_mk',
-            'nama_mk' => 'required',
-            'semester' => 'required|integer|between:1,8',
-            'sks_teori' => 'required|integer|min:0',
-            'sks_praktik' => 'required|integer|min:0',
-            'status_mata_kuliah' => 'required|in:Wajib Prodi,Pilihan,Wajib Fakultas,Wajib Universitas',
-            'dosen_ids' => 'nullable|array',
-            'dosen_ids.*' => 'exists:dosens,id',
-            'mahasiswa_nims' => 'nullable|array', // Validasi untuk mahasiswa
-            'mahasiswa_nims.*' => 'exists:mahasiswas,nim' // Pastikan NIM mahasiswa ada
-        ]);
-
-        $mataKuliah = MataKuliah::create($validated);
-
-        if ($request->has('dosen_ids')) {
-            $mataKuliah->dosens()->sync($request->dosen_ids);
-        }
-
-        if ($request->has('mahasiswa_nims')) {
-            $mataKuliah->mahasiswas()->sync($request->mahasiswa_nims);
-        }
-
-        return redirect()->route('mata_kuliah.index')
-            ->with('success', 'Mata kuliah berhasil ditambahkan');
-    }
-
+    /**
+     * Memperbarui mata kuliah di database.
+     */
     public function update(Request $request, MataKuliah $mataKuliah)
     {
         $validated = $request->validate([
@@ -134,23 +150,28 @@ class MataKuliahController extends Controller
             'status_mata_kuliah' => 'required|in:Wajib Prodi,Pilihan,Wajib Fakultas,Wajib Universitas',
             'dosen_ids' => 'nullable|array',
             'dosen_ids.*' => 'exists:dosens,id',
-            'mahasiswa_nims' => 'nullable|array', // Tambahkan juga di update jika diperlukan
-            'mahasiswa_nims.*' => 'exists:mahasiswas,nim' // Tambahkan juga di update jika diperlukan
+            'mahasiswa_nims' => 'nullable|array',
+            'mahasiswa_nims.*' => 'exists:mahasiswas,nim'
         ]);
 
         $mataKuliah->update($validated);
 
+        // Sinkronisasi relasi dosen dan mahasiswa
         $mataKuliah->dosens()->sync($request->dosen_ids ?? []);
-        $mataKuliah->mahasiswas()->sync($request->mahasiswa_nims ?? []); // Tambahkan juga di update jika diperlukan
+        $mataKuliah->mahasiswas()->sync($request->mahasiswa_nims ?? []);
 
         return redirect()->route('mata_kuliah.index')
             ->with('success', 'Mata kuliah berhasil diperbarui');
     }
 
+    /**
+     * Menghapus mata kuliah dari database.
+     */
     public function destroy(MataKuliah $mataKuliah)
     {
+        // Lepaskan semua relasi sebelum menghapus
         $mataKuliah->dosens()->detach();
-        $mataKuliah->mahasiswas()->detach(); // Pastikan relasi mahasiswa juga di-detach
+        $mataKuliah->mahasiswas()->detach();
         $mataKuliah->delete();
 
         return redirect()->route('mata_kuliah.index')

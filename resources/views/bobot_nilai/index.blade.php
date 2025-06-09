@@ -43,28 +43,22 @@
                                 <th>Kode MK</th>
                                 <th>Nama Mata Kuliah</th>
                                 <th>Jumlah Mahasiswa</th>
-                                <th>Aksi</th>
+                                <!-- Kolom Aksi dihilangkan, fungsionalitas pindah ke klik baris -->
                             </tr>
                         </thead>
                         <tbody>
                             @forelse ($mataKuliahs as $index => $mk)
-                                <tr>
+                                <tr class="clickable-row" data-detail-url="{{ route('bobot_nilai.show', $mk->getKey()) }}">
                                     <td>{{ $mataKuliahs->firstItem() + $index }}</td>
                                     <td>{{ $mk->kode_mk }}</td>
-                                    <td class="text-start">{{ $mk->nama_mk }}</td>
-                                    <td>{{ $mk->mahasiswas_count }}</td>
-                                    <td>
-                                        <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal"
-                                            data-bs-target="#aturBobotModal"
-                                            data-mk-id="{{ $mk->id }}"
-                                            data-mk-nama="{{ $mk->nama_mk }}">
-                                            Atur Bobot
-                                        </button>
+                                    <td class="text-start">
+                                        <a href="{{ route('bobot_nilai.show', $mk->getKey()) }}">{{ $mk->nama_mk }}</a>
                                     </td>
+                                    <td>{{ $mk->mahasiswas_count }}</td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="text-center">Tidak ada data mata kuliah yang ditemukan.</td>
+                                    <td colspan="4" class="text-center">Tidak ada data mata kuliah yang ditemukan.</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -87,43 +81,6 @@
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- Modal untuk Atur Bobot -->
-    <div class="modal fade" id="aturBobotModal" tabindex="-1" aria-labelledby="aturBobotModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="aturBobotModalLabel">Atur Bobot Nilai untuk: <span id="modalNamaMK"></span></h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <p>Formulir untuk mengatur bobot nilai (misalnya: Tugas, UTS, UAS, dll.) akan ditampilkan di sini.</p>
-            <p>ID Mata Kuliah: <span id="modalIdMK"></span></p>
-            <!-- Example form structure -->
-            <form id="formAturBobot">
-                <input type="hidden" id="inputMataKuliahId" name="mata_kuliah_id">
-                <div class="mb-3">
-                    <label for="bobot_tugas" class="form-label">Bobot Tugas (%)</label>
-                    <input type="number" class="form-control" id="bobot_tugas" name="bobot_tugas" min="0" max="100">
-                </div>
-                <div class="mb-3">
-                    <label for="bobot_uts" class="form-label">Bobot UTS (%)</label>
-                    <input type="number" class="form-control" id="bobot_uts" name="bobot_uts" min="0" max="100">
-                </div>
-                <div class="mb-3">
-                    <label for="bobot_uas" class="form-label">Bobot UAS (%)</label>
-                    <input type="number" class="form-control" id="bobot_uas" name="bobot_uas" min="0" max="100">
-                </div>
-                <div class="alert alert-info">Pastikan total bobot adalah 100%.</div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-            <button type="button" class="btn btn-primary" id="simpanBobotBtn">Simpan Bobot</button>
-          </div>
-        </div>
-      </div>
     </div>
 
     @if (session('success'))
@@ -185,6 +142,10 @@
             vertical-align: middle;
         }
 
+        .clickable-row {
+            cursor: pointer;
+        }
+
         .btn-outline-primary {
             border-color: #007bff;
             color: #007bff;
@@ -194,12 +155,12 @@
             color: white;
         }
 
-        /* Modal fixes */
+        /* Modal z-index fixes if needed, Bootstrap 5 should handle this well generally */
         .modal-backdrop {
-            z-index: 1040 !important;
+            z-index: 1040 !important; /* Default is 1050 for modal, 1040 for backdrop */
         }
         .modal {
-            z-index: 1050 !important;
+            z-index: 1050 !important; /* Ensure modals are on top */
         }
     </style>
 @endsection
@@ -207,57 +168,23 @@
 @section('scripts')
     <!-- Load Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <script>
-        // Initialize modal functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set up the Atur Bobot modal
-            const aturBobotModal = document.getElementById('aturBobotModal');
-            if (aturBobotModal) {
-                aturBobotModal.addEventListener('show.bs.modal', function(event) {
-                    const button = event.relatedTarget;
-                    const mkId = button.getAttribute('data-mk-id');
-                    const mkNama = button.getAttribute('data-mk-nama');
-                    
-                    // Update modal content
-                    document.getElementById('modalIdMK').textContent = mkId;
-                    document.getElementById('modalNamaMK').textContent = mkNama;
-                    document.getElementById('inputMataKuliahId').value = mkId;
-                    
-                    // Here you could load existing data via AJAX if needed
-                    // loadExistingBobot(mkId);
-                });
-            }
 
-            // Set up the Simpan Bobot button
-            const simpanBobotBtn = document.getElementById('simpanBobotBtn');
-            if (simpanBobotBtn) {
-                simpanBobotBtn.addEventListener('click', function() {
-                    const mataKuliahId = document.getElementById('inputMataKuliahId').value;
-                    const bobotTugas = document.getElementById('bobot_tugas').value;
-                    const bobotUts = document.getElementById('bobot_uts').value;
-                    const bobotUas = document.getElementById('bobot_uas').value;
-                    
-                    // Validate input
-                    if (!bobotTugas || !bobotUts || !bobotUas) {
-                        alert('Harap isi semua bobot nilai');
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const clickableRows = document.querySelectorAll('#bobotNilaiTable tbody .clickable-row');
+            clickableRows.forEach(row => {
+                row.addEventListener('click', function(event) {
+                    // If the click target or its parent is an anchor tag,
+                    // let the anchor tag handle the navigation.
+                    if (event.target.closest('a')) {
                         return;
                     }
-                    
-                    // Here you would typically make an AJAX call to save the data
-                    console.log('Simpan data untuk MK ID:', mataKuliahId);
-                    console.log('Bobot Tugas:', bobotTugas);
-                    console.log('Bobot UTS:', bobotUts);
-                    console.log('Bobot UAS:', bobotUas);
-                    
-                    // Close modal after saving
-                    bootstrap.Modal.getInstance(aturBobotModal).hide();
-                    
-                    // Show success message (you would replace this with actual response handling)
-                    alert('Bobot nilai berhasil disimpan!');
+                    const detailUrl = this.dataset.detailUrl;
+                    if (detailUrl) {
+                        window.location.href = detailUrl; // Navigate if other part of the row is clicked
+                    }
                 });
-            }
-
+            });
             // Auto-dismiss toasts
             var toastElList = [].slice.call(document.querySelectorAll('.toast'));
             var toastList = toastElList.map(function(toastEl) {
@@ -269,20 +196,6 @@
             if (url) {
                 window.location.href = url;
             }
-        }
-
-        // Example function to load existing data
-        function loadExistingBobot(mkId) {
-            // This would be an AJAX call to your backend
-            console.log('Loading existing bobot for MK ID:', mkId);
-            // Example:
-            // fetch(`/api/bobot-nilai/${mkId}`)
-            //     .then(response => response.json())
-            //     .then(data => {
-            //         document.getElementById('bobot_tugas').value = data.bobot_tugas;
-            //         document.getElementById('bobot_uts').value = data.bobot_uts;
-            //         document.getElementById('bobot_uas').value = data.bobot_uas;
-            //     });
         }
     </script>
 @endsection

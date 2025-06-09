@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Mahasiswa;
 use App\Models\MataKuliah;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use App\Models\Penilaian; // Pastikan model Penilaian ada dan di-import
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -57,7 +59,65 @@ class PenilaianController extends Controller
         ]);
     }
 
+    public function showDetailMataKuliah($id_mata_kuliah): View
+    {
+        $mataKuliah = MataKuliah::with('cpmks')->find($id_mata_kuliah); // Memuat relasi cpmks
+
+        if (!$mataKuliah) {
+            return redirect()->route('penilaian.index')->with('error', 'Mata kuliah tidak ditemukan.');
+        }
+        // Variabel $bobotPenilaian tidak lagi relevan jika kita menampilkan daftar CPMK
+
+        return view('penilaian.detail_mk', compact('mataKuliah'));
+    }
+
     public function showPenilaianMataKuliah($id_mata_kuliah): View
+    {
+        $mataKuliah = MataKuliah::with(['mahasiswas.penilaian' => function($q) use ($id_mata_kuliah) {
+            $q->where('mata_kuliah_id', $id_mata_kuliah);
+        }])->find($id_mata_kuliah);
+
+        if (!$mataKuliah) {
+            // Atau redirect dengan pesan error, sesuai kebutuhan aplikasi Anda
+            abort(404, 'Mata Kuliah tidak ditemukan.');
+        }
+
+        $mahasiswaDiKelas = $mataKuliah->mahasiswas ?? collect();
+
+        return view('penilaian.show_mata_kuliah', compact('mataKuliah', 'mahasiswaDiKelas'));
+    }
+
+    public function storeNilai(Request $request, $id_mata_kuliah)
+    {
+        $validatedData = $request->validate([
+            'nilai.*.tugas' => 'nullable|numeric|min:0|max:100',
+            'nilai.*.keaktifan' => 'nullable|numeric|min:0|max:100',
+            'nilai.*.proyek' => 'nullable|numeric|min:0|max:100', // Validasi untuk kolom proyek
+            'nilai.*.uts' => 'nullable|numeric|min:0|max:100',
+            'nilai.*.uas' => 'nullable|numeric|min:0|max:100',
+        ]);
+
+        foreach ($request->nilai as $mahasiswa_nim => $nilai) {
+            Penilaian::updateOrCreate(
+                [
+                    'mahasiswa_nim' => $mahasiswa_nim, // Gunakan mahasiswa_nim sesuai struktur tabel
+                    'mata_kuliah_kode_mk' => $id_mata_kuliah, // Gunakan mata_kuliah_kode_mk sesuai struktur tabel
+                ],
+                [
+                    'tugas' => $nilai['tugas'] ?? null,
+                    'keaktifan' => $nilai['keaktifan'] ?? null,
+                    'proyek' => $nilai['proyek'] ?? null, // Jika ada kolom proyek
+                    'uts' => $nilai['uts'] ?? null,
+                    'uas' => $nilai['uas'] ?? null,
+                ]
+            );
+        }
+
+        return redirect()->back()->with('success', 'Nilai berhasil disimpan!');
+    }
+
+
+    public function inputNilai($id_mata_kuliah)
     {
         $mataKuliah = MataKuliah::with('mahasiswas')->find($id_mata_kuliah);
 

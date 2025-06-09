@@ -21,7 +21,6 @@
             </div>
         </div>
 
-        <!-- Filter Section -->
         <div class="row mb-3">
             <div class="col-12">
                 <div class="card mb-4">
@@ -117,15 +116,8 @@
                                     <td class="text-start">{{ $cpmk->bobot }}</td>
                                     <td class="text-start">{{ $cpmk->pic }}</td>
                                     <td class="text-start">
-                                        <a href="#" class="btn btn-outline-info btn-sm" data-bs-toggle="modal"
-                                            data-bs-target="#editCpmkModal" 
-                                            data-id="{{ $cpmk->id }}"
-                                            data-kode_cpl="{{ $cpmk->kode_cpl }}"
-                                            data-kode_cpmk="{{ $cpmk->kode_cpmk }}"
-                                            data-deskripsi="{{ $cpmk->deskripsi }}" 
-                                            data-mata_kuliah="{{ $cpmk->mata_kuliah }}" 
-                                            data-bobot="{{ $cpmk->bobot }}"
-                                            data-pic="{{ $cpmk->pic }}">
+                                        {{-- [DIUBAH] Tombol Edit sekarang menjadi link ke halaman edit --}}
+                                        <a href="{{ route('cpmk.edit', $cpmk->id) }}" class="btn btn-outline-info btn-sm">
                                             Edit
                                         </a>
                                         <form action="{{ route('cpmk.destroy', $cpmk->id) }}" method="POST"
@@ -151,61 +143,8 @@
         </div>
     </div>
 
-    <!-- Edit CPMK Modal -->
-    <div class="modal fade" id="editCpmkModal" tabindex="-1" aria-labelledby="editCpmkModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editCpmkModalLabel">Edit CPMK</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form method="POST" id="editForm">
-                    @csrf
-                    @method('PUT')
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="edit_kode_cpl" class="form-label">CPL</label>
-                            <select class="form-control" id="edit_kode_cpl" name="kode_cpl" required>
-                                @foreach ($cpls as $cpl)
-                                    <option value="{{ $cpl->kode_cpl }}">{{ $cpl->kode_cpl }} - {{ $cpl->deskripsi }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="edit_kode_cpmk" class="form-label">Kode CPMK</label>
-                            <input type="text" class="form-control" id="edit_kode_cpmk" name="kode_cpmk" readonly>
-                        </div>
-                        <div class="mb-3">
-                            <label for="edit_mata_kuliah" class="form-label">Mata Kuliah</label>
-                            <select class="form-control" id="edit_mata_kuliah" name="mata_kuliah" required>
-                                @foreach ($matakuliahs as $matakuliah)
-                                    <option value="{{ $matakuliah->kode_mk }}">{{ $matakuliah->kode_mk }} -
-                                        {{ $matakuliah->nama_mk }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="edit_deskripsi" class="form-label">Deskripsi</label>
-                            <textarea class="form-control" id="edit_deskripsi" name="deskripsi" rows="4" required></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="edit_bobot" class="form-label">Bobot</label>
-                            <input type="number" class="form-control" id="edit_bobot" name="bobot" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="edit_pic" class="form-label">PIC</label>
-                            <input type="text" class="form-control" id="edit_pic" name="pic" required>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+    {{-- [DIHAPUS] Seluruh bagian Modal Edit tidak diperlukan lagi --}}
+
 @endsection
 
 @section('styles')
@@ -213,95 +152,27 @@
         body {
             background-color: #def4ff;
         }
-
         .table thead {
             background-color: #2f5f98 !important;
             color: #fff !important;
         }
-
         .table th {
             background-color: #2f5f98 !important;
             color: #fff !important;
         }
-
-        .btn-outline-info {
-            color: #17a2b8;
-            border-color: #17a2b8;
-        }
-
-        .btn-outline-info:hover {
-            color: #fff;
-            background-color: #17a2b8;
-            border-color: #17a2b8;
-        }
-
-        .btn-outline-danger {
-            color: #dc3545;
-            border-color: #dc3545;
-        }
-
-        .btn-outline-danger:hover {
-            color: #fff;
-            background-color: #dc3545;
-            border-color: #dc3545;
-        }
-        
-        /* Fix for modal overlay */
-        .modal-backdrop {
-            z-index: 1040 !important;
-        }
-        .modal {
-            z-index: 1050 !important;
-        }
+        .btn-outline-info { color: #17a2b8; border-color: #17a2b8; }
+        .btn-outline-info:hover { color: #fff; background-color: #17a2b8; border-color: #17a2b8; }
+        .btn-outline-danger { color: #dc3545; border-color: #dc3545; }
+        .btn-outline-danger:hover { color: #fff; background-color: #dc3545; border-color: #dc3545; }
     </style>
 @endsection
 
 @section('scripts')
-    <!-- Load Bootstrap JS Bundle -->
+    {{-- [DIHAPUS] Script untuk menangani modal edit tidak diperlukan lagi --}}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
     <script>
-        // Edit Modal Handler
         document.addEventListener('DOMContentLoaded', function() {
-            const editModal = document.getElementById('editCpmkModal');
-            
-            if (editModal) {
-                editModal.addEventListener('show.bs.modal', function(event) {
-                    const button = event.relatedTarget;
-                    const form = this.querySelector('#editForm');
-                    
-                    // Set form action
-                    form.action = '/cpmk/' + button.getAttribute('data-id');
-                    
-                    // Fill form fields
-                    document.getElementById('edit_kode_cpl').value = button.getAttribute('data-kode_cpl');
-                    document.getElementById('edit_kode_cpmk').value = button.getAttribute('data-kode_cpmk');
-                    document.getElementById('edit_mata_kuliah').value = button.getAttribute('data-mata_kuliah');
-                    document.getElementById('edit_deskripsi').value = button.getAttribute('data-deskripsi');
-                    document.getElementById('edit_pic').value = button.getAttribute('data-pic');
-                    document.getElementById('edit_bobot').value = button.getAttribute('data-bobot');
-                });
-            }
-            
-            // CPL Number Preview for Add Form
-            const cplSelect = document.getElementById('kode_cpl');
-            const cpmkInput = document.getElementById('kode_cpmk');
-            
-            if (cplSelect && cpmkInput) {
-                const preview = document.createElement('small');
-                preview.className = 'form-text text-primary mt-1';
-                cpmkInput.parentNode.appendChild(preview);
-
-                function updatePreview() {
-                    const cplCode = cplSelect.value;
-                    const cplNumber = cplCode.replace('CPL', '');
-                    const cpmkNum = cpmkInput.value.padStart(3, '0');
-                    preview.textContent = `Kode CPMK akan menjadi: CPMK${cplNumber}${cpmkNum}`;
-                }
-
-                cplSelect.addEventListener('change', updatePreview);
-                cpmkInput.addEventListener('input', updatePreview);
-            }
+            // Script lain yang tidak berhubungan dengan modal bisa diletakkan di sini
         });
     </script>
 @endsection

@@ -24,9 +24,8 @@ class UserController extends Controller
 
     public function create()
     {
-        return view('users.create', [
-            'dosens' => Dosen::orderBy('nama')->get() // Ambil data dosen dan urutkan
-        ]);
+        $dosens = Dosen::select('id', 'nama', 'nidn', 'email')->orderBy('nama')->get(); // Ambil data dosen dengan email
+        return view('users.create', compact('dosens')); // Kirim data ke view
     }
 
     public function store(Request $request)
@@ -47,7 +46,7 @@ class UserController extends Controller
                 Rule::unique('users', 'email') // Cek unik di tabel users
             ];
         } elseif ($request->role === 'admin') {
-            $rules['name_admin'] = 'required|string|max:255';
+            $rules['name_admin' ] = 'required|string|max:255';
             // Validasi email untuk admin berdasarkan input
             $rules['email'] = [
                 'required',

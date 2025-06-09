@@ -103,21 +103,17 @@
             @endif
 
             @if (auth()->check())
-                <div class="mt-auto text-center py-3">
-                    <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="settingsDropdown"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-cog me-2"></i> Pengaturan
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="settingsDropdown">
-                            <li><a class="dropdown-item" href="{{ route('profile') }}"><i class="fas fa-user me-2"></i>
-                                    Profil</a></li>
-                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal"
-                                    data-bs-target="#logoutModal"><i class="fas fa-sign-out-alt me-2"></i> Logout</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+                {{-- Item Profil: Tampil jika pengguna sudah login --}}
+                <a href="{{ route('profile') }}"
+                    class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('profile') ? 'active' : '' }}">
+                    <i class="fas fa-user me-2"></i> Profil
+                </a>
+
+                {{-- Item Logout: Tampil jika pengguna sudah login, memicu modal --}}
+                <a href="#" data-bs-toggle="modal" data-bs-target="#logoutModal"
+                    class="list-group-item list-group-item-action text-white py-3 my-1">
+                    <i class="fas fa-sign-out-alt me-2"></i> Logout
+                </a>
             @endif
         </div>
     </div>
@@ -157,11 +153,6 @@
         flex-direction: column;
         width: 250px;
         position: fixed;
-        z-index: 1050;
-    }
-
-    .sidebar-heading {
-        font-size: 1.5rem;
         padding: 20px;
         color: #fff;
     }
@@ -190,26 +181,9 @@
         scrollbar-width: none;  /* Firefox */
     }
 
-    .dropdown-menu {
-        background-color: #426c8f;
-        color: #fff;
-        border: none;
-        width: 100%;
-    }
-
     /* Hide scrollbar for Chrome, Safari and Opera */
     #sidebar-wrapper .list-group.flex-grow-1::-webkit-scrollbar {
         display: none;
-    }
-
-    .dropdown-item {
-        color: #fff;
-    }
-
-    .dropdown-item:hover,
-    .dropdown-item:focus {
-        background-color: #5b82a6;
-        color: #fff;
     }
 
     /* Modal fixes */
@@ -219,11 +193,6 @@
     
     .modal-backdrop {
         z-index: 1050 !important;
-    }
-
-    /* Dropdown fixes */
-    .dropdown-menu {
-        z-index: 1061 !important;
     }
 
     /* Mobile responsive */
@@ -258,10 +227,6 @@
     .sidebar-dropdown .list-group-item:hover {
         background-color: rgba(255, 255, 255, 0.1);
     }
-
-    .sidebar-dropdown .dropdown-toggle::after {
-        display: none;
-    }
 </style>
 
 <!-- Load Bootstrap JS Bundle -->
@@ -270,29 +235,18 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Initialize Bootstrap components
-        var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))
+        var dropdownElementList = [].slice.call(document.querySelectorAll('#sidebar-wrapper .collapse'))
         var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
-            return new bootstrap.Dropdown(dropdownToggleEl)
+            // Untuk submenu collapse (seperti Mahasiswa)
+            return new bootstrap.Collapse(dropdownToggleEl, { toggle: false })
         })
 
         // Initialize logout modal
-        var logoutModal = document.getElementById('logoutModal')
-        if (logoutModal) {
-            var modal = new bootstrap.Modal(logoutModal)
-            
-            // Ensure modal closes properly
-            logoutModal.addEventListener('hidden.bs.modal', function () {
-                document.body.classList.remove('modal-open')
-                document.querySelector('.modal-backdrop').remove()
-            })
+        var logoutModalElement = document.getElementById('logoutModal')
+        if (logoutModalElement) {
+            var logoutModal = new bootstrap.Modal(logoutModalElement);
         }
 
-        // Prevent dropdown from closing when clicking inside
-        document.querySelectorAll('.dropdown-menu').forEach(function(element) {
-            element.addEventListener('click', function(e) {
-                e.stopPropagation()
-            })
-        })
     })
 </script>
 

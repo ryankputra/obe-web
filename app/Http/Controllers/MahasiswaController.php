@@ -81,7 +81,8 @@ class MahasiswaController extends Controller
 
         Mahasiswa::create($validatedData);
 
-        return redirect()->route('mahasiswa.index')
+        // Redirect kembali ke form create, bukan ke index
+        return redirect()->route('mahasiswa.create')
             ->with('success', 'Data mahasiswa berhasil ditambahkan.');
     }
 

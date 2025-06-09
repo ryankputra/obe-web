@@ -120,7 +120,7 @@
             &#128424; </span>
     </div>
 
-    <form action="{{ route('penilaian.store', ['id_mata_kuliah' => $mataKuliah->kode_mk ?? $mataKuliah->id]) }}" method="POST">
+    <form action="{{ route('penilaian.store', ['id_mata_kuliah' => $mataKuliah->kode_mk]) }}" method="POST">
         @csrf
         <div class="card shadow">
             <div class="card-body p-0">
@@ -130,8 +130,9 @@
                             <tr>
                                 <th style="width: 10%;">NIM</th>
                                 <th style="width: 25%;">Nama</th>
-                                <th style="width: 10%;">Tugas</th>
                                 <th style="width: 10%;">Keaktifan</th>
+                                <th style="width: 10%;">Tugas</th>
+                                <th style="width: 10%;">Proyek</th> <!-- Tambahkan kolom Proyek -->
                                 <th style="width: 10%;">UTS</th>
                                 <th style="width: 10%;">UAS</th>
                                 <th style="width: 15%;">Total (Rata-rata)</th>
@@ -144,27 +145,41 @@
                                         <td>{{ $mahasiswa->nim ?? 'N/A' }}</td>
                                         <td>{{ $mahasiswa->nama_mahasiswa ?? ($mahasiswa->nama ?? 'N/A') }}</td>
                                         <td>
-                                            <input type="number" name="nilai[{{ $mahasiswa->id ?? $index }}][tugas]" class="form-control form-control-sm nilai-input" min="0" max="100"
-                                                   value="{{ $mahasiswa->penilaian->tugas ?? old('nilai.'.($mahasiswa->id ?? $index).'.tugas') ?? '' }}" data-row="{{ $index }}">
+                                            <input type="number" name="nilai[{{ $mahasiswa->nim ?? $index }}][keaktifan]"
+                                                class="form-control form-control-sm nilai-input" min="0" max="100"
+                                                value="{{ old('nilai.'.($mahasiswa->nim ?? $index).'.keaktifan', $mahasiswa->penilaian->keaktifan ?? '') }}"
+                                                data-row="{{ $index }}">
                                         </td>
                                         <td>
-                                            <input type="number" name="nilai[{{ $mahasiswa->id ?? $index }}][keaktifan]" class="form-control form-control-sm nilai-input" min="0" max="100"
-                                                   value="{{ $mahasiswa->penilaian->keaktifan ?? old('nilai.'.($mahasiswa->id ?? $index).'.keaktifan') ?? '' }}" data-row="{{ $index }}">
+                                            <input type="number" name="nilai[{{ $mahasiswa->nim ?? $index }}][tugas]"
+                                                class="form-control form-control-sm nilai-input" min="0" max="100"
+                                                value="{{ old('nilai.'.($mahasiswa->nim ?? $index).'.tugas', $mahasiswa->penilaian->tugas ?? '') }}"
+                                                data-row="{{ $index }}">
                                         </td>
                                         <td>
-                                            <input type="number" name="nilai[{{ $mahasiswa->id ?? $index }}][uts]" class="form-control form-control-sm nilai-input" min="0" max="100"
-                                                   value="{{ $mahasiswa->penilaian->uts ?? old('nilai.'.($mahasiswa->id ?? $index).'.uts') ?? '' }}" data-row="{{ $index }}">
+                                            <input type="number" name="nilai[{{ $mahasiswa->nim ?? $index }}][proyek]"
+                                                class="form-control form-control-sm nilai-input" min="0" max="100"
+                                                value="{{ old('nilai.'.($mahasiswa->nim ?? $index).'.proyek', $mahasiswa->penilaian->proyek ?? '') }}"
+                                                data-row="{{ $index }}">
                                         </td>
                                         <td>
-                                            <input type="number" name="nilai[{{ $mahasiswa->id ?? $index }}][uas]" class="form-control form-control-sm nilai-input" min="0" max="100"
-                                                   value="{{ $mahasiswa->penilaian->uas ?? old('nilai.'.($mahasiswa->id ?? $index).'.uas') ?? '' }}" data-row="{{ $index }}">
+                                            <input type="number" name="nilai[{{ $mahasiswa->nim ?? $index }}][uts]"
+                                                class="form-control form-control-sm nilai-input" min="0" max="100"
+                                                value="{{ old('nilai.'.($mahasiswa->nim ?? $index).'.uts', $mahasiswa->penilaian->uts ?? '') }}"
+                                                data-row="{{ $index }}">
+                                        </td>
+                                        <td>
+                                            <input type="number" name="nilai[{{ $mahasiswa->nim ?? $index }}][uas]"
+                                                class="form-control form-control-sm nilai-input" min="0" max="100"
+                                                value="{{ old('nilai.'.($mahasiswa->nim ?? $index).'.uas', $mahasiswa->penilaian->uas ?? '') }}"
+                                                data-row="{{ $index }}">
                                         </td>
                                         <td class="total-score" id="total-{{ $index }}">0.00</td>
                                     </tr>
                                 @endforeach
                             @else
                                 <tr>
-                                    <td colspan="7" class="text-center py-5">
+                                    <td colspan="8" class="text-center py-5">
                                         Tidak ada mahasiswa yang terdaftar pada mata kuliah ini.
                                     </td>
                                 </tr>
@@ -188,44 +203,48 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const rows = document.querySelectorAll('.table-penilaian tbody tr');
+    const tableBody = document.querySelector('.table-penilaian tbody');
+    if (!tableBody) {
+        console.log('Tabel tidak ditemukan!');
+        return;
+    }
 
-    rows.forEach((row, rowIndex) => {
-        if (!row.querySelector('td[colspan="7"]')) {
-            const inputs = row.querySelectorAll('.nilai-input');
-            const totalCell = row.querySelector('.total-score');
-            function calculateAverage() {
-                let sum = 0;
-                let count = 0;
-                inputs.forEach(input => {
-                    const value = parseFloat(input.value);
-                    if (!isNaN(value) && value >= 0 && value <= 100) { // Validasi sederhana
-                        sum += value; //
-                        count++;
-                    }
-                });
-                const average = count > 0 ? (sum / count) : 0;
-                if (totalCell) {
-                    totalCell.textContent = average.toFixed(2);
-                }
+    function calculateRowAverage(row) {
+        const inputs = row.querySelectorAll('input.nilai-input');
+        const totalCell = row.querySelector('.total-score');
+        if (!inputs.length || !totalCell) return;
+        let sum = 0, count = 0;
+        inputs.forEach(input => {
+            const value = parseFloat(input.value);
+            if (!isNaN(value)) {
+                sum += value;
+                count++;
             }
+        });
+        const average = count > 0 ? (sum / count) : 0;
+        totalCell.textContent = average.toFixed(2);
+    }
 
-            inputs.forEach(input => {
-                input.addEventListener('input', calculateAverage);
-                input.addEventListener('change', function() {
-                    let value = parseFloat(this.value);
-                    if (isNaN(value) || value < 0) {
-                        this.value = '';
-                    } else if (value > 100) {
-                        this.value = 100;
-                    }
-                    calculateAverage();
-                });
-            });
-
-            calculateAverage();
+    // Event delegation for input
+    tableBody.addEventListener('input', function (e) {
+        if (e.target.classList.contains('nilai-input')) {
+            const input = e.target;
+            // Validasi nilai
+            if (parseFloat(input.value) > 100) input.value = 100;
+            if (parseFloat(input.value) < 0) input.value = 0;
+            const row = input.closest('tr');
+            if (row) calculateRowAverage(row);
         }
     });
+
+    // Hitung rata-rata awal untuk semua baris
+    const allRows = tableBody.querySelectorAll('tr');
+    allRows.forEach(row => {
+        if (row.querySelector('.nilai-input')) calculateRowAverage(row);
+    });
+
+    // DEBUG: cek apakah script jalan
+    console.log('Script rata-rata nilai aktif!');
 });
 </script>
 @endpush

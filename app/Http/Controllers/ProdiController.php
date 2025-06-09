@@ -19,20 +19,20 @@ class ProdiController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'nama_prodi' => 'required|string|max:255|unique:prodis,nama_prodi',
+        $validated = $request->validate([
+            'nama_prodi' => 'required|string|max:255',
             'status' => 'required|in:aktif,nonaktif',
         ]);
 
-        Prodi::create([
-            'nama_prodi' => $request->nama_prodi,
-            'status' => $request->status,
-        ]);
+        $prodi = Prodi::create($validated);
 
-        // Mengembalikan response JSON jika Anda menggunakan AJAX untuk form submission
-        // Jika tidak, lebih baik redirect dengan pesan sukses:
-        // return redirect()->route('fakultasfst.index')->with('success', 'Prodi berhasil ditambahkan.');
-        return response()->json(['message' => 'Prodi berhasil ditambahkan', 'redirect_url' => route('fakultasfst.index')]);
+        // Jika request AJAX (fetch), balas JSON
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json(['success' => true, 'message' => 'Prodi berhasil ditambahkan!', 'prodi' => $prodi]);
+        }
+
+        // Jika bukan AJAX, balas redirect biasa
+        return redirect()->route('fakultasfst.index')->with('success', 'Prodi berhasil ditambahkan!');
     }
 
     public function show(Prodi $prodi)
@@ -43,12 +43,10 @@ class ProdiController extends Controller
         return redirect()->route('mahasiswa.index', ['prodi_id' => $prodi->id]); // Menggunakan prodi_id lebih umum untuk filter
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Prodi $prodi)
     {
-        $prodi = Prodi::findOrFail($id); // Pastikan $id adalah primary key dari Prodi
-
         $request->validate([
-            'nama_prodi' => 'required|string|max:255|unique:prodis,nama_prodi,' . $prodi->id,
+            'nama_prodi' => 'required|string|max:255',
             'status' => 'required|in:aktif,nonaktif',
         ]);
 
@@ -56,27 +54,33 @@ class ProdiController extends Controller
             'nama_prodi' => $request->nama_prodi,
             'status' => $request->status,
         ]);
-        
-        // Mengembalikan response JSON jika Anda menggunakan AJAX untuk form submission
-        // Jika tidak, lebih baik redirect dengan pesan sukses:
-        // return redirect()->route('fakultasfst.index')->with('success', 'Prodi berhasil diperbarui.');
-        return response()->json(['message' => 'Prodi berhasil diperbarui', 'redirect_url' => route('fakultasfst.index')]);
+
+        // Jika request AJAX, balas JSON. Jika bukan, redirect.
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'message' => 'Prodi berhasil diperbarui',
+                'redirect_url' => route('fakultasfst.index')
+            ]);
+        }
+        return redirect()->route('fakultasfst.index')->with('success', 'Prodi berhasil diperbarui');
     }
 
-    public function destroy($id)
+    public function destroy(Prodi $prodi)
     {
-        $prodi = Prodi::findOrFail($id);
-
-        // Pertimbangkan untuk menambahkan pengecekan apakah prodi masih memiliki mahasiswa
         if ($prodi->mahasiswas()->count() > 0) {
-             return response()->json(['message' => 'Program Studi tidak dapat dihapus karena masih memiliki mahasiswa.'], 422); // 422 Unprocessable Entity
+            $msg = 'Tidak bisa menghapus prodi yang memiliki mahasiswa!';
+            if (request()->expectsJson() || request()->ajax()) {
+                return response()->json(['message' => $msg], 400);
+            }
+            return redirect()->route('fakultasfst.index')->with('error', $msg);
         }
-        
-        $prodi->delete();
 
-        // Mengembalikan response JSON jika Anda menggunakan AJAX untuk form submission
-        // Jika tidak, lebih baik redirect dengan pesan sukses:
-        // return redirect()->route('fakultasfst.index')->with('success', 'Prodi berhasil dihapus.');
-        return response()->json(['message' => 'Prodi berhasil dihapus', 'redirect_url' => route('fakultasfst.index')]);
+        $prodi->delete();
+        $msg = 'Prodi berhasil dihapus';
+
+        if (request()->expectsJson() || request()->ajax()) {
+            return response()->json(['message' => $msg]);
+        }
+        return redirect()->route('fakultasfst.index')->with('success', $msg);
     }
 }

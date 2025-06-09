@@ -20,7 +20,8 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
-        'dosen_id', // Add this line
+        'dosen_id',
+        'avatar', // Tambahkan ini agar bisa diisi secara massal
     ];
 
     /**

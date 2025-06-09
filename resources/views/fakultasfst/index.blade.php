@@ -32,8 +32,6 @@
             <div class="col-12">
                 <div class="table-responsive">
                     <table class="table table-bordered text-center">
-                        {{-- Inline style di thead ini akan diprioritaskan untuk thead element, 
-                             namun style untuk th di bawahnya juga penting --}}
                         <thead style="background-color: #2f5f98; color: #fff;">
                             <tr>
                                 <th>No.</th>
@@ -60,18 +58,53 @@
                                         <a href="{{ route('mahasiswa.index', ['prodi_id' => $prodi->id]) }}"
                                             class="btn btn-outline-info btn-sm" title="Lihat Mahasiswa Prodi Ini"><i
                                                 class="fas fa-users"></i></a>
-                                        <button class="btn btn-outline-primary btn-sm edit-btn"
-                                            data-id="{{ $prodi->id }}" data-nama="{{ $prodi->nama_prodi }}"
-                                            data-status="{{ $prodi->status }}" title="Edit Prodi">
+                                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editProdiModal{{ $prodi->id }}">
                                             <i class="fas fa-edit"></i>
                                         </button>
-                                        <button class="btn btn-outline-danger btn-sm delete-btn"
-                                            data-id="{{ $prodi->id }}" data-nama="{{ $prodi->nama_prodi }}"
-                                            title="Hapus Prodi">
+                                        <!-- Tombol Hapus -->
+                                        <button type="button"
+                                            class="btn btn-outline-danger btn-sm delete-btn"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteProdiModal"
+                                            data-id="{{ $prodi->id }}"
+                                            data-nama="{{ $prodi->nama_prodi }}">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </td>
                                 </tr>
+
+                                {{-- Modal Edit Prodi --}}
+                                <div class="modal fade" id="editProdiModal{{ $prodi->id }}" tabindex="-1" aria-labelledby="editProdiModalLabel{{ $prodi->id }}" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <form action="{{ route('fakultasfst.prodi.update', $prodi->id) }}" method="POST">
+                                                @csrf
+                                                @method('PUT')
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="editProdiModalLabel{{ $prodi->id }}">Edit Program Studi</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Nama Prodi <span class="text-danger">*</span></label>
+                                                        <input type="text" class="form-control" name="nama_prodi" value="{{ $prodi->nama_prodi }}" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Status <span class="text-danger">*</span></label>
+                                                        <select class="form-select" name="status" required>
+                                                            <option value="aktif" {{ $prodi->status == 'aktif' ? 'selected' : '' }}>Aktif</option>
+                                                            <option value="nonaktif" {{ $prodi->status == 'nonaktif' ? 'selected' : '' }}>Nonaktif</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
                             @empty
                                 <tr>
                                     <td colspan="5" class="text-center">Belum ada data program studi.</td>
@@ -89,6 +122,7 @@
         </div>
     </div>
 
+    {{-- Modal Tambah Prodi --}}
     <div class="modal fade" id="addProdiModal" tabindex="-1" aria-labelledby="addProdiModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -96,7 +130,7 @@
                     <h5 class="modal-title" id="addProdiModalLabel">Tambah Prodi</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="addProdiForm">
+                <form id="addProdiForm" action="{{ route('fakultasfst.prodi.store') }}" method="POST">
                     @csrf
                     <div class="modal-body">
                         <div class="mb-3">
@@ -120,60 +154,23 @@
         </div>
     </div>
 
-    <div class="modal fade" id="editProdiModal" tabindex="-1" aria-labelledby="editProdiModalLabel" aria-hidden="true">
+    {{-- Modal Konfirmasi Hapus Prodi --}}
+    <div class="modal fade" id="deleteProdiModal" tabindex="-1" aria-labelledby="deleteProdiModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editProdiModalLabel">Edit Prodi</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form id="editProdiForm">
-                    @csrf
-                    @method('PUT')
-                    <input type="hidden" id="editProdiId" name="id">
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="editProdiNama" class="form-label">Nama Prodi <span
-                                    class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="editProdiNama" name="nama_prodi" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="editProdiStatus" class="form-label">Status <span
-                                    class="text-danger">*</span></label>
-                            <select class="form-select" id="editProdiStatus" name="status" required>
-                                <option value="aktif">Aktif</option>
-                                <option value="nonaktif">Nonaktif</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="deleteProdiModal" tabindex="-1" aria-labelledby="deleteProdiModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteProdiModalLabel">Konfirmasi Hapus Prodi</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form id="deleteProdiForm">
+                <form id="deleteProdiForm" method="POST">
                     @csrf
                     @method('DELETE')
-                    <input type="hidden" id="deleteProdiId" name="id">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteProdiModalLabel">Konfirmasi Hapus</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                    </div>
                     <div class="modal-body">
-                        Apakah Anda yakin ingin menghapus program studi <strong id="prodiToDelete"
-                            class="text-danger"></strong>? Tindakan ini tidak dapat diurungkan.
+                        <p>Yakin ingin menghapus prodi <strong id="prodiToDelete"></strong>?</p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-danger">Ya, Hapus</button>
+                        <button type="submit" class="btn btn-danger">Hapus</button>
                     </div>
                 </form>
             </div>
@@ -185,37 +182,22 @@
     <style>
         body {
             background-color: #def4ff;
-            /* DIKEMBALIKAN ke warna awal Anda */
-        }
-
-        .table thead {
-            /* Ini akan menargetkan elemen thead */
-            /* background-color: #2f5f98 !important; */
-            /* Sebenarnya tidak perlu jika th sudah di-style atau ada inline style di thead */
-            /* color: #fff !important; */
         }
 
         .table th {
-            /* Style untuk semua sel header (th) DIKEMBALIKAN */
             background-color: #2f5f98 !important;
             color: #fff !important;
             vertical-align: middle;
-            /* Ini tambahan yang bermanfaat */
         }
 
         .table td {
-            /* Ditambahkan untuk konsistensi vertical-align */
             vertical-align: middle;
         }
 
         .text-purple {
-            /* DIKEMBALIKAN ke definisi awal Anda (hitam) */
             color: rgb(0, 0, 0) !important;
-            /* font-weight: bold; */
-            /* font-weight bold tidak ada di style awal Anda untuk kelas ini */
         }
 
-        /* Style tambahan yang bermanfaat dan tidak terkait langsung dengan isu "putih" dipertahankan */
         .btn-outline-info {
             color: #0dcaf0;
             border-color: #0dcaf0;
@@ -235,7 +217,6 @@
             font-size: 0.85em;
         }
 
-        /* Add these new styles */
         .modal-backdrop {
             z-index: 1040 !important;
         }
@@ -244,7 +225,6 @@
             z-index: 1045 !important;
         }
 
-        /* Ensure dropdowns appear above modals */
         .dropdown-menu {
             z-index: 1055 !important;
         }
@@ -252,134 +232,21 @@
 @endsection
 
 @section('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        xintegrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
-    </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const addProdiModalElement = document.getElementById('addProdiModal');
-            const addProdiModal = addProdiModalElement ? new bootstrap.Modal(addProdiModalElement) : null;
-            const editProdiModalElement = document.getElementById('editProdiModal');
-            const editProdiModal = editProdiModalElement ? new bootstrap.Modal(editProdiModalElement) : null;
-            const deleteProdiModalElement = document.getElementById('deleteProdiModal');
-            const deleteProdiModal = deleteProdiModalElement ? new bootstrap.Modal(deleteProdiModalElement) : null;
-
-            document.querySelectorAll('.edit-btn').forEach(button => {
-                button.addEventListener('click', function() {
-                    const id = this.dataset.id;
-                    const nama = this.dataset.nama;
-                    const status = this.dataset.status;
-
-                    document.getElementById('editProdiId').value = id;
-                    document.getElementById('editProdiNama').value = nama;
-                    document.getElementById('editProdiStatus').value = status;
-
-                    if (editProdiModal) editProdiModal.show();
-                });
-            });
-
-            document.querySelectorAll('.delete-btn').forEach(button => {
-                button.addEventListener('click', function() {
-                    const id = this.dataset.id;
-                    const nama = this.dataset.nama;
-
-                    document.getElementById('deleteProdiId').value = id;
-                    document.getElementById('prodiToDelete').textContent = nama;
-
-                    if (deleteProdiModal) deleteProdiModal.show();
-                });
-            });
-
-            function handleFormSubmit(formId, url, method, successCallback) {
-                const form = document.getElementById(formId);
-                if (!form) return;
-
-                form.addEventListener('submit', function(e) {
-                        e.preventDefault();
-                        const formData = new FormData(form);
-
-                        let dynamicUrl = url;
-                        if (method.toUpperCase() === 'PUT' || method.toUpperCase() === 'DELETE') {
-                            const id = formData.get('id') || (method.toUpperCase() === 'PUT' ? document
-                                .getElementById('editProdiId').value : document.getElementById(
-                                    'deleteProdiId').value);
-                            if (id) {
-                                dynamicUrl = url.replace(':id', id);
-                            } else {
-                                console.error(
-                                    'ID for PUT/DELETE operation not found in form data or hidden input.');
-                                alert('Terjadi kesalahan: ID tidak ditemukan untuk operasi ini.');
-                                return;
-                            }
-                        }
-
-                        fetch(dynamicUrl, {
-                                method: 'POST',
-                                headers: {
-                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                        ?.getAttribute('content') || form.querySelector('[name="_token"]')
-                                        ?.value,
-                                    'Accept': 'application/json',
-                                },
-                                body: formData
-                            })
-                            .then(response => {
-                                if (!response.ok) {
-                                    return response.json().then(errData => {
-                                        throw {
-                                            status: response.status,
-                                            data: errData
-                                        };
-                                    });
-                                }
-                                return response.json();
-                            })
-                            .then data => {
-                                if (data.redirect_url) {
-                                    window.location.href = data.redirect_url;
-                                } else {
-                                    location.reload();
-                                }
-                                if (successCallback) successCallback();
-                            })
-                    .catch(errorInfo => {
-                        console.error('Error:', errorInfo);
-                        let errorMessage = 'Terjadi kesalahan. Periksa konsol untuk detail.';
-                        if (errorInfo && errorInfo.data && errorInfo.data.message) {
-                            errorMessage = errorInfo.data.message;
-                            if (errorInfo.data.errors) {
-                                for (const key in errorInfo.data.errors) {
-                                    errorMessage += `\n- ${errorInfo.data.errors[key].join(', ')}`;
-                                }
-                            }
-                        } else if (errorInfo && errorInfo.message) {
-                            errorMessage = errorInfo.message;
-                        }
-                        alert(errorMessage);
-                    });
-                });
-        }
-
-        handleFormSubmit('addProdiForm', "{{ route('fakultasfst.prodi.store') }}", 'POST', () => {
-            if (addProdiModal) addProdiModal.hide();
-        }); handleFormSubmit('editProdiForm', "{{ url('fakultasfst/prodi') }}/:id", 'PUT', () => {
-            if (editProdiModal) editProdiModal.hide();
-        }); handleFormSubmit('deleteProdiForm', "{{ url('fakultasfst/prodi') }}/:id", 'DELETE', () => {
-            if (deleteProdiModal) deleteProdiModal.hide();
-        });
-
-        const alertNode = document.querySelector('.alert-dismissible.show');
-        if (alertNode && typeof bootstrap !== 'undefined' && bootstrap.Alert) {
-            setTimeout(function() {
-                new bootstrap.Alert(alertNode).close();
-            }, 5000);
-        } else if (alertNode) {
-            setTimeout(function() {
-                alertNode.classList.remove('show');
-                setTimeout(() => alertNode.remove(), 150);
-            }, 5000);
-        }
-        });
-    </script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var deleteProdiModal = document.getElementById('deleteProdiModal');
+    deleteProdiModal.addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget;
+        var id = button.getAttribute('data-id');
+        var nama = button.getAttribute('data-nama');
+        // Set nama prodi di modal
+        document.getElementById('prodiToDelete').textContent = nama;
+        // Set action form
+        var form = document.getElementById('deleteProdiForm');
+        form.action = '/fakultasfst/prodi/' + id;
+    });
+});
+</script>
 @endsection
+
+<link rel="stylesheet" href="fakultasfst:8">

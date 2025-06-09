@@ -4,91 +4,86 @@ namespace App\Http\Controllers;
 
 use App\Models\Cpl;
 use App\Models\Cpmk;
+use App\Models\Dosen;
 use App\Models\MataKuliah;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr; // Import Arr helper
 
 class CpmkController extends Controller
 {
+    /**
+     * Menampilkan daftar CPMK dengan filter.
+     * (Tidak ada perubahan di method ini)
+     */
+    public function index(Request $request)
+    {
+        $availableCpls = Cpl::select('kode_cpl')->distinct()->orderBy('kode_cpl')->get();
+        $availableMatakuliahs = MataKuliah::select('kode_mk')->distinct()->orderBy('kode_mk')->get();
+        $availablePics = Cpmk::select('pic')->whereNotNull('pic')->where('pic', '!=', '')->distinct()->orderBy('pic')->pluck('pic');
+
+        $query = Cpmk::query();
+
+        if ($request->filled('kode_cpmk')) {
+            $query->where('kode_cpmk', 'like', '%' . $request->kode_cpmk . '%');
+        }
+        if ($request->filled('kode_cpl')) {
+            $query->where('kode_cpl', $request->kode_cpl);
+        }
+        if ($request->filled('mata_kuliah')) {
+            $query->where('mata_kuliah', $request->mata_kuliah);
+        }
+        if ($request->filled('pic')) {
+            $query->where('pic', 'like', '%' . $request->pic . '%');
+        }
+        if ($request->filled('bobot')) {
+            $query->where('bobot', $request->bobot);
+        }
+
+        $query->join('cpls', 'cpmks.kode_cpl', '=', 'cpls.kode_cpl')
+              ->orderByRaw("CAST(SUBSTRING(cpls.kode_cpl, 4) AS UNSIGNED) ASC")
+              ->orderByRaw("CAST(SUBSTRING(cpmks.kode_cpmk, 6) AS UNSIGNED) ASC")
+              ->select('cpmks.*');
+
+        $cpmks = $query->paginate(10)->withQueryString();
+
+        // Data ini tidak lagi diperlukan untuk modal edit, tapi bisa dibiarkan jika ada fungsi lain
+        $cpls = Cpl::all()->sortBy(fn($item) => (int) filter_var($item->kode_cpl, FILTER_SANITIZE_NUMBER_INT));
+        $matakuliahs = MataKuliah::all();
+
+        return view('cpmk.index', compact('cpmks', 'availableCpls', 'availableMatakuliahs', 'availablePics', 'cpls', 'matakuliahs'));
+    }
+
+    /**
+     * Menampilkan form untuk membuat CPMK baru.
+     * (Tidak ada perubahan di method ini)
+     */
     public function create()
     {
-        $cpls = Cpl::all(); // Ambil data CPL untuk select
-        $matakuliahs = MataKuliah::all(); // Ambil data Mata Kuliah
+        $cpls = Cpl::all();
+        $matakuliahs = MataKuliah::all();
         return view('cpmk.create', compact('cpls', 'matakuliahs'));
     }
 
-    public function index(Request $request)
-    {
-        // Get distinct values for filter dropdowns
-        $availableCpls = Cpl::select('kode_cpl')->distinct()->orderBy('kode_cpl')->get();
-        $availableMatakuliahs = MataKuliah::select('kode_mk')->distinct()->orderBy('kode_mk')->get();
-        $availablePics = Cpmk::select('pic')->distinct()->orderBy('pic')->pluck('pic');
-
-        // Build the query with CPL relationship and sorting
-        $query = Cpmk::with('cpl')
-            ->join('cpls', 'cpmks.kode_cpl', '=', 'cpls.kode_cpl');
-
-        // Apply filters
-        if ($request->filled('kode_cpmk')) {
-            $query->where('cpmks.kode_cpmk', 'like', '%' . $request->kode_cpmk . '%');
-        }
-
-        if ($request->filled('kode_cpl')) {
-            $query->where('cpmks.kode_cpl', $request->kode_cpl);
-        }
-
-        if ($request->filled('mata_kuliah')) {
-            $query->where('cpmks.mata_kuliah', $request->mata_kuliah);
-        }
-
-        if ($request->filled('pic')) {
-            $query->where('cpmks.pic', $request->pic);
-        }
-
-        if ($request->filled('bobot')) {
-            $query->where('cpmks.bobot', $request->bobot);
-        }
-
-        // Apply sorting
-        $query->orderByRaw("CAST(SUBSTRING(cpls.kode_cpl, 4) AS UNSIGNED) ASC")
-            ->orderByRaw("CAST(SUBSTRING(cpmks.kode_cpmk, 6) AS UNSIGNED) ASC")
-            ->select('cpmks.*');
-
-        // Get CPLs for modals with proper sorting
-        $cpls = Cpl::all()->sortBy(function ($item) {
-            return (int) filter_var($item->kode_cpl, FILTER_SANITIZE_NUMBER_INT);
-        });
-
-        $matakuliahs = MataKuliah::all();
-
-        // Paginate the results
-        $cpmks = $query->paginate(10);
-
-        return view('cpmk.index', [
-            'cpmks' => $cpmks,
-            'availableCpls' => $availableCpls,
-            'availableMatakuliahs' => $availableMatakuliahs,
-            'availablePics' => $availablePics,
-            'cpls' => $cpls,
-            'matakuliahs' => $matakuliahs,
-        ]);
-    }
-
-
-    // app/Http/Controllers/CpmkController.php (Store Method)
+    /**
+     * Menyimpan CPMK baru ke database.
+     * (Tidak ada perubahan di method ini)
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'kode_cpl' => 'required',
+            'kode_cpl' => 'required|exists:cpls,kode_cpl',
             'kode_cpmk' => 'required|integer',
-            'mata_kuliah' => 'required',
+            'mata_kuliah' => 'required|exists:mata_kuliah,kode_mk', // Koreksi nama tabel
             'deskripsi' => 'required',
-            'pic' => 'required',
-            'bobot' => 'required|numeric|min:0|max:100',
-
+            'bobot' => 'required|numeric|min:0',
+            'pic_ids' => 'required|array|min:1',
+            'pic_ids.*' => 'required|exists:dosens,id',
         ]);
 
-        $cpl = Cpl::where('kode_cpl', $validated['kode_cpl'])->firstOrFail();
-        $cplNumber = substr($cpl->kode_cpl, 3); // Remove 'CPL' prefix
+        $dosenNames = Dosen::whereIn('id', $validated['pic_ids'])->pluck('nama')->toArray();
+        $picString = implode(', ', $dosenNames);
+
+        $cplNumber = substr($validated['kode_cpl'], 3);
         $kode_cpmk = 'CPMK' . $cplNumber . str_pad($validated['kode_cpmk'], 3, '0', STR_PAD_LEFT);
 
         if (Cpmk::where('kode_cpmk', $kode_cpmk)->exists()) {
@@ -100,35 +95,67 @@ class CpmkController extends Controller
             'kode_cpmk' => $kode_cpmk,
             'mata_kuliah' => $validated['mata_kuliah'],
             'deskripsi' => $validated['deskripsi'],
-            'pic' => $validated['pic'],
             'bobot' => $validated['bobot'],
+            'pic' => $picString,
         ]);
 
-        return redirect()->route('cpmk.index')->with('success', 'CPMK berhasil ditambahkan');
+        return redirect()->route('cpmk.index')->with('success', 'CPMK berhasil ditambahkan.');
     }
 
-    // app/Http/Controllers/CpmkController.php (Update Method)
-    public function update(Request $request, $id)
+    /**
+     * [DIUBAH] Menampilkan form untuk mengedit CPMK.
+     */
+    public function edit(Cpmk $cpmk) // Menggunakan Route Model Binding
     {
-        $validated = $request->validate([
-            'kode_cpl' => 'required',
-            'kode_cpmk' => 'required',
-            'mata_kuliah' => 'required',
-            'deskripsi' => 'required',
-            'pic' => 'required',
-            'bobot' => 'required|numeric|min:0|max:100',
+        $cpls = Cpl::all();
+        $matakuliahs = MataKuliah::all();
 
+        // Logika untuk mengambil data PIC yang sudah terpilih dari string nama
+        // 1. Ambil string nama dari kolom 'pic'
+        $picNamesString = $cpmk->pic;
+        // 2. Ubah menjadi array nama
+        $picNamesArray = array_map('trim', explode(',', $picNamesString));
+        // 3. Cari Dosen berdasarkan array nama tersebut untuk mendapatkan data lengkap (id, nama, nidn)
+        $selectedPics = Dosen::whereIn('nama', $picNamesArray)->get();
+
+        return view('cpmk.edit', compact('cpmk', 'cpls', 'matakuliahs', 'selectedPics'));
+    }
+
+    /**
+     * [DIUBAH] Memperbarui CPMK di database.
+     */
+    public function update(Request $request, Cpmk $cpmk) // Menggunakan Route Model Binding
+    {
+        // Validasi disesuaikan dengan form edit yang baru
+        $validated = $request->validate([
+            'kode_cpl' => 'required|exists:cpls,kode_cpl',
+            'mata_kuliah' => 'required|exists:mata_kuliah,kode_mk', // Koreksi nama tabel
+            'deskripsi' => 'required',
+            'bobot' => 'required|numeric|min:0',
+            'pic_ids' => 'required|array|min:1',
+            'pic_ids.*' => 'required|exists:dosens,id',
         ]);
 
-        if (Cpmk::where('kode_cpmk', $validated['kode_cpmk'])->where('id', '!=', $id)->exists()) {
-            return back()->withErrors(['kode_cpmk' => 'Kode CPMK sudah ada.'])->withInput();
-        }
+        // Menggunakan logika yang sama dengan 'store' untuk mengubah array ID menjadi string nama
+        $dosenNames = Dosen::whereIn('id', $validated['pic_ids'])->pluck('nama')->toArray();
+        $picString = implode(', ', $dosenNames);
 
-        $cpmk = Cpmk::findOrFail($id);
-        $cpmk->update($validated);
+        // Update data CPMK
+        $cpmk->update([
+            'kode_cpl' => $validated['kode_cpl'],
+            'mata_kuliah' => $validated['mata_kuliah'],
+            'deskripsi' => $validated['deskripsi'],
+            'bobot' => $validated['bobot'],
+            'pic' => $picString, // Update dengan string nama yang baru
+        ]);
 
-        return redirect()->route('cpmk.index')->with('success', 'CPMK berhasil diperbarui');
+        return redirect()->route('cpmk.index')->with('success', 'CPMK berhasil diperbarui.');
     }
+
+    /**
+     * Menghapus CPMK dari database.
+     * (Tidak ada perubahan di method ini)
+     */
     public function destroy(Cpmk $cpmk)
     {
         $cpmk->delete();

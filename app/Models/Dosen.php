@@ -19,6 +19,10 @@ class Dosen extends Model
         'jabatan',
         'kompetensi',
         'prodi',
+        'tempat_lahir',
+        'tanggal_lahir',
+        'agama',
+        'kewarganegaraan',
     ];
 
     public function mataKuliahs()

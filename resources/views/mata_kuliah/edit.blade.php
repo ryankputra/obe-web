@@ -226,7 +226,7 @@ document.addEventListener('DOMContentLoaded', function() {
             input.type = 'hidden';
             input.name = 'dosen_ids[]';
             input.value = id;
-            hiddenInputsContainer.appendChild(input);
+            dosenHiddenInputsContainer.appendChild(input);
         }
     }
 

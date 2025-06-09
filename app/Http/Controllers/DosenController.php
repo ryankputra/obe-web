@@ -65,13 +65,18 @@ class DosenController extends Controller
 
         $dosen = Dosen::create($validated);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Dosen berhasil ditambahkan.',
-            'data' => $dosen
-        ]);
-    }
+        // Jika request AJAX, balas JSON
+        if ($request->ajax() || $request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Dosen berhasil ditambahkan.',
+                'data' => $dosen
+            ]);
+        }
 
+        // Jika request biasa (form submit biasa), redirect ke form tambah dosen
+        return redirect()->route('dosen.create');
+    }
 
     public function edit(Dosen $dosen)
     {
@@ -106,5 +111,19 @@ class DosenController extends Controller
     {
         $dosen = Dosen::findOrFail($id);
         return view('dosen.kompetensi', compact('dosen'));
+    }
+    public function searchJson(Request $request)
+    {
+        $q = $request->input('q');
+        $selected = $request->input('selected_ids', []);
+        $dosens = \App\Models\Dosen::query()
+            ->when($q, function($query, $q) {
+                $query->where('nama', 'like', "%$q%")
+                      ->orWhere('nidn', 'like', "%$q%");
+            })
+            ->whereNotIn('id', $selected)
+            ->limit(10)
+            ->get(['id', 'nama', 'nidn']);
+        return response()->json($dosens);
     }
 }

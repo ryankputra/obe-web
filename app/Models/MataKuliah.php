@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
 
 class MataKuliah extends Model
@@ -41,5 +42,17 @@ class MataKuliah extends Model
             'kode_mk',              // local key di MataKuliah
             'nim'                   // local key di Mahasiswa
         );
+    }
+
+    /**
+     * Mendefinisikan relasi bahwa satu Mata Kuliah memiliki banyak CPMK.
+     * Relasi ini didasarkan pada kolom 'mata_kuliah' di tabel 'cpmks'
+     * yang merujuk ke kolom 'kode_mk' (primary key) di tabel 'mata_kuliahs'.
+     */
+    public function cpmks(): HasMany
+    {
+        // Parameter kedua adalah foreign key di tabel cpmks (defaultnya mata_kuliah_kode_mk jika mengikuti konvensi)
+        // Parameter ketiga adalah local key di tabel mata_kuliahs (defaultnya kode_mk karena itu primaryKey model ini)
+        return $this->hasMany(Cpmk::class, 'mata_kuliah', 'kode_mk');
     }
 }

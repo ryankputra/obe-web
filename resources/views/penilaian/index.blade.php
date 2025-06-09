@@ -46,7 +46,7 @@
                                         <td class="align-middle">{{ $course->kode_mk ?? 'N/A' }}</td>
                                         <td class="align-middle text-start">
                                             <a
-                                                href="{{ route('penilaian.mata_kuliah.show', ['id_mata_kuliah' => $course->kode_mk]) }}">
+                                                href="{{ route('penilaian.mata_kuliah.detail', ['id_mata_kuliah' => $course->kode_mk]) }}">
                                                 {{ $course->nama_mk ?? 'N/A' }}
                                             </a>
                                         </td>
