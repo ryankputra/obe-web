@@ -1,12 +1,22 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ProfileController extends Controller
 {
+    protected $messages = [
+        'avatar.max' => 'Ukuran foto profil tidak boleh lebih dari 2MB',
+        'avatar.mimes' => 'Format file harus berupa jpeg, png, jpg, gif, atau svg',
+        'email.unique' => 'Email sudah digunakan oleh pengguna lain',
+        'password.min' => 'Password minimal harus 6 karakter',
+        'password.confirmed' => 'Konfirmasi password tidak cocok'
+    ];
+
     public function index()
     {
         // Ambil data profil pengguna dari database atau session
@@ -32,19 +42,47 @@ class ProfileController extends Controller
             'kewarganegaraan' => 'nullable|string|max:100',
             'password' => 'nullable|string|min:6|confirmed',
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Validasi untuk avatar
-        ]);
+        ], $this->messages);
+
+        // Sanitize inputs
+        $validatedData['email'] = filter_var($validatedData['email'], FILTER_SANITIZE_EMAIL);
+        $validatedData['tempat_lahir'] = Str::title($validatedData['tempat_lahir']);
+        $validatedData['kewarganegaraan'] = Str::title($validatedData['kewarganegaraan']);
 
         $user->email = $validatedData['email'];
 
         // Handle file upload untuk avatar
         if ($request->hasFile('avatar')) {
-            // Hapus avatar lama jika ada
-            if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
-                Storage::disk('public')->delete($user->avatar);
+            try {
+                $file = $request->file('avatar');
+
+                // Delete old avatar
+                if ($user->avatar) {
+                    Storage::disk('public')->delete($user->avatar);
+                }
+
+                // Generate unique filename
+                $fileName = time() . '_' . $file->getClientOriginalName();
+
+                // Store the file
+                $path = $file->storeAs('avatars', $fileName, 'public');
+
+                if (!$path) {
+                    throw new \Exception('Failed to store avatar');
+                }
+
+                $user->avatar = $path;
+
+                \Log::info('Avatar uploaded successfully', [
+                    'path' => $path,
+                    'user_id' => $user->id
+                ]);
+            } catch (\Exception $e) {
+                \Log::error('Avatar upload failed: ' . $e->getMessage());
+                return back()
+                    ->with('error', 'Gagal mengunggah foto profil: ' . $e->getMessage())
+                    ->withInput();
             }
-            // Simpan avatar baru
-            $path = $request->file('avatar')->store('avatars', 'public');
-            $user->avatar = $path;
         }
 
         // Jika profil ini untuk Dosen dan data ada di model Dosen

@@ -9,16 +9,16 @@ use Illuminate\Database\Eloquent\Model;
 class MataKuliah extends Model
 {
     use HasFactory;
-    protected $table = 'mata_kuliahs';
+
+    protected $table = 'mata_kuliahs'; // Update table name to match database
 
     protected $fillable = [
         'kode_mk',
         'nama_mk',
-        'deskripsi',
-        'semester',
         'sks_teori',
         'sks_praktik',
-        'status_mata_kuliah',
+        'semester',
+        'deskripsi'
     ];
     protected $primaryKey = 'kode_mk';
     public $incrementing = false;
