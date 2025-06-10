@@ -112,7 +112,7 @@
                                     <td class="text-start">{{ $cpmk->kode_cpmk }}</td>
                                     <td class="text-start">{{ $cpmk->deskripsi }}</td>
                                     <td class="text-start">{{ $cpmk->kode_cpl }}</td>
-                                    <td class="text-start">{{ $cpmk->mata_kuliah }}</td>
+                                    <td class="text-start">{{ $cpmk->nama_mk }}</td>
                                     <td class="text-start">{{ $cpmk->bobot }}</td>
                                     <td class="text-start">{{ $cpmk->pic }}</td>
                                     <td class="text-start">
@@ -124,7 +124,7 @@
                                             style="display: inline-block;">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-outline-danger btn-sm"
+                                            <button type="submit" class="btn btn-outline-danger btn-sm delete-btn"
                                                 onclick="return confirm('Apakah Anda yakin ingin menghapus CPMK ini?')">
                                                 Hapus
                                             </button>
@@ -152,18 +152,38 @@
         body {
             background-color: #def4ff;
         }
+
         .table thead {
             background-color: #2f5f98 !important;
             color: #fff !important;
         }
+
         .table th {
             background-color: #2f5f98 !important;
             color: #fff !important;
         }
-        .btn-outline-info { color: #17a2b8; border-color: #17a2b8; }
-        .btn-outline-info:hover { color: #fff; background-color: #17a2b8; border-color: #17a2b8; }
-        .btn-outline-danger { color: #dc3545; border-color: #dc3545; }
-        .btn-outline-danger:hover { color: #fff; background-color: #dc3545; border-color: #dc3545; }
+
+        .btn-outline-info {
+            color: #17a2b8;
+            border-color: #17a2b8;
+        }
+
+        .btn-outline-info:hover {
+            color: #fff;
+            background-color: #17a2b8;
+            border-color: #17a2b8;
+        }
+
+        .btn-outline-danger {
+            color: #dc3545;
+            border-color: #dc3545;
+        }
+
+        .btn-outline-danger:hover {
+            color: #fff;
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
     </style>
 @endsection
 
@@ -175,4 +195,30 @@
             // Script lain yang tidak berhubungan dengan modal bisa diletakkan di sini
         });
     </script>
+    @push('scripts')
+        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            document.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const form = this.closest('form');
+
+                    Swal.fire({
+                        title: 'Apakah Anda yakin?',
+                        text: "Data CPMK akan dihapus permanen",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Ya, hapus!',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            });
+        </script>
+    @endpush
 @endsection
