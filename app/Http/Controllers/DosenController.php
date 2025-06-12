@@ -2,14 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Filters\V1\DosenFilter;
-use App\Http\Resources\V1\DosenCollection;
+use App\Filters\V1\DosenFilter; // Pastikan ini masih relevan jika Anda menggunakannya
+use App\Http\Resources\V1\DosenCollection; // Pastikan ini masih relevan jika Anda menggunakannya
 use App\Models\Dosen;
-use Illuminate\Contracts\Validation\Rule;
+use Illuminate\Contracts\Validation\Rule; // Mungkin tidak terpakai, bisa dihapus jika tidak digunakan
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth; // Tambahkan ini jika Anda menggunakan Auth::check() di Controller
 
 class DosenController extends Controller
 {
+    // Jika Anda ingin semua method di controller ini hanya bisa diakses admin,
+    // Anda bisa tambahkan middleware di constructor
+    // public function __construct()
+    // {
+    //     $this->middleware(['auth', 'admin']); // Pastikan Anda punya middleware 'admin'
+    // }
+
     public function index(Request $request)
     {
         $query = Dosen::query();
@@ -57,7 +65,7 @@ class DosenController extends Controller
             'gelar' => 'required',
             'jenis_kelamin' => 'required',
             'email' => 'nullable|email',
-            'kontak' => 'nullable|numeric',
+            'kontak' => 'nullable|string|max:20', // <-- PERBAIKAN DI SINI
             'jabatan' => 'required',
             'kompetensi' => 'required',
             'prodi' => 'required',
@@ -92,7 +100,7 @@ class DosenController extends Controller
             'gelar' => 'required',
             'jenis_kelamin' => 'required',
             'email' => 'nullable|email',
-            'kontak' => 'numeric|nullable',
+            'kontak' => 'nullable|string|max:20', 
             'jabatan' => 'required',
             'kompetensi' => 'required',
             'prodi' => 'required',
@@ -107,11 +115,13 @@ class DosenController extends Controller
         $dosen->delete();
         return redirect()->route('dosen.index')->with('success', 'Dosen berhasil dihapus.');
     }
+
     public function showKompetensi($id)
     {
         $dosen = Dosen::findOrFail($id);
         return view('dosen.kompetensi', compact('dosen'));
     }
+
     public function searchJson(Request $request)
     {
         $q = $request->input('q');

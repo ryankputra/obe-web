@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Mahasiswa;
 use App\Models\Prodi;
+use App\Models\EventAkademik; // Import model EventAkademik
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth; // Untuk Auth::check() dan Auth::user()->role
 
 class DashboardController extends Controller
 {
@@ -23,11 +25,25 @@ class DashboardController extends Controller
             ];
         });
 
-        // Tangani kasus kosong
+        // Tangani kasus kosong untuk grafik (opsional, untuk memastikan grafik tidak error jika data kosong)
         if ($prodiData->isEmpty()) {
             $prodiData = collect([['nama_prodi' => 'Tidak ada data', 'jumlah_mahasiswa' => 0]]);
         }
 
-        return view('dashboard', compact('prodiData'));
+        // --- Logika untuk mengambil data event akademik (khusus admin) ---
+        $events = collect(); // Inisialisasi sebagai koleksi kosong Laravel
+
+        // Periksa apakah pengguna sudah login dan memiliki peran 'admin'
+        if (Auth::check() && Auth::user()->role == 'admin') {
+            $events = EventAkademik::select(
+                'tanggal_event as date',
+                'deskripsi as description',
+                'tipe as type'
+            )->get(); // <-- HAPUS ->toArray() DI SINI
+        }
+        // --- Akhir logika data event ---
+
+        // Kirimkan data prodi dan event ke view dashboard
+        return view('dashboard', compact('prodiData', 'events'));
     }
 }

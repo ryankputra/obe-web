@@ -17,7 +17,7 @@
 
     .chart-container {
         position: relative;
-        height: 300px;
+        height: 300px; /* Sesuaikan tinggi chart jika perlu */
         width: 100%;
     }
 
@@ -26,12 +26,55 @@
         text-align: center;
         vertical-align: middle;
     }
+
+    /* Style untuk event di kalender */
+    .has-event {
+        position: relative;
+        cursor: pointer;
+    }
+    .has-event .event-indicator {
+        position: absolute;
+        bottom: 2px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.8em; /* Sedikit lebih besar agar lebih mudah terlihat */
+        font-weight: bold; /* Pastikan tebal */
+        z-index: 1; /* Pastikan di atas elemen lain jika ada tumpang tindih */
+    }
+
+    /* --- ATURAN CSS BARU/DIPERBAIKI UNTUK VISIBILITAS EVENT --- */
+    /* Pastikan warna teks default untuk event indicator terlihat */
+    .text-info { color: #0dcaf0 !important; }
+    .text-success { color: #198754 !important; }
+    .text-warning { color: #ffc107 !important; }
+    .text-danger { color: #dc3545 !important; }
+    .text-secondary { color: #6c757d !important; }
+
+
+    /* Override warna event indicator jika sel kalender memiliki latar belakang bg-primary (seperti "Hari Ini") */
+    /* Ini untuk memastikan kontras yang baik antara warna event dengan latar belakang biru */
+    .table-bordered .bg-primary.text-white .event-indicator.text-info {
+        color: white !important; /* Putih di biru */
+    }
+    .table-bordered .bg-primary.text-white .event-indicator.text-success {
+        color: limegreen !important; /* Hijau terang di biru */
+    }
+    .table-bordered .bg-primary.text-white .event-indicator.text-warning {
+        color: yellow !important; /* Kuning di biru */
+    }
+    .table-bordered .bg-primary.text-white .event-indicator.text-danger {
+        color: white !important; /* Putih di biru */
+    }
+    .table-bordered .bg-primary.text-white .event-indicator.text-secondary {
+        color: lightgray !important; /* Abu terang di biru */
+    }
+    /* --- AKHIR ATURAN CSS BARU/DIPERBAIKI --- */
+
 </style>
 
 <div class="container-fluid">
     <h1 class="dashboard-heading mt-4">Dashboard</h1>
     <div class="row">
-        <!-- Jumlah Mahhasiswa Per Prodi -->
         <div class="col-lg-6 mb-4">
             <div class="card shadow-sm h-100">
                 <div class="card-header bg-primary text-white">
@@ -45,15 +88,14 @@
             </div>
         </div>
 
-        <!-- Kalender Akademik -->
         <div class="col-lg-6 mb-4">
             <div class="card shadow-sm h-100">
                 <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                     <span>Kalender Akademik</span>
                     <div>
-                        <button class="btn btn-sm btn-light prev-month"><i class="fas fa-chevron-left"></i></button>
-                        <button class="btn btn-sm btn-light next-month"><i class="fas fa-chevron-right"></i></button>
-                        <button class="btn btn-sm btn-light today-btn">Hari Ini</button>
+                        <button class="btn btn-sm btn-light prev-month" aria-label="Bulan Sebelumnya"><i class="fas fa-chevron-left"></i></button>
+                        <button class="btn btn-sm btn-light next-month" aria-label="Bulan Selanjutnya"><i class="fas fa-chevron-right"></i></button>
+                        <button class="btn btn-sm btn-light today-btn" aria-label="Kembali ke Hari Ini">Hari Ini</button>
                     </div>
                 </div>
                 <div class="card-body text-center">
@@ -72,16 +114,64 @@
                             </tr>
                         </thead>
                         <tbody id="calendar-body">
-                            <!-- Calendar akan di-generate oleh JavaScript -->
-                        </tbody>
+                            </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Daftar Event Akademik (FULL WIDTH) --}}
+    <div class="row mb-4"> {{-- Memulai baris baru untuk full width --}}
+        <div class="col-12"> {{-- Kolom 12 untuk mengambil lebar penuh --}}
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    Daftar Event Akademik
+                </div>
+                <div class="card-body">
+                    {{-- Definisi mapping tipe event ke label Bahasa Indonesia --}}
+                    @php
+                        $displayTypeMap = [
+                            'info' => 'Info (Biru)',
+                            'success' => 'Penting (Hijau)',
+                            'warning' => 'Perhatian (Kuning)',
+                            'danger' => 'Urgensi (Merah)',
+                            // Tambahkan tipe lain jika ada
+                        ];
+                    @endphp
+
+                    @if(count($events) > 0)
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Tanggal</th>
+                                    <th>Deskripsi</th>
+                                    <th>Tipe</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($events as $event)
+                                    <tr>
+                                        <td>{{ \Carbon\Carbon::parse($event->date)->format('d F Y') }}</td>
+                                        <td>{{ $event->description }}</td>
+                                        <td>
+                                            <span class="badge bg-{{ $event->type ?? 'secondary' }}">
+                                                {{ $displayTypeMap[$event->type] ?? ucfirst($event->type ?? 'Tidak Ada') }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    @else
+                        <p>Tidak ada event akademik yang dijadwalkan.</p>
+                    @endif
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Script untuk Chart -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -132,85 +222,18 @@
     });
 </script>
 
-<!-- Script Kalender -->
+{{-- Definisi data event secara global sebelum skrip kalender eksternal dimuat --}}
 <script>
-    let today = new Date();
-    let currentMonth = today.getMonth();
-    let currentYear = today.getFullYear();
-
-    const monthNames = [
-        "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-        "Juli", "Agustus", "September", "Oktober", "November", "Desember"
-    ];
-
-    document.addEventListener('DOMContentLoaded', function() {
-        document.querySelector('.prev-month').addEventListener('click', () => {
-            currentMonth--;
-            if (currentMonth < 0) {
-                currentMonth = 11;
-                currentYear--;
-            }
-            generateCalendar(currentMonth, currentYear);
-        });
-
-        document.querySelector('.next-month').addEventListener('click', () => {
-            currentMonth++;
-            if (currentMonth > 11) {
-                currentMonth = 0;
-                currentYear++;
-            }
-            generateCalendar(currentMonth, currentYear);
-        });
-
-        document.querySelector('.today-btn').addEventListener('click', () => {
-            today = new Date();
-            currentMonth = today.getMonth();
-            currentYear = today.getFullYear();
-            generateCalendar(currentMonth, currentYear);
-        });
-
-        generateCalendar(currentMonth, currentYear);
-    });
-
-    function generateCalendar(month, year) {
-        const firstDay = new Date(year, month, 1).getDay();
-        const daysInMonth = 32 - new Date(year, month, 32).getDate();
-        const calendarBody = document.getElementById('calendar-body');
-        calendarBody.innerHTML = "";
-
-        document.getElementById('monthYear').innerText = `${monthNames[month]} ${year}`;
-        document.getElementById('todayDate').innerText = formatTodayDate();
-
-        let date = 1;
-        for (let i = 0; i < 6; i++) {
-            const row = document.createElement('tr');
-
-            for (let j = 0; j < 7; j++) {
-                const cell = document.createElement('td');
-                if (i === 0 && j < (firstDay === 0 ? 6 : firstDay - 1)) {
-                    cell.innerHTML = "";
-                } else if (date > daysInMonth) {
-                    break;
-                } else {
-                    cell.innerHTML = date;
-
-                    if (date === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
-                        cell.classList.add('bg-primary', 'text-white', 'fw-bold');
-                    }
-
-                    date++;
-                }
-                row.appendChild(cell);
-            }
-
-            calendarBody.appendChild(row);
-        }
-    }
-
-    function formatTodayDate() {
-        const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-        return today.toLocaleDateString('id-ID', options);
-    }
+    window.eventsData = []; // Inisialisasi secara global sebagai array kosong
+    @if (auth()->check() && auth()->user()->role == 'admin')
+        // Jika pengguna adalah admin, isi dengan data event dari controller
+        window.eventsData = @json($events ?? []); 
+    @endif
 </script>
+
+{{-- Memuat skrip kalender dari file eksternal ke stack 'scripts' --}}
+@push('scripts')
+<script src="{{ asset('js/dashboard-calendar.js') }}"></script>
+@endpush
 
 @endsection

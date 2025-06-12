@@ -3,62 +3,44 @@
         <div class="sidebar-heading text-white text-center py-4">OBE-WEB</div>
         <div class="list-group list-group-flush flex-grow-1">
 
-            {{-- Item untuk role 'dosen' --}}
-            @if (auth()->check() && auth()->user()->role == 'dosen')
-                {{-- Item Dashboard: Ditambahkan untuk role 'dosen' dan diletakkan di atas Penilaian --}}
+            {{-- 1. Dashboard (Tampil untuk semua yang sudah login) --}}
+            @if (auth()->check())
                 <a href="{{ route('dashboard') }}"
                     class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('dashboard') ? 'active' : '' }}">
                     <i class="fas fa-tachometer-alt me-2"></i> Dashboard
                 </a>
+            @endif
 
-                {{-- Item Penilaian: Hanya tampil jika role adalah 'dosen' --}}
+            {{-- Item khusus untuk role 'dosen' (Penilaian, sesuai posisi sebelumnya) --}}
+            @if (auth()->check() && auth()->user()->role == 'dosen')
                 <a href="{{ route('penilaian.index') }}"
                     class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('penilaian*') ? 'active' : '' }}">
                     <i class="fas fa-clipboard-check me-2"></i> Penilaian
                 </a>
             @endif
 
-            {{-- Item Dashboard: Tampil jika BUKAN role 'dosen' --}}
+            {{-- Item-item yang tampil jika BUKAN role 'dosen' (umumnya untuk admin/pengelola) --}}
             @if (auth()->check() && auth()->user()->role != 'dosen')
-                <a href="{{ route('dashboard') }}"
-                    class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('dashboard') ? 'active' : '' }}">
-                    <i class="fas fa-tachometer-alt me-2"></i> Dashboard
-                </a>
-            @endif
-
-            {{-- Item Mata Kuliah: Tampil jika BUKAN role 'dosen' --}}
-            @if (auth()->check() && auth()->user()->role != 'dosen')
-                <a href="{{ route('mata_kuliah.index') }}"
-                    class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('mata_kuliah*') ? 'active' : '' }}">
-                    <i class="fas fa-book me-2"></i> Mata Kuliah
-                </a>
-            @endif
-
-            {{-- Item Dosen: Tampil jika BUKAN role 'dosen' --}}
-            @if (auth()->check() && auth()->user()->role != 'dosen')
-                <a href="{{ route('dosen.index') }}"
-                    class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('dosen*') ? 'active' : '' }}">
-                    <i class="fas fa-chalkboard-teacher me-2"></i> Dosen
-                </a>
-            @endif
-
-            {{-- Item Daftar Prodi: Tampil jika BUKAN role 'dosen' --}}
-            @if (auth()->check() && auth()->user()->role != 'dosen')
+                {{-- 2. Daftar Prodi --}}
                 <a href="{{ route('fakultasfst.index') }}"
                     class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('fakultasfst*') ? 'active' : '' }}">
                     <i class="fas fa-building me-2"></i> Daftar Prodi
                 </a>
-            @endif
 
-            {{-- Mahasiswa dropdown: Tampil jika BUKAN role 'dosen' --}}
-            @if (auth()->check() && auth()->user()->role != 'dosen')
+                {{-- 3. Dosen --}}
+                <a href="{{ route('dosen.index') }}"
+                    class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('dosen*') ? 'active' : '' }}">
+                    <i class="fas fa-chalkboard-teacher me-2"></i> Dosen
+                </a>
+
+                {{-- 4. Mahasiswa dropdown --}}
                 <div
-                    class="list-group-item text-white py-3 my-1 {{ request()->is('mahasiswa*') ? 'active' : '' }} sidebar-dropdown">
+                    class="list-group-item text-white py-3 my-1 sidebar-dropdown">
                     <a class="text-white dropdown-toggle text-decoration-none d-block w-100" href="#mahasiswaSubmenu"
-                        data-bs-toggle="collapse" aria-expanded="false">
+                        data-bs-toggle="collapse" aria-expanded="{{ request()->is('mahasiswa*') ? 'true' : 'false' }}">
                         <i class="fas fa-user-graduate me-2"></i> Mahasiswa
                     </a>
-                    <div class="collapse" id="mahasiswaSubmenu">
+                    <div class="collapse {{ request()->is('mahasiswa*') ? 'show' : '' }}" id="mahasiswaSubmenu">
                         <div class="list-group mt-2">
                             <a class="list-group-item text-white py-2" href="{{ route('mahasiswa.index') }}">
                                 <i class="fas fa-list me-2"></i> Tampil Mahasiswa
@@ -69,47 +51,56 @@
                         </div>
                     </div>
                 </div>
-            @endif
 
-            {{-- Item CPL: Tampil jika BUKAN role 'dosen' --}}
-            @if (auth()->check() && auth()->user()->role != 'dosen')
+                {{-- 5. Mata Kuliah --}}
+                <a href="{{ route('mata_kuliah.index') }}"
+                    class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('mata_kuliah*') ? 'active' : '' }}">
+                    <i class="fas fa-book me-2"></i> Mata Kuliah
+                </a>
+
+                {{-- 6. CPL --}}
                 <a href="{{ route('cpl.index') }}"
                     class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('cpl*') ? 'active' : '' }}">
                     <i class="fas fa-list-alt me-2"></i> CPL
                 </a>
-            @endif
 
-            {{-- Item CPMK: Tampil jika BUKAN role 'dosen' --}}
-            @if (auth()->check() && auth()->user()->role != 'dosen')
+                {{-- 7. CPMK --}}
                 <a href="{{ route('cpmk.index') }}"
                     class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('cpmk*') ? 'active' : '' }}">
                     <i class="fas fa-tasks me-2"></i> CPMK
                 </a>
             @endif
 
-            {{-- Menu items untuk role 'admin' --}}
+            {{-- Item-item khusus untuk role 'admin' (juga tampil jika BUKAN role 'dosen') --}}
             @if (auth()->check() && auth()->user()->role == 'admin')
-                {{-- Item Bobot Nilai: Hanya tampil jika role adalah 'admin'. --}}
+                {{-- 8. Bobot Nilai --}}
                 <a href="{{ route('bobot_nilai.index') }}"
                     class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('bobot-nilai*') ? 'active' : '' }}">
                     <i class="fas fa-balance-scale me-2"></i> Bobot Nilai
                 </a>
 
-                {{-- Item User: Hanya tampil jika role adalah 'admin'. --}}
+                {{-- Manajemen Event Akademik --}}
+                <a href="{{ route('event_akademik.index') }}"
+                    class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('event-akademik*') ? 'active' : '' }}">
+                    <i class="fas fa-calendar-alt me-2"></i> Event Akademik
+                </a>
+
+                {{-- 9. User --}}
                 <a href="{{ route('users.index') }}"
                     class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('user*') ? 'active' : '' }}">
                     <i class="fas fa-users me-2"></i> User
                 </a>
             @endif
 
+            {{-- Item-item yang selalu tampil jika pengguna sudah login (umumnya di bagian bawah) --}}
             @if (auth()->check())
-                {{-- Item Profil: Tampil jika pengguna sudah login --}}
+                {{-- 10. Profil --}}
                 <a href="{{ route('profile') }}"
                     class="list-group-item list-group-item-action text-white py-3 my-1 {{ request()->is('profile') ? 'active' : '' }}">
                     <i class="fas fa-user me-2"></i> Profil
                 </a>
 
-                {{-- Item Logout: Tampil jika pengguna sudah login, memicu modal --}}
+                {{-- 11. Logout --}}
                 <a href="#" data-bs-toggle="modal" data-bs-target="#logoutModal"
                     class="list-group-item list-group-item-action text-white py-3 my-1">
                     <i class="fas fa-sign-out-alt me-2"></i> Logout
@@ -123,7 +114,6 @@
     </div>
 </div>
 
-<!-- Logout Modal -->
 <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -229,19 +219,18 @@
     }
 </style>
 
-<!-- Load Bootstrap JS Bundle -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Initialize Bootstrap components
-        var dropdownElementList = [].slice.call(document.querySelectorAll('#sidebar-wrapper .collapse'))
-        var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
-            // Untuk submenu collapse (seperti Mahasiswa)
-            return new bootstrap.Collapse(dropdownToggleEl, { toggle: false })
-        })
+        // HAPUS inisialisasi Bootstrap Collapse di sini.
+        // `data-bs-toggle="collapse"` akan menangani toggling secara otomatis.
+        // var dropdownElementList = [].slice.call(document.querySelectorAll('#sidebar-wrapper .collapse'))
+        // var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+        //     return new bootstrap.Collapse(dropdownToggleEl, { toggle: false })
+        // })
 
-        // Initialize logout modal
+        // Inisialisasi modal logout (ini tidak berubah)
         var logoutModalElement = document.getElementById('logoutModal')
         if (logoutModalElement) {
             var logoutModal = new bootstrap.Modal(logoutModalElement);

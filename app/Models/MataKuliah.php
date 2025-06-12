@@ -12,14 +12,17 @@ class MataKuliah extends Model
 
     protected $table = 'mata_kuliahs'; // Update table name to match database
 
+    // DIUBAH: Menambahkan 'status_mata_kuliah' ke daftar yang boleh diisi
     protected $fillable = [
         'kode_mk',
         'nama_mk',
         'sks_teori',
         'sks_praktik',
         'semester',
-        'deskripsi'
+        'deskripsi',
+        'status_mata_kuliah' // <-- TAMBAHKAN BARIS INI
     ];
+
     protected $primaryKey = 'kode_mk';
     public $incrementing = false;
     protected $keyType = 'string';
@@ -28,10 +31,12 @@ class MataKuliah extends Model
     {
         return 'kode_mk';
     }
+
     public function dosens()
     {
         return $this->belongsToMany(Dosen::class, 'dosen_matakuliah', 'mata_kuliah_kode_mk', 'dosen_id');
     }
+
     public function mahasiswas()
     {
         return $this->belongsToMany(

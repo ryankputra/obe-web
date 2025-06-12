@@ -14,6 +14,7 @@ use App\Http\Controllers\ProdiController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PenilaianController;
 use App\Http\Controllers\BobotNilaiController;
+use App\Http\Controllers\EventAkademikController; // <-- Tambahkan ini
 
 Route::get('/', function () {
     return view('auth.login');
@@ -41,14 +42,22 @@ Route::prefix('bobot-nilai')->name('bobot_nilai.')->middleware(['auth', 'admin']
     Route::get('/{mataKuliah}/cpmk/{cpmk}/atur-jenis-penilaian', [BobotNilaiController::class, 'aturJenisPenilaian'])->name('cpmk.atur_jenis_penilaian');
     Route::post('/{mataKuliah}/cpmk/{cpmk}/store-jenis-penilaian', [BobotNilaiController::class, 'storeJenisPenilaian'])->name('cpmk.store_jenis_penilaian');
 });
-// ...
+
+// -- Grup rute untuk manajemen event akademik (khusus admin) --
+// Pastikan Anda memiliki middleware 'admin' yang terdaftar di App\Http\Kernel.php
+Route::prefix('event-akademik')->name('event_akademik.')->middleware(['auth', 'admin'])->group(function () {
+    // Menggunakan Route::resource untuk CRUD event
+    // Parameternya diubah dari default '{event_akademik}' menjadi '{event}'
+    Route::resource('/', EventAkademikController::class)->parameters(['' => 'event']);
+});
+// -- Akhir grup rute event akademik --
 
 Auth::routes();
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
-    Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update'); // Tambahkan route ini
+    Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 
     Route::resource('mata_kuliah', MataKuliahController::class);
     Route::resource('dosen', DosenController::class);
@@ -74,8 +83,8 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('penilaian')->name('penilaian.')->group(function () {
         Route::get('/', [PenilaianController::class, 'index'])->name('index');
-        Route::get('/mata-kuliah/{id_mata_kuliah}/detail', [PenilaianController::class, 'showDetailMataKuliah'])->name('mata_kuliah.detail'); // Route baru
-        Route::get('/mata-kuliah/{id_mata_kuliah}/input-nilai', [PenilaianController::class, 'inputNilai'])->name('mata_kuliah.input_nilai'); // Tambahkan route ini
+        Route::get('/mata-kuliah/{id_mata_kuliah}/detail', [PenilaianController::class, 'showDetailMataKuliah'])->name('mata_kuliah.detail');
+        Route::get('/mata-kuliah/{id_mata_kuliah}/input-nilai', [PenilaianController::class, 'inputNilai'])->name('mata_kuliah.input_nilai');
         Route::post('/mata-kuliah/{id_mata_kuliah}/store', [PenilaianController::class, 'storeNilai'])->name('store');
     });
 });

@@ -4,120 +4,23 @@
 
 @section('styles')
 <style>
-    body {
-        background-color: #def4ff;
-    }
-
-    .page-title {
-        font-size: 2rem;
-        font-weight: bold;
-        color: #545CD8;
-        margin-bottom: 20px;
-    }
-
-    .header-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1.5rem;
-    }
-
-    .back-button,
-    .print-icon {
-        font-size: 1.5rem;
-        color: #545CD8;
-        text-decoration: none;
-    }
-    .print-icon {
-        cursor: pointer;
-    }
-
-    .table-penilaian thead th {
-        background-color: rgb(0, 114, 202) !important;
-        color: white !important;
-        vertical-align: middle;
-        padding: 0.9rem 0.75rem;
-        font-size: 0.9rem;
-        font-weight: bold;
-        text-align: center;
-        border: 1px solid #dee2e6;
-    }
-
-    .table-penilaian th.text-start,
-    .table-penilaian td.text-start {
-        text-align: left !important;
-    }
-
-    .table-penilaian tbody td {
-        vertical-align: middle;
-        padding: 0.8rem 0.75rem;
-        font-size: 0.875rem;
-        color: #5a5c69;
-        border: 1px solid #dee2e6;
-        text-align: center;
-    }
-
-    .table-penilaian td:first-child,
-    .table-penilaian td:nth-child(2) {
-        text-align: left !important;
-    }
-
-    .table-penilaian td input[type="number"] {
-        width: 80px;
-        text-align: center;
-        border: 1px solid #ced4da;
-        border-radius: 0.25rem;
-        padding: 0.375rem 0.75rem;
-        box-sizing: border-box;
-    }
-
-    .total-score {
-        font-weight: bold;
-    }
-
-    .card.shadow {
-        border: none;
-    }
-
-    .card-body.p-0 .table-responsive {
-        overflow-x: auto;
-    }
-
-    .action-buttons .btn-batal {
-        background-color: white;
-        border: 1px solid #dc3545;
-        color: #dc3545;
-        padding: 8px 20px;
-        border-radius: 5px;
-        margin-right: 10px;
-    }
-    .action-buttons .btn-batal:hover {
-        background-color: #dc3545;
-        color: white;
-    }
-    .action-buttons .btn-simpan {
-        background-color: #d4edda;
-        border: 1px solid #28a745;
-        color: #28a745;
-        font-weight: bold;
-        padding: 8px 20px;
-        border-radius: 5px;
-    }
-    .action-buttons .btn-simpan:hover {
-        background-color: #28a745;
-        color: white;
-    }
+    body { background-color: #def4ff; }
+    .page-title { font-size: 2rem; font-weight: bold; color: #545CD8; margin-bottom: 20px; }
+    .header-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    .table-penilaian thead th { background-color: rgb(0, 114, 202) !important; color: white !important; vertical-align: middle; text-align: center; }
+    .table-penilaian tbody td { vertical-align: middle; text-align: center; }
+    .table-penilaian td:nth-child(1), .table-penilaian td:nth-child(2) { text-align: left !important; }
+    .table-penilaian td input[type="number"] { width: 80px; text-align: center; }
+    .total-score { font-weight: bold; background-color: #e9ecef; }
 </style>
 @endsection
 
 @section('content')
 <div class="container-fluid py-4">
     <div class="header-container">
-        <a href="{{ route('penilaian.index') }}" class="back-button" title="Kembali">
-            &#x276E; </a>
+        <a href="{{ route('penilaian.index') }}" class="btn btn-secondary" title="Kembali">&#x276E; Kembali</a>
         <h1 class="page-title mb-0">{{ $mataKuliah->nama_mk ?? 'Input Nilai Mata Kuliah' }}</h1>
-        <span class="print-icon" onclick="window.print()" title="Cetak Halaman">
-            &#128424; </span>
+        <button class="btn btn-info" onclick="window.print()" title="Cetak Halaman">&#128424; Cetak</button>
     </div>
 
     <form action="{{ route('penilaian.store', ['id_mata_kuliah' => $mataKuliah->kode_mk]) }}" method="POST">
@@ -129,122 +32,122 @@
                         <thead>
                             <tr>
                                 <th style="width: 10%;">NIM</th>
-                                <th style="width: 25%;">Nama</th>
+                                <th style="width: 20%;">Nama</th>
                                 <th style="width: 10%;">Keaktifan</th>
                                 <th style="width: 10%;">Tugas</th>
-                                <th style="width: 10%;">Proyek</th> <!-- Tambahkan kolom Proyek -->
+                                <th style="width: 10%;">Proyek</th>
+                                <th style="width: 10%;">Kuis</th>
                                 <th style="width: 10%;">UTS</th>
                                 <th style="width: 10%;">UAS</th>
-                                <th style="width: 15%;">Total (Rata-rata)</th>
+                                <th style="width: 10%;">Nilai Akhir</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @if($mahasiswaDiKelas && !$mahasiswaDiKelas->isEmpty())
-                                @foreach($mahasiswaDiKelas as $index => $mahasiswa)
-                                    <tr>
-                                        <td>{{ $mahasiswa->nim ?? 'N/A' }}</td>
-                                        <td>{{ $mahasiswa->nama_mahasiswa ?? ($mahasiswa->nama ?? 'N/A') }}</td>
-                                        <td>
-                                            <input type="number" name="nilai[{{ $mahasiswa->nim ?? $index }}][keaktifan]"
-                                                class="form-control form-control-sm nilai-input" min="0" max="100"
-                                                value="{{ old('nilai.'.($mahasiswa->nim ?? $index).'.keaktifan', $mahasiswa->penilaian->keaktifan ?? '') }}"
-                                                data-row="{{ $index }}">
-                                        </td>
-                                        <td>
-                                            <input type="number" name="nilai[{{ $mahasiswa->nim ?? $index }}][tugas]"
-                                                class="form-control form-control-sm nilai-input" min="0" max="100"
-                                                value="{{ old('nilai.'.($mahasiswa->nim ?? $index).'.tugas', $mahasiswa->penilaian->tugas ?? '') }}"
-                                                data-row="{{ $index }}">
-                                        </td>
-                                        <td>
-                                            <input type="number" name="nilai[{{ $mahasiswa->nim ?? $index }}][proyek]"
-                                                class="form-control form-control-sm nilai-input" min="0" max="100"
-                                                value="{{ old('nilai.'.($mahasiswa->nim ?? $index).'.proyek', $mahasiswa->penilaian->proyek ?? '') }}"
-                                                data-row="{{ $index }}">
-                                        </td>
-                                        <td>
-                                            <input type="number" name="nilai[{{ $mahasiswa->nim ?? $index }}][uts]"
-                                                class="form-control form-control-sm nilai-input" min="0" max="100"
-                                                value="{{ old('nilai.'.($mahasiswa->nim ?? $index).'.uts', $mahasiswa->penilaian->uts ?? '') }}"
-                                                data-row="{{ $index }}">
-                                        </td>
-                                        <td>
-                                            <input type="number" name="nilai[{{ $mahasiswa->nim ?? $index }}][uas]"
-                                                class="form-control form-control-sm nilai-input" min="0" max="100"
-                                                value="{{ old('nilai.'.($mahasiswa->nim ?? $index).'.uas', $mahasiswa->penilaian->uas ?? '') }}"
-                                                data-row="{{ $index }}">
-                                        </td>
-                                        <td class="total-score" id="total-{{ $index }}">0.00</td>
-                                    </tr>
-                                @endforeach
-                            @else
+                            @forelse($mahasiswaDiKelas as $mahasiswa)
                                 <tr>
-                                    <td colspan="8" class="text-center py-5">
-                                        Tidak ada mahasiswa yang terdaftar pada mata kuliah ini.
+                                    <td>{{ $mahasiswa->nim }}</td>
+                                    <td>{{ $mahasiswa->nama_mahasiswa ?? $mahasiswa->nama }}</td>
+                                    <td>
+                                        <input type="number" name="nilai[{{ $mahasiswa->nim }}][keaktifan]" class="form-control form-control-sm mx-auto nilai-input" min="0" max="100" value="{{ old('nilai.'.$mahasiswa->nim.'.keaktifan', $mahasiswa->penilaian->keaktifan ?? '') }}" data-jenis="keaktifan">
                                     </td>
+                                    <td>
+                                        <input type="number" name="nilai[{{ $mahasiswa->nim }}][tugas]" class="form-control form-control-sm mx-auto nilai-input" min="0" max="100" value="{{ old('nilai.'.$mahasiswa->nim.'.tugas', $mahasiswa->penilaian->tugas ?? '') }}" data-jenis="tugas">
+                                    </td>
+                                    <td>
+                                        <input type="number" name="nilai[{{ $mahasiswa->nim }}][proyek]" class="form-control form-control-sm mx-auto nilai-input" min="0" max="100" value="{{ old('nilai.'.$mahasiswa->nim.'.proyek', $mahasiswa->penilaian->proyek ?? '') }}" data-jenis="proyek">
+                                    </td>
+                                    <td>
+                                        <input type="number" name="nilai[{{ $mahasiswa->nim }}][kuis]" class="form-control form-control-sm mx-auto nilai-input" min="0" max="100" value="{{ old('nilai.'.$mahasiswa->nim.'.kuis', $mahasiswa->penilaian->kuis ?? '') }}" data-jenis="kuis">
+                                    </td>
+                                    <td>
+                                        <input type="number" name="nilai[{{ $mahasiswa->nim }}][uts]" class="form-control form-control-sm mx-auto nilai-input" min="0" max="100" value="{{ old('nilai.'.$mahasiswa->nim.'.uts', $mahasiswa->penilaian->uts ?? '') }}" data-jenis="uts">
+                                    </td>
+                                    <td>
+                                        <input type="number" name="nilai[{{ $mahasiswa->nim }}][uas]" class="form-control form-control-sm mx-auto nilai-input" min="0" max="100" value="{{ old('nilai.'.$mahasiswa->nim.'.uas', $mahasiswa->penilaian->uas ?? '') }}" data-jenis="uas">
+                                    </td>
+                                    <td class="total-score">0.00</td>
                                 </tr>
-                            @endif
+                            @empty
+                                <tr>
+                                    <td colspan="9" class="text-center py-5">Tidak ada mahasiswa yang terdaftar pada mata kuliah ini.</td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        @if($mahasiswaDiKelas && !$mahasiswaDiKelas->isEmpty())
-        <div class="text-end mt-4 action-buttons">
-            <a href="{{ route('penilaian.index') }}" class="btn btn-batal">Batal</a>
-            <button type="submit" class="btn btn-simpan">Simpan</button>
+        @if($mahasiswaDiKelas->isNotEmpty())
+        <div class="text-end mt-4">
+            <a href="{{ route('penilaian.index') }}" class="btn btn-secondary">Batal</a>
+            <button type="submit" class="btn btn-primary">Simpan Nilai</button>
         </div>
         @endif
     </form>
 </div>
 @endsection
 
+{{-- PENTING: Ubah 'const' menjadi 'window.' untuk membuat variabel global --}}
+<script>
+    // Variabel ini diisi oleh data dari controller dan dibuat global
+    window.bobotPenilaian = @json($bobotPenilaian ?? []);
+</script>
+
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const tableBody = document.querySelector('.table-penilaian tbody');
-    if (!tableBody) {
-        console.log('Tabel tidak ditemukan!');
-        return;
-    }
-
-    function calculateRowAverage(row) {
+    // Fungsi ini menghitung nilai akhir terbobot untuk satu baris
+    function calculateWeightedTotal(row) {
         const inputs = row.querySelectorAll('input.nilai-input');
         const totalCell = row.querySelector('.total-score');
+        
         if (!inputs.length || !totalCell) return;
-        let sum = 0, count = 0;
+        
+        let totalWeightedScore = 0;
+
         inputs.forEach(input => {
-            const value = parseFloat(input.value);
-            if (!isNaN(value)) {
-                sum += value;
-                count++;
+            const nilai = parseFloat(input.value);
+            const jenis = input.dataset.jenis; // Ambil jenis dari atribut 'data-jenis'
+
+            // Akses bobotPenilaian melalui window.bobotPenilaian
+            if (window.bobotPenilaian && typeof window.bobotPenilaian[jenis] !== 'undefined' && !isNaN(nilai)) {
+                const bobot = parseFloat(window.bobotPenilaian[jenis]);
+                
+                if (!isNaN(bobot)) {
+                    // Rumus: (nilai * (bobot / 100))
+                    totalWeightedScore += nilai * (bobot / 100);
+                }
             }
         });
-        const average = count > 0 ? (sum / count) : 0;
-        totalCell.textContent = average.toFixed(2);
+
+        // Tampilkan hasil dengan 2 angka desimal
+        totalCell.textContent = totalWeightedScore.toFixed(2);
     }
 
-    // Event delegation for input
-    tableBody.addEventListener('input', function (e) {
-        if (e.target.classList.contains('nilai-input')) {
-            const input = e.target;
-            // Validasi nilai
-            if (parseFloat(input.value) > 100) input.value = 100;
-            if (parseFloat(input.value) < 0) input.value = 0;
-            const row = input.closest('tr');
-            if (row) calculateRowAverage(row);
-        }
-    });
+    const tableBody = document.querySelector('.table-penilaian tbody');
+    
+    if (tableBody) {
+        // Event listener untuk menghitung ulang saat nilai diubah
+        tableBody.addEventListener('input', function (e) {
+            if (e.target.classList.contains('nilai-input')) {
+                const row = e.target.closest('tr');
+                if (row) {
+                    calculateWeightedTotal(row);
+                }
+            }
+        });
 
-    // Hitung rata-rata awal untuk semua baris
-    const allRows = tableBody.querySelectorAll('tr');
-    allRows.forEach(row => {
-        if (row.querySelector('.nilai-input')) calculateRowAverage(row);
-    });
-
-    // DEBUG: cek apakah script jalan
-    console.log('Script rata-rata nilai aktif!');
+        // Hitung nilai awal untuk semua baris saat halaman pertama kali dimuat
+        tableBody.querySelectorAll('tr').forEach(row => {
+            if (row.querySelector('.nilai-input')) {
+                calculateWeightedTotal(row);
+            }
+        });
+        
+        // Untuk memastikan, tampilkan bobot yang digunakan di console browser
+        console.log('Bobot yang digunakan untuk perhitungan:', window.bobotPenilaian);
+    }
 });
 </script>
 @endpush
