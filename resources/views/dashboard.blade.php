@@ -122,8 +122,8 @@
     </div>
 
     {{-- Daftar Event Akademik (FULL WIDTH) --}}
-    <div class="row mb-4"> {{-- Memulai baris baru untuk full width --}}
-        <div class="col-12"> {{-- Kolom 12 untuk mengambil lebar penuh --}}
+    <div class="row mb-4">
+        <div class="col-12">
             <div class="card shadow">
                 <div class="card-header bg-primary text-white">
                     Daftar Event Akademik
@@ -225,8 +225,8 @@
 {{-- Definisi data event secara global sebelum skrip kalender eksternal dimuat --}}
 <script>
     window.eventsData = []; // Inisialisasi secara global sebagai array kosong
-    @if (auth()->check() && auth()->user()->role == 'admin')
-        // Jika pengguna adalah admin, isi dengan data event dari controller
+    // Perubahan di sini: Termasuk role 'dosen'
+    @if (auth()->check() && (auth()->user()->role == 'admin' || auth()->user()->role == 'dosen'))
         window.eventsData = @json($events ?? []); 
     @endif
 </script>
