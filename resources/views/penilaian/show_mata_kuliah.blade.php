@@ -54,7 +54,8 @@
 @section('content')
     <div class="container-fluid py-4">
         <div class="header-container">
-            <a href="{{ route('penilaian.index') }}" class="btn btn-secondary" title="Kembali">&#x276E; Kembali</a>
+            <a href="{{ route('penilaian.mata_kuliah.detail', ['id_mata_kuliah' => $mataKuliah->kode_mk]) }}"
+                class="btn btn-secondary" title="Kembali">&#x276E; Kembali</a>
             <h1 class="page-title mb-0">{{ $mataKuliah->nama_mk ?? 'Input Nilai Mata Kuliah' }}</h1>
             <button class="btn btn-info" onclick="window.print()" title="Cetak Halaman">&#128424; Cetak</button>
         </div>
