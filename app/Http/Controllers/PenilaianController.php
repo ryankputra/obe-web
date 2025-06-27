@@ -218,4 +218,74 @@ class PenilaianController extends Controller
 
         return redirect()->back()->with('success', 'Nilai berhasil disimpan!');
     }
+
+    /**
+     * Menyimpan nilai secara massal untuk mata kuliah tertentu.
+     */
+    public function storeMass(Request $request, $id_mata_kuliah)
+    {
+        $mataKuliah = MataKuliah::findOrFail($id_mata_kuliah);
+
+        $bobotPenilaian = [
+            'keaktifan' => 0,
+            'tugas'     => 0,
+            'proyek'    => 0,
+            'kuis'      => 0,
+            'uts'       => 0,
+            'uas'       => 0,
+        ];
+
+        // Ambil semua CPMK yang terkait dengan mata kuliah ini
+        $cpmks = $mataKuliah->cpmks;
+
+        // Untuk setiap CPMK, simpan nilai mahasiswa
+        foreach ($cpmks as $cpmk) {
+            $jenisBobots = \App\Models\BobotPenilaian::where('cpmk_id', $cpmk->id)->get();
+            foreach ($jenisBobots as $jb) {
+                $key = strtolower(str_replace(' ', '_', $jb->jenis_penilaian));
+                if (array_key_exists($key, $bobotPenilaian)) {
+                    $bobotPenilaian[$key] = $jb->bobot;
+                }
+            }
+
+            // Hanya validasi field yang ada bobotnya
+            $rules = [];
+            foreach ($bobotPenilaian as $key => $bobot) {
+                if ($bobot > 0) {
+                    $rules["nilai.*.$key"] = 'nullable|numeric|min:0|max:100';
+                }
+            }
+            $request->validate($rules);
+
+            // Hitung total bobot yang digunakan
+            $totalBobot = array_sum(array_filter($bobotPenilaian, fn($b) => $b > 0));
+
+            foreach ($request->nilai as $mahasiswa_nim => $nilai) {
+                $nilai_akhir = 0;
+                foreach ($bobotPenilaian as $key => $bobot) {
+                    if ($bobot > 0) {
+                        $nilaiItem = (float)($nilai[$key] ?? 0);
+                        $nilai_akhir += $nilaiItem * $bobot;
+                    }
+                }
+                $nilai_akhir = $totalBobot > 0 ? round($nilai_akhir / $totalBobot, 2) : 0;
+
+                Penilaian::updateOrCreate(
+                    [
+                        'mahasiswa_nim'       => $mahasiswa_nim,
+                        'mata_kuliah_kode_mk' => $id_mata_kuliah,
+                        'cpmk_id'             => $cpmk->id, // <-- WAJIB ADA
+                    ],
+                    array_merge(
+                        collect($bobotPenilaian)->filter(fn($b) => $b > 0)->mapWithKeys(function ($b, $k) use ($nilai) {
+                            return [$k => ($nilai[$k] === null ? null : (float)($nilai[$k] ?? 0))];
+                        })->toArray(),
+                        ['nilai_akhir' => $nilai_akhir]
+                    )
+                );
+            }
+        }
+
+        return redirect()->back()->with('success', 'Nilai berhasil disimpan secara massal!');
+    }
 }

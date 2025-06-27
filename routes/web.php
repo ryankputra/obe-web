@@ -86,6 +86,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/mata-kuliah/{id_mata_kuliah}/detail', [PenilaianController::class, 'showDetailMataKuliah'])->name('mata_kuliah.detail');
         Route::get('/{id_mata_kuliah}/input_nilai/{cpmk_id}', [PenilaianController::class, 'inputNilai'])->name('mata_kuliah.input_nilai');
         Route::post('/{id_mata_kuliah}/store/{cpmk_id}', [PenilaianController::class, 'storeNilai'])->name('store');
+        Route::post('/{id_mata_kuliah}/store-mass', [PenilaianController::class, 'storeMass'])->name('store.mass');
     });
 });
 

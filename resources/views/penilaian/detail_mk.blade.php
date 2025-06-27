@@ -104,5 +104,81 @@
                 </div>
             </div>
         </div>
+
+        {{-- Tambahkan di bawah tabel CPMK --}}
+        <div class="card shadow mt-5">
+            <div class="card-header bg-primary text-white">
+                <b>Input Nilai Seluruh CPMK</b>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <form action="{{ route('penilaian.store.mass', ['id_mata_kuliah' => $mataKuliah->kode_mk]) }}"
+                        method="POST">
+                        @csrf
+                        <table class="table table-bordered table-striped mb-0">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" style="vertical-align: middle;">Nama Mahasiswa</th>
+                                    @foreach ($mataKuliah->cpmks as $cpmk)
+                                        @php
+                                            // Ambil jenis penilaian yang sudah ada bobotnya untuk CPMK ini
+                                            $jenisBobots = \App\Models\BobotPenilaian::where('cpmk_id', $cpmk->id)
+                                                ->where('bobot', '>', 0)
+                                                ->get();
+                                        @endphp
+                                        @if ($jenisBobots->count())
+                                            <th colspan="{{ $jenisBobots->count() }}" class="text-center">
+                                                {{ $cpmk->kode_cpmk }}
+                                            </th>
+                                        @endif
+                                    @endforeach
+                                </tr>
+                                <tr>
+                                    @foreach ($mataKuliah->cpmks as $cpmk)
+                                        @php
+                                            $jenisBobots = \App\Models\BobotPenilaian::where('cpmk_id', $cpmk->id)
+                                                ->where('bobot', '>', 0)
+                                                ->get();
+                                        @endphp
+                                        @foreach ($jenisBobots as $jb)
+                                            <th class="text-center">{{ ucfirst($jb->jenis_penilaian) }}<br><small>(Bobot:
+                                                    {{ $jb->bobot }})</small></th>
+                                        @endforeach
+                                    @endforeach
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($mataKuliah->mahasiswas as $mhs)
+                                    <tr>
+                                        <td>{{ $mhs->nama }}</td>
+                                        @foreach ($mataKuliah->cpmks as $cpmk)
+                                            @php
+                                                $jenisBobots = \App\Models\BobotPenilaian::where('cpmk_id', $cpmk->id)
+                                                    ->where('bobot', '>', 0)
+                                                    ->get();
+                                                // Ambil penilaian untuk mahasiswa, mk, dan cpmk ini
+                                                $penilaian = $mhs->penilaian->where('cpmk_id', $cpmk->id)->first();
+                                            @endphp
+                                            @foreach ($jenisBobots as $jb)
+                                                <td>
+                                                    <input type="number"
+                                                        name="nilai[{{ $mhs->nim }}][{{ $cpmk->id }}][{{ strtolower($jb->jenis_penilaian) }}]"
+                                                        value="{{ old('nilai.' . $mhs->nim . '.' . $cpmk->id . '.' . strtolower($jb->jenis_penilaian), $penilaian ? $penilaian->{strtolower($jb->jenis_penilaian)} : '') }}"
+                                                        min="0" max="100"
+                                                        class="form-control form-control-sm" />
+                                                </td>
+                                            @endforeach
+                                        @endforeach
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                        <div class="text-end mt-3">
+                            <button type="submit" class="btn btn-primary">Simpan Semua Nilai</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection
