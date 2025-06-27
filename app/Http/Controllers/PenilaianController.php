@@ -86,7 +86,7 @@ class PenilaianController extends Controller
      */
     public function showPenilaianMataKuliah($id_mata_kuliah): View
     {
-        $mataKuliah = MataKuliah::with(['mahasiswas.penilaian' => function($q) use ($id_mata_kuliah) {
+        $mataKuliah = MataKuliah::with(['mahasiswas.penilaian' => function ($q) use ($id_mata_kuliah) {
             $q->where('mata_kuliah_id', $id_mata_kuliah);
         }])->find($id_mata_kuliah);
 
@@ -104,100 +104,25 @@ class PenilaianController extends Controller
     /**
      * Menyimpan nilai-nilai yang dimasukkan oleh dosen.
      */
-    public function storeNilai(Request $request, $id_mata_kuliah)
-    {
-        $request->validate([
-            'nilai.*.keaktifan' => 'nullable|numeric|min:0|max:100',
-            'nilai.*.tugas'     => 'nullable|numeric|min:0|max:100',
-            'nilai.*.proyek'    => 'nullable|numeric|min:0|max:100',
-            'nilai.*.kuis'      => 'nullable|numeric|min:0|max:100',
-            'nilai.*.uts'       => 'nullable|numeric|min:0|max:100',
-            'nilai.*.uas'       => 'nullable|numeric|min:0|max:100',
-        ]);
-
-        $mataKuliah = MataKuliah::findOrFail($id_mata_kuliah);
-        
-        // Inisialisasi bobotPenilaian dengan nilai default 0
-        $bobotPenilaian = [
-            'keaktifan' => 0,
-            'tugas'     => 0,
-            'proyek'    => 0,
-            'kuis'      => 0,
-            'uts'       => 0,
-            'uas'       => 0,
-        ];
-
-        // Mengambil CPMK pertama dari mata kuliah ini untuk mendapatkan bobot penilaian
-        $cpmk = $mataKuliah->cpmks->first(); // Pastikan relasi cpmks() ada di model MataKuliah
-
-        if ($cpmk) {
-            // Mengambil SEMUA bobot jenis penilaian untuk CPMK ini
-            $jenisBobots = BobotPenilaian::where('cpmk_id', $cpmk->id)->get(); 
-            
-            foreach ($jenisBobots as $jb) {
-                // Pastikan nama jenis penilaian di DB (jenis_penilaian) sesuai dengan key di array $bobotPenilaian
-                $key = strtolower(str_replace(' ', '_', $jb->jenis_penilaian));
-                if (array_key_exists($key, $bobotPenilaian)) {
-                    $bobotPenilaian[$key] = $jb->bobot;
-                }
-            }
-        } else {
-            Log::warning("Tidak ada CPMK ditemukan untuk mata kuliah ID: {$id_mata_kuliah}. Bobot penilaian akan dihitung dengan 0.");
-        }
-
-        foreach ($request->nilai as $mahasiswa_nim => $nilai) {
-            $nilai_akhir = 0;
-            
-            // Pastikan nilai diubah ke float dan default ke 0 jika null/kosong
-            $nilai_keaktifan = (float)($nilai['keaktifan'] ?? 0);
-            $nilai_tugas     = (float)($nilai['tugas'] ?? 0);
-            $nilai_proyek    = (float)($nilai['proyek'] ?? 0);
-            $nilai_kuis      = (float)($nilai['kuis'] ?? 0);
-            $nilai_uts       = (float)($nilai['uts'] ?? 0);
-            $nilai_uas       = (float)($nilai['uas'] ?? 0);
-
-            // Perhitungan nilai akhir menggunakan bobot yang telah diambil
-            $nilai_akhir += $nilai_keaktifan * ($bobotPenilaian['keaktifan'] / 100);
-            $nilai_akhir += $nilai_tugas     * ($bobotPenilaian['tugas'] / 100);
-            $nilai_akhir += $nilai_proyek    * ($bobotPenilaian['proyek'] / 100);
-            $nilai_akhir += $nilai_kuis      * ($bobotPenilaian['kuis'] / 100);
-            $nilai_akhir += $nilai_uts       * ($bobotPenilaian['uts'] / 100);
-            $nilai_akhir += $nilai_uas       * ($bobotPenilaian['uas'] / 100);
-
-            Penilaian::updateOrCreate(
-                [
-                    'mahasiswa_nim'       => $mahasiswa_nim,
-                    'mata_kuliah_kode_mk' => $id_mata_kuliah, // Pastikan ini konsisten dengan kolom di DB Anda
-                ],
-                [
-                    'keaktifan'   => ($nilai['keaktifan'] === null) ? null : $nilai_keaktifan, // Simpan null jika input kosong
-                    'tugas'       => ($nilai['tugas'] === null) ? null : $nilai_tugas,
-                    'proyek'      => ($nilai['proyek'] === null) ? null : $nilai_proyek,
-                    'kuis'        => ($nilai['kuis'] === null) ? null : $nilai_kuis,
-                    'uts'         => ($nilai['uts'] === null) ? null : $nilai_uts,
-                    'uas'         => ($nilai['uas'] === null) ? null : $nilai_uas,
-                    'nilai_akhir' => round($nilai_akhir, 2), // Bulatkan nilai akhir ke 2 desimal
-                ]
-            );
-        }
-
-        return redirect()->back()->with('success', 'Nilai berhasil disimpan!');
-    }
+   
 
     /**
      * Menampilkan halaman input nilai untuk mata kuliah tertentu.
      * Method ini mengirimkan data bobot penilaian ke view.
      */
-    public function inputNilai($id_mata_kuliah): View
+    public function inputNilai($id_mata_kuliah, $cpmk_id): View
     {
-        // Pastikan relasi mahasiswas dan cpmks ada di model MataKuliah
         $mataKuliah = MataKuliah::with('mahasiswas.penilaian', 'cpmks')->find($id_mata_kuliah);
 
         if (!$mataKuliah) {
             return redirect()->route('penilaian.index')->with('error', 'Mata kuliah tidak ditemukan.');
         }
 
-        // Inisialisasi bobotPenilaian dengan nilai default 0
+        $cpmk = $mataKuliah->cpmks->where('id', $cpmk_id)->first();
+        if (!$cpmk) {
+            return redirect()->route('penilaian.detail', $id_mata_kuliah)->with('error', 'CPMK tidak ditemukan.');
+        }
+
         $bobotPenilaian = [
             'keaktifan' => 0,
             'tugas'     => 0,
@@ -207,27 +132,85 @@ class PenilaianController extends Controller
             'uas'       => 0,
         ];
 
-        // Mengambil CPMK pertama dari mata kuliah ini untuk mendapatkan bobot penilaian
-        $cpmk = $mataKuliah->cpmks->first(); // Pastikan relasi cpmks() ada di model MataKuliah
-
-        if ($cpmk) {
-            // Mengambil SEMUA bobot jenis penilaian untuk CPMK ini
-            $jenisBobots = BobotPenilaian::where('cpmk_id', $cpmk->id)->get(); 
-            
-            foreach ($jenisBobots as $jb) {
-                // Pastikan nama jenis penilaian di DB (jenis_penilaian) sesuai dengan key di array $bobotPenilaian
-                $key = strtolower(str_replace(' ', '_', $jb->jenis_penilaian));
-                if (array_key_exists($key, $bobotPenilaian)) {
-                    $bobotPenilaian[$key] = $jb->bobot;
-                }
+        $jenisBobots = \App\Models\BobotPenilaian::where('cpmk_id', $cpmk->id)->get();
+        foreach ($jenisBobots as $jb) {
+            $key = strtolower(str_replace(' ', '_', $jb->jenis_penilaian));
+            if (array_key_exists($key, $bobotPenilaian)) {
+                $bobotPenilaian[$key] = $jb->bobot;
             }
-        } else {
-            Log::warning("Tidak ada CPMK ditemukan untuk mata kuliah ID: {$id_mata_kuliah}. Bobot penilaian akan ditampilkan sebagai 0.");
         }
+
+        // Filter hanya yang bobotnya > 0
+        $bobotPenilaian = array_filter($bobotPenilaian, fn($b) => $b > 0);
 
         $mahasiswaDiKelas = $mataKuliah->mahasiswas ?? collect();
 
-        // Pastikan Anda meneruskan 'bobotPenilaian' ke view
-        return view('penilaian.show_mata_kuliah', compact('mataKuliah', 'mahasiswaDiKelas', 'bobotPenilaian'));
+        return view('penilaian.show_mata_kuliah', compact('mataKuliah', 'mahasiswaDiKelas', 'bobotPenilaian', 'cpmk'));
+    }
+
+    public function storeNilai(Request $request, $id_mata_kuliah, $cpmk_id)
+    {
+        $mataKuliah = MataKuliah::findOrFail($id_mata_kuliah);
+
+        $cpmk = $mataKuliah->cpmks->where('id', $cpmk_id)->first();
+        if (!$cpmk) {
+            return redirect()->route('penilaian.detail', $id_mata_kuliah)->with('error', 'CPMK tidak ditemukan.');
+        }
+
+        $bobotPenilaian = [
+            'keaktifan' => 0,
+            'tugas'     => 0,
+            'proyek'    => 0,
+            'kuis'      => 0,
+            'uts'       => 0,
+            'uas'       => 0,
+        ];
+
+        $jenisBobots = \App\Models\BobotPenilaian::where('cpmk_id', $cpmk->id)->get();
+        foreach ($jenisBobots as $jb) {
+            $key = strtolower(str_replace(' ', '_', $jb->jenis_penilaian));
+            if (array_key_exists($key, $bobotPenilaian)) {
+                $bobotPenilaian[$key] = $jb->bobot;
+            }
+        }
+
+        // Hanya validasi field yang ada bobotnya
+        $rules = [];
+        foreach ($bobotPenilaian as $key => $bobot) {
+            if ($bobot > 0) {
+                $rules["nilai.*.$key"] = 'nullable|numeric|min:0|max:100';
+            }
+        }
+        $request->validate($rules);
+
+        // Hitung total bobot yang digunakan
+        $totalBobot = array_sum(array_filter($bobotPenilaian, fn($b) => $b > 0));
+
+        foreach ($request->nilai as $mahasiswa_nim => $nilai) {
+            $nilai_akhir = 0;
+            foreach ($bobotPenilaian as $key => $bobot) {
+                if ($bobot > 0) {
+                    $nilaiItem = (float)($nilai[$key] ?? 0);
+                    $nilai_akhir += $nilaiItem * $bobot;
+                }
+            }
+            $nilai_akhir = $totalBobot > 0 ? round($nilai_akhir / $totalBobot, 2) : 0;
+
+            Penilaian::updateOrCreate(
+                [
+                    'mahasiswa_nim'       => $mahasiswa_nim,
+                    'mata_kuliah_kode_mk' => $id_mata_kuliah,
+                    'cpmk_id'             => $cpmk->id, // Pastikan ada kolom cpmk_id di tabel penilaian
+                ],
+                array_merge(
+                    collect($bobotPenilaian)->filter(fn($b) => $b > 0)->mapWithKeys(function ($b, $k) use ($nilai) {
+                        return [$k => ($nilai[$k] === null ? null : (float)($nilai[$k] ?? 0))];
+                    })->toArray(),
+                    ['nilai_akhir' => $nilai_akhir]
+                )
+            );
+        }
+
+        return redirect()->back()->with('success', 'Nilai berhasil disimpan!');
     }
 }

@@ -27,14 +27,14 @@ class BobotNilaiController extends Controller
         // Jika relasi 'mahasiswas' ada di model MataKuliah:
         $mataKuliahModel = new MataKuliah();
         $query = MataKuliah::withCount('mahasiswas')
-                           ->whereNotNull($mataKuliahModel->getTable() . '.' . $mataKuliahModel->getKeyName()); // Memastikan primary key tidak null
+            ->whereNotNull($mataKuliahModel->getTable() . '.' . $mataKuliahModel->getKeyName()); // Memastikan primary key tidak null
 
 
         // Jika ada parameter pencarian, filter berdasarkan nama atau kode mata kuliah
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('nama_mk', 'like', "%{$search}%")
-                  ->orWhere('kode_mk', 'like', "%{$search}%");
+                    ->orWhere('kode_mk', 'like', "%{$search}%");
             });
         }
 
@@ -62,7 +62,7 @@ class BobotNilaiController extends Controller
         // Jika bobot CPMK disimpan dalam pivot table (misal cpmk_mata_kuliah dengan kolom 'bobot'),
         // pastikan relasi (belongsToMany) sudah dikonfigurasi untuk mengambil pivot data.
         // Contoh: $mataKuliah->load('cpmks.pivot') jika perlu
-        $mataKuliah->load('cpmks'); 
+        $mataKuliah->load('cpmks');
 
         return view('bobot_nilai.show', compact('mataKuliah'));
     }
@@ -103,17 +103,17 @@ class BobotNilaiController extends Controller
     {
         if ($cpmk->mata_kuliah !== $mataKuliah->getKey()) {
             return redirect()->route('bobot_nilai.show', $mataKuliah->getKey())
-                             ->with('error_cpmk', 'CPMK tidak valid untuk mata kuliah ini.');
+                ->with('error_cpmk', 'CPMK tidak valid untuk mata kuliah ini.');
         }
 
         $jenisPenilaianList = ['Keaktifan', 'Tugas', 'Kuis', 'Proyek', 'UTS', 'UAS'];
-        
+
         // Mengambil bobot yang sudah ada dari database
         $bobotData = $cpmk->jenisPenilaianBobot()->pluck('bobot', 'jenis_penilaian')->all();
         $existingBobot = [];
         foreach ($jenisPenilaianList as $jenis) {
-           $key = strtolower(str_replace(' ', '_', $jenis)); // e.g., 'keaktifan'
-           $existingBobot[$key] = $bobotData[$key] ?? null;
+            $key = strtolower(str_replace(' ', '_', $jenis)); // e.g., 'keaktifan'
+            $existingBobot[$key] = $bobotData[$key] ?? null;
         }
 
         return view('bobot_nilai.cpmk_jenis_penilaian', compact('mataKuliah', 'cpmk', 'jenisPenilaianList', 'existingBobot'));
@@ -131,12 +131,14 @@ class BobotNilaiController extends Controller
     {
         if ($cpmk->mata_kuliah !== $mataKuliah->getKey()) {
             return redirect()->route('bobot_nilai.show', $mataKuliah->getKey())
-                             ->with('error_cpmk', 'Operasi tidak valid.');
+                ->with('error_cpmk', 'Operasi tidak valid.');
         }
+
+        $maxBobot = $cpmk->bobot ?? 0;
 
         $validatedData = $request->validate([
             'bobot_jenis' => 'required|array',
-            'bobot_jenis.*' => 'nullable|numeric|min:0|max:100',
+            'bobot_jenis.*' => 'nullable|numeric|min:0|max:' . $maxBobot,
         ]);
 
         // Hitung total bobot yang diinput
@@ -147,23 +149,25 @@ class BobotNilaiController extends Controller
             }
         }
 
-        // Validasi total bobot harus 100 jika ada inputan, toleransi kecil untuk floating point
-        if ($totalBobotJenis > 0 && abs($totalBobotJenis - 100) > 0.01) {
-            return redirect()->back()->withInput()->with('error_jenis', 'Total bobot untuk semua jenis penilaian harus 100%. Saat ini totalnya: ' . $totalBobotJenis . '%.');
+        // Validasi total bobot harus sama dengan bobot CPMK
+        if ($totalBobotJenis > 0 && abs($totalBobotJenis - $maxBobot) > 0.01) {
+            return redirect()->back()->withInput()->with(
+                'error_jenis',
+                'Total bobot untuk semua jenis penilaian harus ' . $maxBobot . '. Saat ini totalnya: ' . $totalBobotJenis . '.'
+            );
         }
 
         // Menyimpan atau memperbarui bobot jenis penilaian
-        DB::transaction(function () use ($cpmk, $validatedData) {
+        \DB::transaction(function () use ($cpmk, $validatedData) {
             foreach ($validatedData['bobot_jenis'] as $jenisKey => $bobotValue) {
-                // $jenisKey akan berupa 'keaktifan', 'tugas', dll.
                 $cpmk->jenisPenilaianBobot()->updateOrCreate(
-                    ['jenis_penilaian' => $jenisKey], // Kriteria pencarian
-                    ['bobot' => $bobotValue]          // Data untuk diupdate atau create
+                    ['jenis_penilaian' => $jenisKey],
+                    ['bobot' => $bobotValue]
                 );
             }
         });
 
         return redirect()->route('bobot_nilai.show', $mataKuliah->getKey())
-                         ->with('success_cpmk', 'Bobot jenis penilaian untuk CPMK ' . $cpmk->kode_cpmk . ' berhasil diperbarui.');
+            ->with('success_cpmk', 'Bobot jenis penilaian untuk CPMK ' . $cpmk->kode_cpmk . ' berhasil diperbarui.');
     }
 }
