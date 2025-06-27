@@ -42,4 +42,12 @@ class Penilaian extends Model
     {
         return $this->belongsTo(MataKuliah::class, 'mata_kuliah_kode_mk', 'kode_mk');
     }
+
+    /**
+     * Get the cpmk that owns the penilaian.
+     */
+    public function cpmk()
+    {
+        return $this->belongsTo(\App\Models\Cpmk::class, 'cpmk_id');
+    }
 }
