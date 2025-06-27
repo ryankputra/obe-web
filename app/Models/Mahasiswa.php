@@ -37,9 +37,9 @@ class Mahasiswa extends Model
             'kode_mk'               // local key di MataKuliah
         );
     }
-    
+
     public function penilaian()
     {
-        return $this->hasOne(Penilaian::class, 'mahasiswa_nim', 'nim'); // Sesuaikan dengan kolom mahasiswa_nim
+        return $this->hasMany(\App\Models\Penilaian::class, 'mahasiswa_nim', 'nim');
     }
 }

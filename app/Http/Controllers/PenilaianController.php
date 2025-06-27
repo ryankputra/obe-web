@@ -104,7 +104,7 @@ class PenilaianController extends Controller
     /**
      * Menyimpan nilai-nilai yang dimasukkan oleh dosen.
      */
-   
+
 
     /**
      * Menampilkan halaman input nilai untuk mata kuliah tertentu.
@@ -112,7 +112,12 @@ class PenilaianController extends Controller
      */
     public function inputNilai($id_mata_kuliah, $cpmk_id): View
     {
-        $mataKuliah = MataKuliah::with('mahasiswas.penilaian', 'cpmks')->find($id_mata_kuliah);
+        $mataKuliah = MataKuliah::with(['mahasiswas' => function ($q) use ($cpmk_id, $id_mata_kuliah) {
+            $q->with(['penilaian' => function ($q2) use ($cpmk_id, $id_mata_kuliah) {
+                $q2->where('cpmk_id', $cpmk_id)
+                    ->where('mata_kuliah_kode_mk', $id_mata_kuliah);
+            }]);
+        }, 'cpmks'])->find($id_mata_kuliah);
 
         if (!$mataKuliah) {
             return redirect()->route('penilaian.index')->with('error', 'Mata kuliah tidak ditemukan.');
@@ -200,7 +205,7 @@ class PenilaianController extends Controller
                 [
                     'mahasiswa_nim'       => $mahasiswa_nim,
                     'mata_kuliah_kode_mk' => $id_mata_kuliah,
-                    'cpmk_id'             => $cpmk->id, // Pastikan ada kolom cpmk_id di tabel penilaian
+                    'cpmk_id'             => $cpmk->id, // <-- WAJIB ADA
                 ],
                 array_merge(
                     collect($bobotPenilaian)->filter(fn($b) => $b > 0)->mapWithKeys(function ($b, $k) use ($nilai) {

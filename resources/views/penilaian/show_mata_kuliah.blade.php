@@ -78,16 +78,26 @@
                             </thead>
                             <tbody>
                                 @foreach ($mahasiswaDiKelas as $mhs)
+                                    @php
+                                        // Jika $mhs->penilaian adalah koleksi (hasMany)
+                                        $penilaian = null;
+                                        if (
+                                            $mhs->penilaian &&
+                                            $mhs->penilaian instanceof \Illuminate\Support\Collection
+                                        ) {
+                                            $penilaian = $mhs->penilaian->where('cpmk_id', $cpmk->id)->first();
+                                        }
+                                    @endphp
                                     <tr>
                                         <td>{{ $mhs->nama }}</td>
                                         @foreach ($bobotPenilaian as $jenis => $bobot)
                                             <td>
                                                 <input type="number" name="nilai[{{ $mhs->nim }}][{{ $jenis }}]"
-                                                    value="{{ old('nilai.' . $mhs->nim . '.' . $jenis, $mhs->penilaian->{$jenis} ?? '') }}"
+                                                    value="{{ old('nilai.' . $mhs->nim . '.' . $jenis, $penilaian->{$jenis} ?? '') }}"
                                                     min="0" max="100" class="form-control" />
                                             </td>
                                         @endforeach
-                                        <td>{{ $mhs->penilaian->nilai_akhir ?? '-' }}</td>
+                                        <td>{{ $penilaian->nilai_akhir ?? '-' }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>

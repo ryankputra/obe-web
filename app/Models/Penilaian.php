@@ -18,6 +18,7 @@ class Penilaian extends Model
     protected $fillable = [
         'mahasiswa_nim',
         'mata_kuliah_kode_mk',
+        'cpmk_id', // <-- Tambahkan ini!
         'keaktifan',
         'tugas',
         'proyek',       // <-- Memperbaiki Proyek yang tidak tersimpan
