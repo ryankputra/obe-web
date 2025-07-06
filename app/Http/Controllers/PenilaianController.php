@@ -224,64 +224,30 @@ class PenilaianController extends Controller
      */
     public function storeMass(Request $request, $id_mata_kuliah)
     {
-        $mataKuliah = MataKuliah::findOrFail($id_mata_kuliah);
-
-        $bobotPenilaian = [
-            'keaktifan' => 0,
-            'tugas'     => 0,
-            'proyek'    => 0,
-            'kuis'      => 0,
-            'uts'       => 0,
-            'uas'       => 0,
-        ];
-
-        // Ambil semua CPMK yang terkait dengan mata kuliah ini
-        $cpmks = $mataKuliah->cpmks;
-
-        // Untuk setiap CPMK, simpan nilai mahasiswa
-        foreach ($request->nilai as $mahasiswa_nim => $nilaiPerCpmk) {
-            foreach ($cpmks as $cpmk) {
-                $jenisBobots = \App\Models\BobotPenilaian::where('cpmk_id', $cpmk->id)->get();
-                $bobotPenilaian = [
-                    'keaktifan' => 0,
-                    'tugas'     => 0,
-                    'proyek'    => 0,
-                    'kuis'      => 0,
-                    'uts'       => 0,
-                    'uas'       => 0,
-                ];
-                foreach ($jenisBobots as $jb) {
-                    $key = strtolower(str_replace(' ', '_', $jb->jenis_penilaian));
-                    if (array_key_exists($key, $bobotPenilaian)) {
-                        $bobotPenilaian[$key] = $jb->bobot;
-                    }
+        $nilaiData = $request->input('nilai');
+    
+        foreach ($nilaiData as $nim => $cpmks) {
+            foreach ($cpmks as $cpmk_id => $jenis_nilai) {
+                $penilaian = Penilaian::firstOrNew([
+                    'mahasiswa_nim' => $nim,
+                    'mata_kuliah_kode_mk' => $id_mata_kuliah,
+                    'cpmk_id' => $cpmk_id,
+                ]);
+    
+                // Simpan semua jenis penilaian (dalam bentuk kolom dinamis: tugas, kuis, proyek, dll)
+                foreach ($jenis_nilai as $jenis => $nilai) {
+                    $penilaian->{$jenis} = $nilai;
                 }
-                $nilai_akhir = 0;
-                $totalBobot = array_sum(array_filter($bobotPenilaian, fn($b) => $b > 0));
-                foreach ($bobotPenilaian as $key => $bobot) {
-                    if ($bobot > 0) {
-                        $nilaiItem = isset($nilaiPerCpmk[$cpmk->id][$key]) ? (float)$nilaiPerCpmk[$cpmk->id][$key] : 0;
-                        $nilai_akhir += $nilaiItem * $bobot;
-                    }
-                }
-                $nilai_akhir = $totalBobot > 0 ? round($nilai_akhir / $totalBobot, 2) : 0;
-
-                Penilaian::updateOrCreate(
-                    [
-                        'mahasiswa_nim'       => $mahasiswa_nim,
-                        'mata_kuliah_kode_mk' => $id_mata_kuliah,
-                        'cpmk_id'             => $cpmk->id,
-                    ],
-                    array_merge(
-                        collect($bobotPenilaian)->filter(fn($b) => $b > 0)->mapWithKeys(function ($b, $k) use ($nilaiPerCpmk, $cpmk) {
-                            return [$k => isset($nilaiPerCpmk[$cpmk->id][$k]) ? (float)$nilaiPerCpmk[$cpmk->id][$k] : null];
-                        })->toArray(),
-                        ['nilai_akhir' => $nilai_akhir]
-                    )
-                );
+    
+                // Hitung nilai akhir jika perlu
+                // (opsional, tergantung bobot dan kebutuhan)
+                // Misal:
+                // $penilaian->nilai_akhir = ...;
+    
+                $penilaian->save();
             }
         }
-
-        return redirect()->back()->with('success', 'Nilai berhasil disimpan secara massal!');
+    
+        return redirect()->back()->with('success', 'Nilai berhasil disimpan.');
     }
 }

@@ -62,14 +62,14 @@
                                             <i class="fas fa-edit"></i>
                                         </button>
                                         <!-- Tombol Hapus -->
-                                        <button type="button"
+                                        <!-- <button type="button"
                                             class="btn btn-outline-danger btn-sm delete-btn"
                                             data-bs-toggle="modal"
                                             data-bs-target="#deleteProdiModal"
                                             data-id="{{ $prodi->id }}"
                                             data-nama="{{ $prodi->nama_prodi }}">
                                             <i class="fas fa-trash"></i>
-                                        </button>
+                                        </button> -->
                                     </td>
                                 </tr>
 

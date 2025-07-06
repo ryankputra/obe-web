@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\Cpmk;
 
 use App\Models\Mahasiswa;
 use App\Models\Prodi;
@@ -17,23 +18,19 @@ class DashboardController extends Controller
 
     public function index()
     {
-        // Ambil data jumlah mahasiswa per prodi
         $prodiData = Prodi::withCount('mahasiswas')->get()->map(function ($prodi) {
             return [
                 'nama_prodi' => $prodi->nama_prodi,
                 'jumlah_mahasiswa' => $prodi->mahasiswas_count,
             ];
         });
-
-        // Tangani kasus kosong untuk grafik
+    
         if ($prodiData->isEmpty()) {
             $prodiData = collect([['nama_prodi' => 'Tidak ada data', 'jumlah_mahasiswa' => 0]]);
         }
-
-        // --- Logika untuk mengambil data event akademik ---
-        $events = collect(); // Inisialisasi sebagai koleksi kosong Laravel
-
-        // Periksa apakah pengguna sudah login dan memiliki peran 'admin' ATAU 'dosen'
+    
+        $events = collect();
+    
         if (Auth::check() && (Auth::user()->role == 'admin' || Auth::user()->role == 'dosen')) {
             $events = EventAkademik::select(
                 'tanggal_event as date',
@@ -41,9 +38,33 @@ class DashboardController extends Controller
                 'tipe as type'
             )->get();
         }
-        // --- Akhir logika data event ---
+    
+        $grafikCpmk = collect();
+    
+        if (Auth::user()->role === 'dosen') {
+    $userId = Auth::id(); // Mengambil ID user (dosen)
 
-        // Kirimkan data prodi dan event ke view dashboard
-        return view('dashboard', compact('prodiData', 'events'));
-    }
+    $grafikCpmk = Cpmk::where('pic', $userId)
+        ->with('jenisPenilaianBobot', 'mataKuliah') // pastikan relasi ini ada
+        ->get()
+        ->map(function ($cpmk) {
+            $totalNilai = $cpmk->jenisPenilaianBobot->sum('nilai');
+            return [
+                'kode_cpmk' => $cpmk->kode_cpmk,
+                'nama_mk' => optional($cpmk->mataKuliah)->nama_mata_kuliah ?? 'Tidak diketahui',
+                'total_nilai' => round($totalNilai, 2),
+            ];
+        })
+        ->sortByDesc('total_nilai') // urutkan dari nilai terbesar
+        ->take(1); // hanya ambil 1 data tertinggi
 }
+
+    
+        return view('dashboard', compact('prodiData', 'events', 'grafikCpmk'));
+    }
+    
+}
+
+
+
+

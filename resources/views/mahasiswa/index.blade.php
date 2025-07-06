@@ -117,9 +117,9 @@
                                     <form action="{{ route('mahasiswa.destroy', $mhs->nim) }}" method="POST"
                                           style="display: inline-block;">
                                         @csrf
-                                        @method('DELETE')
+                                        <!-- @method('DELETE')
                                         <button type="submit" class="btn btn-outline-danger btn-sm"
-                                                onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
+                                                onclick="return confirm('Yakin ingin menghapus?')">Hapus</button> -->
                                     </form>
                                 </td>
                             </tr>

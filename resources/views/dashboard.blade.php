@@ -166,6 +166,36 @@
                     @else
                         <p>Tidak ada event akademik yang dijadwalkan.</p>
                     @endif
+
+                    <!-- @if(auth()->check() && auth()->user()->role === 'dosen')
+                    <div class="col-12 mb-4">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-header bg-success text-white">
+                                Grafik Nilai Rata-rata CPMK (Dosen)
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="cpmkChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endif -->
+                    @if(auth()->check() && auth()->user()->role === 'dosen')
+                        <div class="col-12 mb-4">
+                            <div class="card shadow-sm h-100">
+                                <div class="card-header bg-success text-white">
+                                    Grafik Nilai CPMK Berdasarkan Mata Kuliah
+                                </div>
+                                <div class="card-body">
+                                    <div class="chart-container">
+                                        <canvas id="cpmkChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
                 </div>
             </div>
         </div>
@@ -173,6 +203,72 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- @if(auth()->check() && auth()->user()->role === 'dosen')
+<script>
+    const cpmkData = {
+        labels: [@foreach($grafikCpmk as $item) '{{ $item['nama_mk'] }} ({{ $item['kode_cpmk'] }})', @endforeach],
+        datasets: [{
+            label: 'Nilai Tertinggi CPMK',
+            data: [@foreach($grafikCpmk as $item) {{ $item['total_nilai'] }}, @endforeach],
+            backgroundColor: 'rgba(255, 99, 132, 0.6)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1
+        }]
+    };
+
+    const ctxCpmk = document.getElementById('cpmkChart').getContext('2d');
+    new Chart(ctxCpmk, {
+        type: 'bar',
+        data: cpmkData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+@endif -->
+@if(auth()->check() && auth()->user()->role === 'dosen')
+<script>
+    const dummyData = {
+        labels: [
+            'INF-1317 - Penambangan Data',
+            'INF-6509 - Apps Programming Capstone Project',
+            'INF-9602 - Informatics Experience',
+            'INF-9705 - Collaborative Development',
+        ],
+        datasets: [{
+            label: 'Rata-rata Nilai CPMK',
+            data: [85, 78, 90, 74],  // Dummy nilai CPMK
+            backgroundColor: 'rgba(75, 192, 192, 0.6)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1
+        }]
+    };
+
+    const ctxCpmk = document.getElementById('cpmkChart').getContext('2d');
+    new Chart(ctxCpmk, {
+        type: 'bar',
+        data: dummyData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100
+                }
+            }
+        }
+    });
+</script>
+@endif
+
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Data dinamis dari controller
